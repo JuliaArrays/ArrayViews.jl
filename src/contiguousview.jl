@@ -51,16 +51,3 @@ stride{T,N}(a::ContiguousView{T,N}, d::Integer) = (d > 0 || error("dimension out
                                                    d == 1 ? 1 : 
                                                    d == 2 ? a.shp[1] :
                                                    d <= N ? *(a.shp[1:d-1]...) : length(a))
-
-# getindex (for scalar)
-
-getindex(a::ContiguousView, i::Int) = arrayref(a.arr, a.offset + i)
-getindex(a::ContiguousView, i0::Int, i1::Int) = arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1))
-getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2))
-
-getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int, i3::Int) = 
-    arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2, i3))
-
-getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) = 
-    arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2, i3, i4, I...))
-

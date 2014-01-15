@@ -31,22 +31,49 @@ size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d);
 
 # getindex
 
-getindex(a::ArrayView, i::Real) = getindex(a, to_index(i))
+getindex(a::ArrayView, i::Int) = getindex(a, to_index(i))
 
-getindex(a::ArrayView, i0::Real, i1::Real) = getindex(a, to_index(i0), to_index(i1))
+getindex(a::ArrayView, i0::Int, i1::Int) = getindex(a, to_index(i0), to_index(i1))
 
-getindex(a::ArrayView, i0::Real, i1::Real, i2::Real) = 
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int) = 
     getindex(a, to_index(i0), to_index(i1), to_index(i2))
 
-getindex(a::ArrayView, i0::Real, i1::Real, i2::Real, i3::Real) = 
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int) = 
     getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3))
 
-getindex(a::ArrayView, i0::Real, i1::Real, i2::Real, i3::Real, i4::Real) = 
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = 
     getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4))
 
-getindex(a::ArrayView, i0::Real, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real) = 
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = 
     getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5))
 
-getindex(a::ArrayView, i0::Real, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real, I::Int...) = 
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
     getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5), I...)
+
+
+getindex(a::ArrayView, i::Int) = arrayref(a.arr, uindex(a, i))
+getindex(a::ArrayView, i0::Int, i1::Int) = arrayref(a.arr, uindex(a, i0, i1))
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, uindex(a, i0, i1, i2))
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int) =  arrayref(a.arr, uindex(a, i0, i1, i2, i3))
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = arrayref(a.arr, uindex(i0, i1, i2, i3, i4))
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
+    arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4, i5, I...))
+
+
+# index calculation (for contiguous views)
+
+uindex{T,N}(a::ArrayView{T,N,N}, i::Int) = a.offset + i
+
+uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int) = a.offset + sub2ind(size(a), i0, i1)
+
+uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int) = a.offset + sub2ind(size(a), i0, i1, i2)
+
+uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int) = 
+    a.offset + sub2ind(size(a), i0, i1, i2, i3)
+
+uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = 
+    a.offset + sub2ind(size(a), i0, i1, i2, i3, i4)
+
+uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
+    a.offset + sub2ind(size(a), i0, i1, i2, i3, i4, i5, I...)
 
