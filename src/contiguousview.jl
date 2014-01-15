@@ -2,24 +2,18 @@
 
 immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
     arr::Arr
+    offset::Int
     len::Int
     shp::NTuple{N,Int}
 end
 
-function ContiguousView{T,N}(arr::Array{T}, shp::NTuple{N,Int}) 
-    len::Int = *(shp...)
-    len == length(arr) || throw(DimensionMismatch("Inconsistent array size."))
-    ContiguousView{T,N,typeof(arr)}(arr, len, shp)
-end
+ContiguousView{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
+    ContiguousView{T,N,typeof(arr)}(arr, offset, *(shp...), shp)
 
-# length
+# length & size
 
 length(a::ContiguousView) = a.len
-
-# size
-
 size(a::ContiguousView) = a.shp
-size(a::ContiguousView, d::Integer) = getdim(a.shp, d)
 
 # contiguousness
 
@@ -55,15 +49,18 @@ stride{T}(a::ContiguousView{T,2}, d::Integer) = (d > 0 || error("dimension out o
 
 stride{T,N}(a::ContiguousView{T,N}, d::Integer) = (d > 0 || error("dimension out of range."); 
                                                    d == 1 ? 1 : 
-                                                   d == 2 ? a.shp[1]
+                                                   d == 2 ? a.shp[1] :
                                                    d <= N ? *(a.shp[1:d-1]...) : length(a))
 
 # getindex (for scalar)
 
-getindex(a::ContiguousView{T}, i::Int) = arrayref(a.arr, i)
-getindex(a::ContiguousView{T}, i0::Int, i1::Int) = arrayref(a.arr, sub2ind(a.shp, i0, i1))
-getindex(a::ContiguousView{T}, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, sub2ind(a.shp, i0, i1, i2))
-getindex(a::ContiguousView{T}, i0::Int, i1::Int, i2::Int, i3::Int) = arrayref(a.arr, sub2ind(a.shp, i0, i1, i2, i3))
-getindex(a::ContiguousView{T}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) = 
-    arrayref(a.arr, sub2ind(a.shp, i0, i1, i2, i3, i4, I...))
+getindex(a::ContiguousView, i::Int) = arrayref(a.arr, a.offset + i)
+getindex(a::ContiguousView, i0::Int, i1::Int) = arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1))
+getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2))
+
+getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int, i3::Int) = 
+    arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2, i3))
+
+getindex(a::ContiguousView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) = 
+    arrayref(a.arr, a.offset + sub2ind(a.shp, i0, i1, i2, i3, i4, I...))
 

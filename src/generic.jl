@@ -26,8 +26,8 @@ contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
 
 # size
 
-getdim{N}(s::NTuple{N,Int}, d::Int) = (d > 0 || error("dimension out of range."); d <= N ? s[d] : 1)
-size{T,N}(a::ArrayView{T,N}, d::Int) = getdim(size(a), d);
+getdim{N}(s::NTuple{N,Int}, d::Integer) = (d > 0 || error("dimension out of range."); d <= N ? s[d] : 1)
+size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d);
 
 # getindex
 
