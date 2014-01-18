@@ -24,6 +24,8 @@ eltype{T}(a::ArrayView{T}) = T
 ndims{T,N}(a::ArrayView{T,N}) = N
 contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
 
+type ContRank{M} end
+
 # size
 
 getdim{N}(s::NTuple{N,Int}, d::Integer) = (d > 0 || error("dimension out of range."); d <= N ? s[d] : 1)

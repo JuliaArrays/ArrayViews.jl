@@ -1,6 +1,6 @@
 # Strided Views
 
-immutable StridedView{T,N,M,Arr<:Array{T}} <: ArrayView{T,M,N}
+immutable StridedView{T,N,M,Arr<:Array{T}} <: ArrayView{T,N,M}
     arr::Arr
     offset::Int
     len::Int
@@ -10,11 +10,11 @@ end
 
 # construction
 
-strided_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}, strides::NTuple{N,Int}) = 
-    StridedView{T,N,typeof(arr)}(arr, offset, *(shp...), shp, strides)
+strided_view{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int}) = 
+	StridedView{T,N,M,typeof(arr)}(arr, offset, *(shp...), shp, strides)
 
-strided_view{T,N}(arr::Array{T}, shp::NTuple{N,Int}, strides::NTuple{N,Int}) = 
-	strided_view(arr, 0, shp, strides)
+strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int}) = 
+	StridedView{T,N,M,typeof(arr)}(arr, 0, *(shp...), shp, strides)
 
 # length & size
 
@@ -30,11 +30,11 @@ iscontiguous{T,N}(a::StridedView{T,N}) = (stride(a, N) == *(a.shp[1:N-1]...))
 
 strides(a::StridedView) = a.strides
 
-stride{T,N}(a::StridedView{T,N}, d::Integer) = (d > 0 || error("dimension out of range."); 
-                                                d <= N ? a.strides[d] : length(a))
+stride{T,N}(a::StridedView{T,N}, d::Integer) = (1 <= d <= N || error("dimension out of range."); 
+                                                a.strides[d])
 
 ### index calculation
 
-uindex(a::StridedView{T,1,0}, i::Int) = a.offset + i * a.strides[1]
-uindex(a::StridedView{T,2,0}, i0::Int, i1::Int) = a.offset + i0*a.strides[1] + i1*strides[2]
-uindex(a::StridedView{T,2,1}, i0::Int, i1::Int) = a.offset + i0 + i1*strides[2]
+uindex{T}(a::StridedView{T,1,0}, i::Int) = a.offset + i*a.strides[1]
+uindex{T}(a::StridedView{T,2,0}, i0::Int, i1::Int) = a.offset +  1 + (i0-1)*a.strides[1] + (i1-1)*a.strides[2]
+uindex{T}(a::StridedView{T,2,1}, i0::Int, i1::Int) = a.offset + i0 + (i1-1)*a.strides[2]

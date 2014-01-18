@@ -7,6 +7,8 @@ immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
     shp::NTuple{N,Int}
 end
 
+# construction
+
 contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
     ContiguousView{T,N,typeof(arr)}(arr, offset, *(shp...), shp)
 
@@ -71,4 +73,3 @@ uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) =
 uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
     a.offset + sub2ind(size(a), i0, i1, i2, i3, i4, i5, I...)
 
-    
