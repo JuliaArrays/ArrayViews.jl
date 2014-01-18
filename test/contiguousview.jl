@@ -8,6 +8,7 @@ a = rand(5, 4, 3, 2)
 ## 1D
 
 v = contiguous_view(a, 10, (20,))
+@test isa(v, ContiguousView{Float64,1})
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 1
@@ -31,6 +32,7 @@ end
 ## 2D
 
 v = contiguous_view(a, 10, (5, 12))
+@test isa(v, ContiguousView{Float64,2})
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 2
@@ -60,6 +62,7 @@ end
 ## 3D
 
 v = contiguous_view(a, (5, 4, 6))
+@test isa(v, ContiguousView{Float64,3})
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 3
@@ -95,6 +98,7 @@ end
 ## 4D
 
 v = contiguous_view(a, 0, (5, 4, 3, 2))
+@test isa(v, ContiguousView{Float64,4})
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 4

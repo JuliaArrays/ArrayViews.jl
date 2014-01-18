@@ -5,6 +5,7 @@ module ArrayViews
 
     export ArrayView
     export ContiguousView, contiguous_view
+    export StridedView, strided_view
 
     include("generic.jl")
     include("contiguousview.jl")
