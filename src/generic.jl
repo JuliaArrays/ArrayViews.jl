@@ -59,21 +59,3 @@ getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = arrayref(a
 getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
     arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4, i5, I...))
 
-
-# index calculation (for contiguous views)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i::Int) = a.offset + i
-
-uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int) = a.offset + sub2ind(size(a), i0, i1)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int) = a.offset + sub2ind(size(a), i0, i1, i2)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int) = 
-    a.offset + sub2ind(size(a), i0, i1, i2, i3)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = 
-    a.offset + sub2ind(size(a), i0, i1, i2, i3, i4)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
-    a.offset + sub2ind(size(a), i0, i1, i2, i3, i4, i5, I...)
-
