@@ -7,8 +7,10 @@ immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
     shp::NTuple{N,Int}
 end
 
-ContiguousView{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
+contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
     ContiguousView{T,N,typeof(arr)}(arr, offset, *(shp...), shp)
+
+contiguous_view{T,N}(arr::Array{T}, shp::NTuple{N,Int}) = contiguous_view(arr, 0, shp)
 
 # length & size
 

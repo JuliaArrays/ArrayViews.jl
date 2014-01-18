@@ -7,7 +7,7 @@ a = rand(5, 4, 3, 2)
 
 ## 1D
 
-v = ContiguousView(a, 10, (20,))
+v = contiguous_view(a, 10, (20,))
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 1
@@ -30,7 +30,7 @@ end
 
 ## 2D
 
-v = ContiguousView(a, 10, (5, 12))
+v = contiguous_view(a, 10, (5, 12))
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 2
@@ -59,7 +59,7 @@ end
 
 ## 3D
 
-v = ContiguousView(a, 0, (5, 4, 6))
+v = contiguous_view(a, (5, 4, 6))
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 3
@@ -94,7 +94,7 @@ end
 
 ## 4D
 
-v = ContiguousView(a, 0, (5, 4, 3, 2))
+v = contiguous_view(a, 0, (5, 4, 3, 2))
 
 @test eltype(v) == eltype(a)
 @test ndims(v) == 4
