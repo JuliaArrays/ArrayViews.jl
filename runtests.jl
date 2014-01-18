@@ -1,4 +1,4 @@
-tests = ["contiguousview"]
+tests = ["contiguousview", "stridedview"]
 
 for t in tests
 	fp = joinpath("test", "$(t).jl")
