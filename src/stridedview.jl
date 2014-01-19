@@ -36,12 +36,11 @@ stride{T,N}(a::StridedView{T,N}, d::Integer) = (1 <= d <= N || error("dimension 
 ### index calculation
 
 uindex{T}(a::StridedView{T,1,0}, i::Int) = a.offset + i*a.strides[1]
-uindex{T}(a::StridedView{T,2,0}, i0::Int, i1::Int) = a.offset + 1 + (i0-1)*a.strides[1] + (i1-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2,1}, i0::Int, i1::Int) = a.offset + i0 + (i1-1)*a.strides[2]
+uindex{T}(a::StridedView{T,2,0}, i1::Int, i2::Int) = a.offset + 1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2]
+uindex{T}(a::StridedView{T,2,1}, i1::Int, i2::Int) = a.offset + i1 + (i2-1)*a.strides[2]
 
-uindex{T}(a::StridedView{T,3,0}, i0::Int, i1::Int, i2::Int) = 
-	a.offset + 1 + (i0-1)*a.strides[1] + (i1-1)*a.strides[2] + (i2-1)*a.strides[3]
+uindex{T}(a::StridedView{T,3,0}, i1::Int, i2::Int, i3::Int) = 
+	a.offset + 1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
 
-uindex{T}(a::StridedView{T,3}, i0::Int, i1::Int, i2::Int) = 
-	a.offset + i0 + (i1-1)*a.strides[2] + (i2-1)*a.strides[3]
-
+uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int, i3::Int) = 
+	a.offset + i1 + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
