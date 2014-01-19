@@ -126,3 +126,110 @@ for j = 1:7, i = 1:4
 end
 
 
+### ND=3, CR=3
+
+v = strided_view(a, (8, 7, 6), ContRank{3}, (1, 8, 56))
+isa(v, StridedView{Float64, 3, 3})
+
+@test eltype(v) == eltype(a)
+@test ndims(v) == 3
+@test length(v) == 336
+@test iscontiguous(v) == true
+@test contiguousrank(v) == 3
+
+@test size(v) == (8, 7, 6)
+@test size(v,1) == 8
+@test size(v,2) == 7
+@test size(v,3) == 6
+@test size(v,4) == 1
+
+@test strides(v) == (1, 8, 56)
+@test stride(v,1) == 1
+@test stride(v,2) == 8
+@test stride(v,3) == 56
+
+for k = 1:6, j = 1:7, i = 1:8
+	@test v[i,j,k] == a[i,j,k]
+end
+
+
+### ND=3, CR=2
+
+v = strided_view(a, (8, 6, 5), ContRank{2}, (1, 8, 56))
+isa(v, StridedView{Float64, 3, 2})
+
+@test eltype(v) == eltype(a)
+@test ndims(v) == 3
+@test length(v) == 240
+@test iscontiguous(v) == false
+@test contiguousrank(v) == 2
+
+@test size(v) == (8, 6, 5)
+@test size(v,1) == 8
+@test size(v,2) == 6
+@test size(v,3) == 5
+@test size(v,4) == 1
+
+@test strides(v) == (1, 8, 56)
+@test stride(v,1) == 1
+@test stride(v,2) == 8
+@test stride(v,3) == 56
+
+for k = 1:5, j = 1:6, i = 1:8
+	@test v[i,j,k] == a[i,j,k]
+end
+
+
+### ND=3, CR=1
+
+v = strided_view(a, (7, 6, 5), ContRank{1}, (1, 8, 56))
+isa(v, StridedView{Float64, 3, 2})
+
+@test eltype(v) == eltype(a)
+@test ndims(v) == 3
+@test length(v) == 210
+@test iscontiguous(v) == false
+@test contiguousrank(v) == 1
+
+@test size(v) == (7, 6, 5)
+@test size(v,1) == 7
+@test size(v,2) == 6
+@test size(v,3) == 5
+@test size(v,4) == 1
+
+@test strides(v) == (1, 8, 56)
+@test stride(v,1) == 1
+@test stride(v,2) == 8
+@test stride(v,3) == 56
+
+for k = 1:5, j = 1:6, i = 1:7
+	@test v[i,j,k] == a[i,j,k]
+end
+
+
+### ND=3, CR=0
+
+v = strided_view(a, (4, 6, 5), ContRank{0}, (2, 8, 56))
+isa(v, StridedView{Float64, 3, 2})
+
+@test eltype(v) == eltype(a)
+@test ndims(v) == 3
+@test length(v) == 120
+@test iscontiguous(v) == false
+@test contiguousrank(v) == 0
+
+@test size(v) == (4, 6, 5)
+@test size(v,1) == 4
+@test size(v,2) == 6
+@test size(v,3) == 5
+@test size(v,4) == 1
+
+@test strides(v) == (2, 8, 56)
+@test stride(v,1) == 2
+@test stride(v,2) == 8
+@test stride(v,3) == 56
+
+for k = 1:5, j = 1:6, i = 1:4
+	@test v[i,j,k] == a[2i-1,j,k]
+end
+
