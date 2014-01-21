@@ -57,7 +57,7 @@ getindex(a::ArrayView, i::Int) = arrayref(a.arr, uindex(a, i))
 getindex(a::ArrayView, i0::Int, i1::Int) = arrayref(a.arr, uindex(a, i0, i1))
 getindex(a::ArrayView, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, uindex(a, i0, i1, i2))
 getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int) =  arrayref(a.arr, uindex(a, i0, i1, i2, i3))
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = arrayref(a.arr, uindex(i0, i1, i2, i3, i4))
+getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4))
 getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
     arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4, i5, I...))
 
