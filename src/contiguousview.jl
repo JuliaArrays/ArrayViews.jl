@@ -64,12 +64,5 @@ uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int) = a.offset + sub2ind(size(a),
 
 uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int) = a.offset + sub2ind(size(a), i1, i2, i3)
 
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int, i4::Int) = 
-    a.offset + sub2ind(size(a), i1, i2, i3, i4)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = 
-    a.offset + sub2ind(size(a), i1, i2, i3, i4, i5)
-
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int, I::Int...) = 
-    a.offset + sub2ind(size(a), i1, i2, i3, i4, i5, i6, I...)
-
+uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) = 
+    a.offset + sub2ind(size(a), i1, i2, i3, i4, I...)
