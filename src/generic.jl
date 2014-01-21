@@ -33,31 +33,33 @@ size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d);
 
 # getindex
 
-getindex(a::ArrayView, i::Int) = getindex(a, to_index(i))
+getindex(a::ArrayView, i::Real) = getindex(a, to_index(i))
 
-getindex(a::ArrayView, i0::Int, i1::Int) = getindex(a, to_index(i0), to_index(i1))
+getindex(a::ArrayView, i1::Real, i2::Real) = getindex(a, to_index(i1), to_index(i2))
 
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int) = 
-    getindex(a, to_index(i0), to_index(i1), to_index(i2))
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real) = 
+    getindex(a, to_index(i1), to_index(i2), to_index(i3))
 
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int) = 
-    getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3))
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real) = 
+    getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4))
 
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = 
-    getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4))
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real) = 
+    getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5))
 
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = 
-    getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5))
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real, i6::Real) = 
+    getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5), to_index(i6))
 
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
-    getindex(a, to_index(i0), to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5), I...)
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real, i6::Real, I::Int...) = 
+    getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5), to_index(i6), I...)
 
 
 getindex(a::ArrayView, i::Int) = arrayref(a.arr, uindex(a, i))
-getindex(a::ArrayView, i0::Int, i1::Int) = arrayref(a.arr, uindex(a, i0, i1))
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int) = arrayref(a.arr, uindex(a, i0, i1, i2))
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int) =  arrayref(a.arr, uindex(a, i0, i1, i2, i3))
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int) = arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4))
-getindex(a::ArrayView, i0::Int, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, I::Int...) = 
-    arrayref(a.arr, uindex(a, i0, i1, i2, i3, i4, i5, I...))
+getindex(a::ArrayView, i1::Int, i2::Int) = arrayref(a.arr, uindex(a, i1, i2))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int) = arrayref(a.arr, uindex(a, i1, i2, i3))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int) =  arrayref(a.arr, uindex(a, i1, i2, i3, i4))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = arrayref(a.arr, uindex(a, i1, i2, i3, i4, i5))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int, I::Int...) = 
+    arrayref(a.arr, uindex(a, i1, i2, i3, i4, i5, i6, I...))
+
+# setindex
 
