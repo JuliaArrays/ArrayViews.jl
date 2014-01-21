@@ -25,6 +25,8 @@ isa(v, StridedView{Float64, 1, 1})
 
 for i = 1:12
 	@test v[i] == a[10 + i]
+	@test v[i,1] == a[10 + i]
+	@test v[i,1,1] == a[10 + i]
 end
 
 
@@ -48,6 +50,8 @@ isa(v, StridedView{Float64, 1, 0})
 
 for i = 1:12
 	@test v[i] == a[10 + i * 2]
+	@test v[i,1] == a[10 + i * 2]
+	@test v[i,1,1] == a[10 + i * 2]
 end
 
 
@@ -71,8 +75,12 @@ isa(v, StridedView{Float64, 2, 2})
 @test stride(v,1) == 1
 @test stride(v,2) == 8
 
+i1_ = 0
 for j = 1:7, i = 1:8
 	@test v[i,j] == a[i,j+1]
+	@test v[i,j,1] == a[i,j+1]
+	i1_ += 1
+	@test v[i1_] == a[i,j+1]
 end
 
 
@@ -96,8 +104,12 @@ isa(v, StridedView{Float64, 2, 1})
 @test stride(v,1) == 1
 @test stride(v,2) == 8
 
+i1_ = 0
 for j = 1:7, i = 1:6
-	@test v[i,j] == a[i, j+1]
+	@test v[i,j] == a[i,j+1]
+	@test v[i,j,1] == a[i,j+1]
+	i1_ += 1
+	@test v[i1_] == a[i,j+1]
 end
 
 
@@ -121,8 +133,12 @@ isa(v, StridedView{Float64, 2, 0})
 @test stride(v,1) == 2
 @test stride(v,2) == 8
 
+i1_ = 0
 for j = 1:7, i = 1:4
-	@test v[i,j] == a[2i-1, j+1]
+	@test v[i,j] == a[2i-1,j+1]
+	@test v[i,j,1] == a[2i-1,j+1]
+	i1_ += 1
+	@test v[i1_] == a[2i-1,j+1]
 end
 
 
@@ -148,8 +164,18 @@ isa(v, StridedView{Float64, 3, 3})
 @test stride(v,2) == 8
 @test stride(v,3) == 56
 
-for k = 1:6, j = 1:7, i = 1:8
-	@test v[i,j,k] == a[i,j,k]
+i1_ = 0
+i2_ = 0
+for k = 1:6, j = 1:7
+	i2_ += 1
+	for i = 1:8
+		@test v[i,j,k] == a[i,j,k]
+		@test v[i,j,k,1] == a[i,j,k]
+
+		i1_ += 1
+		@test v[i1_] == a[i,j,k]
+		@test v[i,i2_] == a[i,j,k]
+	end
 end
 
 
@@ -175,8 +201,19 @@ isa(v, StridedView{Float64, 3, 2})
 @test stride(v,2) == 8
 @test stride(v,3) == 56
 
-for k = 1:5, j = 1:6, i = 1:8
-	@test v[i,j,k] == a[i,j,k]
+
+i1_ = 0
+i2_ = 0
+for k = 1:5, j = 1:6
+	i2_ += 1
+	for i = 1:8
+		@test v[i,j,k] == a[i,j,k]
+		@test v[i,j,k,1] == a[i,j,k]
+
+		i1_ += 1
+		@test v[i1_] == a[i,j,k]
+		@test v[i,i2_] == a[i,j,k]
+	end
 end
 
 
@@ -202,8 +239,18 @@ isa(v, StridedView{Float64, 3, 2})
 @test stride(v,2) == 8
 @test stride(v,3) == 56
 
-for k = 1:5, j = 1:6, i = 1:7
-	@test v[i,j,k] == a[i,j,k]
+i1_ = 0
+i2_ = 0
+for k = 1:5, j = 1:6
+	i2_ += 1
+	for i = 1:7
+		@test v[i,j,k] == a[i,j,k]
+		@test v[i,j,k,1] == a[i,j,k]
+
+		i1_ += 1
+		@test v[i1_] == a[i,j,k]
+		@test v[i,i2_] == a[i,j,k]
+	end
 end
 
 
@@ -229,7 +276,19 @@ isa(v, StridedView{Float64, 3, 2})
 @test stride(v,2) == 8
 @test stride(v,3) == 56
 
-for k = 1:5, j = 1:6, i = 1:4
-	@test v[i,j,k] == a[2i-1,j,k]
+i1_ = 0
+i2_ = 0
+for k = 1:5, j = 1:6
+	i2_ += 1
+	for i = 1:4
+		@test v[i,j,k] == a[2i-1,j,k]
+		@test v[i,j,k,1] == a[2i-1,j,k]
+
+		i1_ += 1
+		@test v[i1_] == a[2i-1,j,k]
+		@test v[i,i2_] == a[2i-1,j,k]
+	end
 end
+
+
 
