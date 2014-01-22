@@ -47,9 +47,9 @@ isa(v, StridedView{Float64, 1, 0})
 @test stride(v,1) == 2
 
 for i = 1:12
-    @test v[i] == a[10 + i * 2]
-    @test v[i,1] == a[10 + i * 2]
-    @test v[i,1,1] == a[10 + i * 2]
+    @test v[i] == a[10 + (2i-1)]
+    @test v[i,1] == a[10 + (2i-1)]
+    @test v[i,1,1] == a[10 + (2i-1)]
 end
 
 

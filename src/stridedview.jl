@@ -38,7 +38,7 @@ stride{T,N}(a::StridedView{T,N}, d::Integer) = (1 <= d <= N || error("dimension 
 
 # 1D view
 
-uindex{T}(a::StridedView{T,1,0}, i::Int) = a.offset + i*a.strides[1]
+uindex{T}(a::StridedView{T,1,0}, i::Int) = a.offset + 1 + (i-1)*a.strides[1]
 uindex{T}(a::StridedView{T,1,1}, i::Int) = a.offset + i
 uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int) = (i2 == 1 || throw(BoundsError()); uindex(a, i1))
 uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int, i3::Int) = 
