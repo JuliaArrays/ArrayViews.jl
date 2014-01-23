@@ -17,27 +17,48 @@ _step(i::Ranges) = step(i)
 
 #### compute view offset
 
+# generic
+
 _offset(i::Colon) = 0
 _offset(i::Int) = i - 1
 _offset(i::Real) = to_index(i) - 1
 _offset(i::Ranges) = to_index(first(i)) - 1
 
-voffset(a::Array, i::Colon) = 0
-voffset(a::Array, i::Indexer) = _offset(i)
+aoffset(a::Array, i::Subs) = roffset(a, i)
+aoffset(a::Array, i1::Subs, i2::Subs) = roffset(a, i1, i2)
+aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs) = roffset(a, i1, i2, i3)
+aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = roffset(a, i1, i2, i3, i4)
+aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = roffset(a, i1, i2, i3, i4, i5, I...)
 
-voffset(a::Array, i1::Colon, i2::Colon) = 0
-voffset(a::Array, i1::Colon, i2::Indexer) = size(a,1) * _offset(i2)
-voffset(a::Array, i1::Indexer, i2::Colon) = _offset(i1)
-voffset(a::Array, i1::Indexer, i2::Indexer) = _offset(i1) + size(a,1) * _offset(i2)
+aoffset(a::ArrayView, i::Subs) = a.offset + roffset(a, i)
+aoffset(a::ArrayView, i1::Subs, i2::Subs) = a.offset + roffset(a, i1, i2)
+aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs) = a.offset + roffset(a, i1, i2, i3)
+aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = a.offset + roffset(a, i1, i2, i3, i4)
+aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
+    a.offset + roffset(a, i1, i2, i3, i4, i5, I...)
 
-voffset(a::Array, i1::Colon, i2::Colon, i3::Colon) = 0
-voffset(a::Array, i1::Colon, i2::Colon, i3::Indexer) = size(a,1) * size(a,2) * _offset(i3)
-voffset(a::Array, i1::Colon, i2::Indexer, i3::Colon) = size(a,1) * _offset(i2)
-voffset(a::Array, i1::Colon, i2::Indexer, i3::Indexer) = size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
-voffset(a::Array, i1::Indexer, i2::Colon, i3::Colon) = _offset(i1)
-voffset(a::Array, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) + (size(a,1) * size(a,2) * _offset(i3))
-voffset(a::Array, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) + size(a,1) * _offset(i2)
-voffset(a::Array, i1::Indexer, i2::Indexer, i3::Indexer) = _offset(i1) + size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
+# 1D view
+
+roffset(a::ContiguousArray, i::Colon) = 0
+roffset(a::ContiguousArray, i::Indexer) = _offset(i)
+
+# 2D view
+
+roffset(a::ContiguousArray, i1::Colon, i2::Colon) = 0
+roffset(a::ContiguousArray, i1::Colon, i2::Indexer) = size(a,1) * _offset(i2)
+roffset(a::ContiguousArray, i1::Indexer, i2::Colon) = _offset(i1)
+roffset(a::ContiguousArray, i1::Indexer, i2::Indexer) = _offset(i1) + size(a,1) * _offset(i2)
+
+# 3D view
+
+roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon) = 0
+roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Indexer) = size(a,1) * size(a,2) * _offset(i3)
+roffset(a::ContiguousArray, i1::Colon, i2::Indexer, i3::Colon) = size(a,1) * _offset(i2)
+roffset(a::ContiguousArray, i1::Colon, i2::Indexer, i3::Indexer) = size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
+roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Colon) = _offset(i1)
+roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) + (size(a,1) * size(a,2) * _offset(i3))
+roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) + size(a,1) * _offset(i2)
+roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Indexer) = _offset(i1) + size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
 
 
 #### compute view shape
@@ -112,16 +133,16 @@ vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) = (stride(a,3) * _step(i1)
 
 ## 1D view
 
-_cview(a::Array, i) = contiguous_view(a, voffset(a, i), vshape(a, i))
-_sview(a::Array, cr, i) = strided_view(a, voffset(a, i), vshape(a, i), cr, vstrides(a, i))
+_cview(a::Array, i) = contiguous_view(a, aoffset(a, i), vshape(a, i))
+_sview(a::Array, cr, i) = strided_view(a, aoffset(a, i), vshape(a, i), cr, vstrides(a, i))
 
 view(a::Array, i::CSubs) = _cview(a, i)
 view(a::Array, i::Range) = _sview(a, ContRank{0}, i)
 
 ## 2D view
 
-_cview(a::Array, i1, i2) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
-_sview(a::Array, cr, i1, i2) = strided_view(a, voffset(a, i1, i2), vshape(a, i1, i2), cr, vstrides(a, i1, i2))
+_cview(a::Array, i1, i2) = contiguous_view(a, aoffset(a, i1, i2), vshape(a, i1, i2))
+_sview(a::Array, cr, i1, i2) = strided_view(a, aoffset(a, i1, i2), vshape(a, i1, i2), cr, vstrides(a, i1, i2))
 
 view(a::Array, i1::Real, i2::Real) = _cview(a, i1, i2)
 view(a::Array, i1::Real, i2::SubsRange) = _sview(a, ContRank{1}, i1, i2)
@@ -137,9 +158,9 @@ view(a::Array, i1::Range, i2::Subs) = _sview(a, ContRank{0}, i1, i2)
 ## 3D view
 
 _cview(a::Array, i1, i2, i3) = 
-    contiguous_view(a, voffset(a, i1, i2, i3), vshape(a, i1, i2, i3))
+    contiguous_view(a, aoffset(a, i1, i2, i3), vshape(a, i1, i2, i3))
 _sview(a::Array, cr, i1, i2, i3) = 
-    strided_view(a, voffset(a, i1, i2, i3), vshape(a, i1, i2, i3), cr, vstrides(a, i1, i2, i3))
+    strided_view(a, aoffset(a, i1, i2, i3), vshape(a, i1, i2, i3), cr, vstrides(a, i1, i2, i3))
 
 view(a::Array, i1::Real, i2::Real, i3::Real) = _cview(a, i1, i2, i3)
 view(a::Array, i1::Real, i2::Real, i3::SubsRange) = _sview(a, ContRank{2}, i1, i2, i3)
