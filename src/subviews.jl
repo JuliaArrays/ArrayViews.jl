@@ -65,32 +65,22 @@ vstrides(a::Array, i1::Range, i2::Range) = (step(i1), size(a,1) * step(i2))
 _cview(a::Array, i) = contiguous_view(a, voffset(a, i), vshape(a, i))
 _sview(a::Array, cr, i) = strided_view(a, voffset(a, i), vshape(a, i), cr, vstrides(a, i))
 
-view(a::Array, i::Colon) = _cview(a, i)
-view(a::Array, i::Range1) = _cview(a, i)
+view(a::Array, i::Union(Colon,Range1)) = _cview(a, i)
 view(a::Array, i::Range) = _sview(a, ContRank{0}, i)
-
 
 ## 2D view
 
 _cview(a::Array, i1, i2) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
 _sview(a::Array, cr, i1, i2) = strided_view(a, voffset(a, i1, i2), vshape(a, i1, i2), cr, vstrides(a, i1, i2))
 
-view(a::Array, i1::Real, i2::Colon)  = _sview(a, ContRank{1}, i1, i2)
-view(a::Array, i1::Real, i2::Range1) = _sview(a, ContRank{1}, i1, i2)
-view(a::Array, i1::Real, i2::Range)  = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Real, i2::Union(Colon,Range1,Range)) = _sview(a, ContRank{1}, i1, i2)
 
-view(a::Array, i1::Colon, i2::Real)   = _cview(a, i1, i2)
-view(a::Array, i1::Colon, i2::Colon)  = _cview(a, i1, i2)
-view(a::Array, i1::Colon, i2::Range1) = _cview(a, i1, i2)
-view(a::Array, i1::Colon, i2::Range)  = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Colon, i2::Union(Real,Colon,Range1)) = _cview(a, i1, i2)
+view(a::Array, i1::Colon, i2::Range) = _sview(a, ContRank{1}, i1, i2)
 
-view(a::Array, i1::Range1, i2::Real)   = _cview(a, i1, i2)
-view(a::Array, i1::Range1, i2::Colon)  = _sview(a, ContRank{1}, i1, i2)
-view(a::Array, i1::Range1, i2::Range1) = _sview(a, ContRank{1}, i1, i2)
-view(a::Array, i1::Range1, i2::Range)  = _sview(a, ContRank{1}, i1, i2) 
+view(a::Array, i1::Range1, i2::Real) = _cview(a, i1, i2)
+view(a::Array, i1::Range1, i2::Union(Colon,Range1,Range)) = _sview(a, ContRank{1}, i1, i2)
 
-view(a::Array, i1::Range, i2::Real)   = _sview(a, ContRank{0}, i1, i2)
-view(a::Array, i1::Range, i2::Colon)  = _sview(a, ContRank{0}, i1, i2)
-view(a::Array, i1::Range, i2::Range1) = _sview(a, ContRank{0}, i1, i2)
-view(a::Array, i1::Range, i2::Range)  = _sview(a, ContRank{0}, i1, i2)
+view(a::Array, i1::Range, i2::Union(Real,Colon,Range1,Range)) = _sview(a, ContRank{0}, i1, i2)
+
 
