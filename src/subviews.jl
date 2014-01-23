@@ -60,12 +60,35 @@ roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) +
 roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) + size(a,1) * _offset(i2)
 roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Indexer) = _offset(i1) + size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
 
+# multi-dimensional 
+
+roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon, i4::Colon, I::Colon...) = 0
+
+function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...)
+	o = _offset(i1)
+
+	s = size(a,1)
+	o += s * _offset(i2)
+
+	o += (s *= size(a,2)) * _offset(i3)
+	o += (s *= size(a,3)) * _offset(i4)
+
+	for i = 1:length(I)
+		o += (s *= size(a,i+3)) * _offset(I[i])
+	end
+	return o::Int
+end
+
 
 #### compute view shape
 
 _dim(a::AbstractArray, d::Int, r::Colon) = size(a, d)
 _dim(a::AbstractArray, d::Int, r::Ranges) = length(r)
 _dim(a::AbstractArray, d::Int, r::Real) = 1
+
+_dim{N}(siz::NTuple{N,Int}, d::Int, r::Colon) = d <= N ? siz[d] : 1
+_dim(siz::Tuple, d::Int, r::Ranges) = length(r)
+_dim(siz::Tuple, d::Int, r::Real) = 1
 
 # 1D view
 
@@ -100,6 +123,15 @@ vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real) = (_dim(a,1,i1), _dim(a
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Colon) = (_dim(a,1,i1), _dim(a,2,i2), _succlen3(a))
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Ranges) = (_dim(a,1,i1), _dim(a,2,i2), length(i3))
 
+# multi-dimensional view
+
+vshape{T,N}(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
+	_vshape(size(a), i1, i2, i3, i4, I...)
+
+_vshape{N}(siz::NTuple{N,Int}, i1::Real, i2::Real...) = ()
+_vshape{N}(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
+
+
 
 #### compute view strides (for necessary cases)
 
@@ -127,6 +159,19 @@ vstrides(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs) = (_step(i1), stride(
 vstrides(a::DenseArray, i1::Subs, i2::Real, i3::Real) = (stride(a,1) * _step(i1),)
 vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Real) = (stride(a,2) * _step(i1), stride(a,2) * _step(i2))
 vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) = (stride(a,3) * _step(i1), stride(a,2) * _step(i2), stride(a,3) * _step(i3))
+
+# multi-dimensional array
+
+vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
+	_vstrides(strides(a), 1, i1, i2, i3, i4, I...)
+
+_vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real) = ()
+_vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Real) = (ss[k] * _step(i1),)
+_vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs) = (ss[k] * _step(i1), ss[k+1] * _step(i2))
+
+_vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real, i3::Real, I::Real...) = ()
+_vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...) = 
+	tuple(ss[k] * _step(i1), _vstrides(ss[2:N], k+1, i2, i3, I...)...)
 
 
 #### views from arrays
