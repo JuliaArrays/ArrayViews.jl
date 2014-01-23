@@ -46,7 +46,7 @@ function time_view2d(a::AbstractArray, rtimes::Int)
     return et
 end
 
-function perf_view(a::Array, i1, rtimes::Int)
+function perf_view(a::Array, i1; rtimes::Int=200000)
     et_s = time_view1d(sub(a, i1), rtimes)
     et_v = time_view1d(view(a, i1), rtimes)
 
@@ -58,9 +58,9 @@ function perf_view(a::Array, i1, rtimes::Int)
         "[$(myrepr(i1))]", mps_s, mps_v, mps_v / mps_s)
 end
 
-function perf_view(a::Array, i1, i2, rtimes::Int)
-    et_s = time_view1d(sub(a, i1, i2), rtimes)
-    et_v = time_view1d(view(a, i1, i2), rtimes)
+function perf_view(a::Array, i1, i2; rtimes::Int=200000)
+    et_s = time_view2d(sub(a, i1, i2), rtimes)
+    et_v = time_view2d(view(a, i1, i2), rtimes)
 
     v = view(a, i1, i2)
     mps_s = mps(v, rtimes, et_s)
@@ -79,22 +79,31 @@ println("-----------------------------------------------------------------------
 
 const a1 = rand(1024)
 
-perf_view(a1, :, 200000)
-perf_view(a1, 1:1024, 200000)
-perf_view(a1, 1:2:1024, 100000)
+gc_disable()
 
+perf_view(a1, :)
+perf_view(a1, 1:1024)
+perf_view(a1, 1:2:1024)
+
+gc_enable()
 
 const a2 = rand(32, 32)
 
-perf_view(a2, :, :, 100000)
-perf_view(a2, :, 1:32, 100000)
-perf_view(a2, :, 1:2:32, 100000)
+gc_disable()
 
-perf_view(a2, 1:30, :, 100000)
-perf_view(a2, 1:30, 1:32, 100000)
-perf_view(a2, 1:30, 1:2:32, 100000)
+perf_view(a2, :, :)
+perf_view(a2, :, 1:32)
+perf_view(a2, :, 1:2:32)
 
-perf_view(a2, 1:2:30, :, 100000)
-perf_view(a2, 1:2:30, 1:32, 100000)
-perf_view(a2, 1:2:30, 1:2:32, 100000)
+perf_view(a2, 1:30, :)
+perf_view(a2, 1:30, 1:32)
+perf_view(a2, 1:30, 1:2:32)
+
+perf_view(a2, 1:2:30, :)
+perf_view(a2, 1:2:30, 1:32)
+perf_view(a2, 1:2:30, 1:2:32)
+
+gc_enable()
+
+
 
