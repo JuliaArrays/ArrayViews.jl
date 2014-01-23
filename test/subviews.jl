@@ -41,7 +41,21 @@ a = reshape(1.:1680., (8, 7, 6, 5))
 
 # 2D
 
-@test_view(a, :, :)
+@test_view(a, 4, :)
+@test_view(a, 4, 3:10)
+@test_view(a, 4, 2:2:10)
+
 @test_view(a, :, 2)
-@test_view(a, :, 2:8)
+@test_view(a, :, :)
+@test_view(a, :, 3:10)
+@test_view(a, :, 2:2:10)
+
 @test_view(a, 1:6, 2)
+@test_view(a, 1:6, :)
+@test_view(a, 1:6, 3:10)
+@test_view(a, 1:6, 2:2:10)
+
+@test_view(a, 1:2:8, 2)
+@test_view(a, 1:2:8, :)
+@test_view(a, 1:2:8, 3:10)
+@test_view(a, 1:2:8, 2:2:10)

@@ -42,15 +42,55 @@ vshape(a::DenseArray, i1::Real, i2::Ranges) = (1, length(i2))
 vshape(a::DenseArray, i1::Colon, i2::Ranges) = (size(a,1), length(i2))
 vshape(a::DenseArray, i1::Ranges, i2::Ranges) = (length(i1), length(i2))
 
+#### compute view strides (for necessary cases)
+
+# 1D
+vstrides(a::Array, i::Ranges) = (step(i),)
+
+# 2D
+
+vstrides(a::Array, i1::Ranges, i2::Real) = (step(i1),)
+
+vstrides(a::Array, i1::Union(Real,Colon,Range1), i2::Union(Colon,Range1)) = (1, size(a,1))
+vstrides(a::Array, i1::Range, i2::Union(Colon,Range1)) = (step(i1), size(a,1))
+
+vstrides(a::Array, i1::Union(Real,Colon,Range1), i2::Range) = (1, size(a,1) * step(i2))
+vstrides(a::Array, i1::Range, i2::Range) = (step(i1), size(a,1) * step(i2))
+
 
 #### views from arrays
 
-view(a::Array, i::Colon) = contiguous_view(a, voffset(a,i), vshape(a,i))
-view(a::Array, i::Range1) = contiguous_view(a, voffset(a,i), vshape(a,i))
-view(a::Array, i::Range) = strided_view(a, voffset(a,i), vshape(a,i), ContRank{0}, (step(i),))
+## 1D view
 
-view(a::Array, i1::Colon, i2::Real) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
-view(a::Array, i1::Range1, i2::Real) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
-view(a::Array, i1::Colon, i2::Colon) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
-view(a::Array, i1::Colon, i2::Range1) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
+_cview(a::Array, i) = contiguous_view(a, voffset(a, i), vshape(a, i))
+_sview(a::Array, cr, i) = strided_view(a, voffset(a, i), vshape(a, i), cr, vstrides(a, i))
+
+view(a::Array, i::Colon) = _cview(a, i)
+view(a::Array, i::Range1) = _cview(a, i)
+view(a::Array, i::Range) = _sview(a, ContRank{0}, i)
+
+
+## 2D view
+
+_cview(a::Array, i1, i2) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
+_sview(a::Array, cr, i1, i2) = strided_view(a, voffset(a, i1, i2), vshape(a, i1, i2), cr, vstrides(a, i1, i2))
+
+view(a::Array, i1::Real, i2::Colon)  = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Real, i2::Range1) = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Real, i2::Range)  = _sview(a, ContRank{1}, i1, i2)
+
+view(a::Array, i1::Colon, i2::Real)   = _cview(a, i1, i2)
+view(a::Array, i1::Colon, i2::Colon)  = _cview(a, i1, i2)
+view(a::Array, i1::Colon, i2::Range1) = _cview(a, i1, i2)
+view(a::Array, i1::Colon, i2::Range)  = _sview(a, ContRank{1}, i1, i2)
+
+view(a::Array, i1::Range1, i2::Real)   = _cview(a, i1, i2)
+view(a::Array, i1::Range1, i2::Colon)  = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Range1, i2::Range1) = _sview(a, ContRank{1}, i1, i2)
+view(a::Array, i1::Range1, i2::Range)  = _sview(a, ContRank{1}, i1, i2) 
+
+view(a::Array, i1::Range, i2::Real)   = _sview(a, ContRank{0}, i1, i2)
+view(a::Array, i1::Range, i2::Colon)  = _sview(a, ContRank{0}, i1, i2)
+view(a::Array, i1::Range, i2::Range1) = _sview(a, ContRank{0}, i1, i2)
+view(a::Array, i1::Range, i2::Range)  = _sview(a, ContRank{0}, i1, i2)
 

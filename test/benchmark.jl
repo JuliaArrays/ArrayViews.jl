@@ -2,7 +2,16 @@
 
 using ArrayViews
 
+# auxiliary functions
+
 mps(a::AbstractArray, rtimes::Int, et::Float64) = (length(a) * 1.0e-6) * rtimes / et
+
+myrepr(r::Ranges) = repr(r)
+myrepr(r::Real) = repr(r)
+myrepr(r::Colon) = ":"
+
+
+# timing functions
 
 function time_view1d(a::AbstractArray, rtimes::Int)
     # warm up
@@ -37,9 +46,7 @@ function time_view2d(a::AbstractArray, rtimes::Int)
     return et
 end
 
-
-
-function perf_view(a::Array, title, i1, rtimes::Int)
+function perf_view(a::Array, i1, rtimes::Int)
     et_s = time_view1d(sub(a, i1), rtimes)
     et_v = time_view1d(view(a, i1), rtimes)
 
@@ -47,11 +54,11 @@ function perf_view(a::Array, title, i1, rtimes::Int)
     mps_s = mps(v, rtimes, et_s)
     mps_v = mps(v, rtimes, et_v)
 
-    @printf("%-16s:   %10.3f MPS   %10.3f MPS |  gain = %6.3fx\n", 
-        "[$title]", mps_s, mps_v, mps_v / mps_s)
+    @printf("%-18s:   %10.3f MPS   %10.3f MPS |  gain = %6.3fx\n", 
+        "[$(myrepr(i1))]", mps_s, mps_v, mps_v / mps_s)
 end
 
-function perf_view(a::Array, title, i1, i2, rtimes::Int)
+function perf_view(a::Array, i1, i2, rtimes::Int)
     et_s = time_view1d(sub(a, i1, i2), rtimes)
     et_v = time_view1d(view(a, i1, i2), rtimes)
 
@@ -59,29 +66,35 @@ function perf_view(a::Array, title, i1, i2, rtimes::Int)
     mps_s = mps(v, rtimes, et_s)
     mps_v = mps(v, rtimes, et_v)    
 
-    @printf("%-16s:   %10.3f MPS   %10.3f MPS |  gain = %6.3fx\n", 
-        "[$title]", mps_s, mps_v, mps_v / mps_s)
+    @printf("%-18s:   %10.3f MPS   %10.3f MPS |  gain = %6.3fx\n", 
+        "[$(myrepr(i1)), $(myrepr(i2))]", mps_s, mps_v, mps_v / mps_s)
 end
 
 
 
 # benchmarks
 
-println("Indexing              sub              view")
-println("---------------------------------------------------------------------")
+println("Indexing                sub              view")
+println("-----------------------------------------------------------------------")
 
 const a1 = rand(1024)
 
-perf_view(a1, ":", :, 200000)
-perf_view(a1, "1:1024", 1:1024, 200000)
-perf_view(a1, "1:2:1024", 1:2:1024, 100000)
+perf_view(a1, :, 200000)
+perf_view(a1, 1:1024, 200000)
+perf_view(a1, 1:2:1024, 100000)
 
 
 const a2 = rand(32, 32)
 
-perf_view(a2, ":,:", :, :, 100000)
-perf_view(a2, ":,1:32", :, 1:32, 100000)
+perf_view(a2, :, :, 100000)
+perf_view(a2, :, 1:32, 100000)
+perf_view(a2, :, 1:2:32, 100000)
 
+perf_view(a2, 1:30, :, 100000)
+perf_view(a2, 1:30, 1:32, 100000)
+perf_view(a2, 1:30, 1:2:32, 100000)
 
-
+perf_view(a2, 1:2:30, :, 100000)
+perf_view(a2, 1:2:30, 1:32, 100000)
+perf_view(a2, 1:2:30, 1:2:32, 100000)
 
