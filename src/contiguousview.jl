@@ -7,6 +7,9 @@ immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
     shp::NTuple{N,Int}
 end
 
+typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
+
+
 # construction
 
 contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
