@@ -31,7 +31,7 @@ end
 
 #### test views from arrays
 
-const a = reshape(1.:1680., (8, 7, 6, 5))
+a = reshape(1.:1680., (8, 7, 6, 5))
 
 # 1D
 
