@@ -47,6 +47,7 @@ vshape(a::DenseArray, i1::Ranges, i2::Ranges) = (length(i1), length(i2))
 
 view(a::Array, i::Colon) = contiguous_view(a, voffset(a,i), vshape(a,i))
 view(a::Array, i::Range1) = contiguous_view(a, voffset(a,i), vshape(a,i))
+view(a::Array, i::Range) = strided_view(a, voffset(a,i), vshape(a,i), ContRank{0}, (step(i),))
 
 view(a::Array, i1::Colon, i2::Real) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))
 view(a::Array, i1::Range1, i2::Real) = contiguous_view(a, voffset(a, i1, i2), vshape(a, i1, i2))

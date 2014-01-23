@@ -74,6 +74,7 @@ const a1 = rand(1024)
 
 perf_view(a1, ":", :, 200000)
 perf_view(a1, "1:1024", 1:1024, 200000)
+perf_view(a1, "1:2:1024", 1:2:1024, 100000)
 
 
 const a2 = rand(32, 32)

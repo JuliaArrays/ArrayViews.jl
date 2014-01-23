@@ -37,6 +37,7 @@ const a = reshape(1.:1680., (8, 7, 6, 5))
 
 @test_view(a, :)
 @test_view(a, 1:12)
+@test_view(a, 3:2:36)
 
 # 2D
 
