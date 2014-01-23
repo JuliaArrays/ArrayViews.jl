@@ -35,12 +35,14 @@ a = reshape(1.:1680., (8, 7, 6, 5))
 
 # 1D
 
+@test_view(a, 3)
 @test_view(a, :)
 @test_view(a, 1:12)
 @test_view(a, 3:2:36)
 
 # 2D
 
+@test_view(a, 4, 2)
 @test_view(a, 4, :)
 @test_view(a, 4, 3:10)
 @test_view(a, 4, 2:2:10)
@@ -59,3 +61,87 @@ a = reshape(1.:1680., (8, 7, 6, 5))
 @test_view(a, 1:2:8, :)
 @test_view(a, 1:2:8, 3:10)
 @test_view(a, 1:2:8, 2:2:10)
+
+# 3D
+
+@test_view(a, 4, 3, 2)
+@test_view(a, 4, 3, :)
+@test_view(a, 4, 3, 2:5)
+@test_view(a, 4, 3, 1:2:6)
+
+@test_view(a, 4, :, 2)
+@test_view(a, 4, :, :)
+@test_view(a, 4, :, 2:5)
+@test_view(a, 4, :, 1:2:6)
+
+@test_view(a, 4, 3:7, 2)
+@test_view(a, 4, 3:7, :)
+@test_view(a, 4, 3:7, 2:5)
+@test_view(a, 4, 3:7, 1:2:6)
+
+@test_view(a, 4, 1:2:5, 2)
+@test_view(a, 4, 1:2:5, :)
+@test_view(a, 4, 1:2:5, 2:5)
+@test_view(a, 4, 1:2:5, 1:2:6)
+
+@test_view(a, :, 3, 2)
+@test_view(a, :, 3, :)
+@test_view(a, :, 3, 2:5)
+@test_view(a, :, 3, 1:2:6)
+
+@test_view(a, :, :, 2)
+@test_view(a, :, :, :)
+@test_view(a, :, :, 2:5)
+@test_view(a, :, :, 1:2:6)
+
+@test_view(a, :, 3:7, 2)
+@test_view(a, :, 3:7, :)
+@test_view(a, :, 3:7, 2:5)
+@test_view(a, :, 3:7, 1:2:6)
+
+@test_view(a, :, 1:2:5, 2)
+@test_view(a, :, 1:2:5, :)
+@test_view(a, :, 1:2:5, 2:5)
+@test_view(a, :, 1:2:5, 1:2:6)
+
+@test_view(a, 2:7, 3, 2)
+@test_view(a, 2:7, 3, :)
+@test_view(a, 2:7, 3, 2:5)
+@test_view(a, 2:7, 3, 1:2:6)
+
+@test_view(a, 2:7, :, 2)
+@test_view(a, 2:7, :, :)
+@test_view(a, 2:7, :, 2:5)
+@test_view(a, 2:7, :, 1:2:6)
+
+@test_view(a, 2:7, 3:7, 2)
+@test_view(a, 2:7, 3:7, :)
+@test_view(a, 2:7, 3:7, 2:5)
+@test_view(a, 2:7, 3:7, 1:2:6)
+
+@test_view(a, 2:7, 1:2:5, 2)
+@test_view(a, 2:7, 1:2:5, :)
+@test_view(a, 2:7, 1:2:5, 2:5)
+@test_view(a, 2:7, 1:2:5, 1:2:6)
+
+@test_view(a, 1:2:7, 3, 2)
+@test_view(a, 1:2:7, 3, :)
+@test_view(a, 1:2:7, 3, 2:5)
+@test_view(a, 1:2:7, 3, 1:2:6)
+
+@test_view(a, 1:2:7, :, 2)
+@test_view(a, 1:2:7, :, :)
+@test_view(a, 1:2:7, :, 2:5)
+@test_view(a, 1:2:7, :, 1:2:6)
+
+@test_view(a, 1:2:7, 3:7, 2)
+@test_view(a, 1:2:7, 3:7, :)
+@test_view(a, 1:2:7, 3:7, 2:5)
+@test_view(a, 1:2:7, 3:7, 1:2:6)
+
+@test_view(a, 1:2:7, 1:2:5, 2)
+@test_view(a, 1:2:7, 1:2:5, :)
+@test_view(a, 1:2:7, 1:2:5, 2:5)
+@test_view(a, 1:2:7, 1:2:5, 1:2:6)
+
+

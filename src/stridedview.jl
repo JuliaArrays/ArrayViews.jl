@@ -11,11 +11,15 @@ end
 
 # construction
 
-strided_view{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int}) = 
+function strided_view{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M <= N
 	StridedView{T,N,M,typeof(arr)}(arr, offset, *(shp...), shp, strides)
+end
 
-strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int}) = 
+function strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M <= N
 	StridedView{T,N,M,typeof(arr)}(arr, 0, *(shp...), shp, strides)
+end
 
 # length & size
 
@@ -35,6 +39,10 @@ stride{T,N}(a::StridedView{T,N}, d::Integer) = (1 <= d <= N || error("dimension 
                                                 a.strides[d])
 
 ### index calculation
+
+# 0D view
+
+uindex{T}(a::StridedView{T,0}, i::Int) = 1
 
 # 1D view
 
@@ -69,7 +77,7 @@ uindex{T}(a::StridedView{T,3,0}, i1::Int, i2::Int, i3::Int) =
 
 # general (probably slow) fallback
 
-uindex{T}(a::StridedView{T}, i::Int) = uindex(a, ind2sub(a.shp, i)...)
+uindex(a::StridedView, i::Int) = uindex(a, ind2sub(a.shp, i)...)
 uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int) = uindex(a, i1, ind2sub(a.shp[2:N], i2)...)
 
 uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int, i3::Int) = 

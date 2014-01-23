@@ -147,10 +147,12 @@ view(a::Array, i1::Real, i2::SubsRange, i3::Subs) = _sview(a, ContRank{1}, i1, i
 
 view(a::Array, i1::Colon, i2::Colon, i3::CSubs) = _cview(a, i1, i2, i3)
 view(a::Array, i1::Colon, i2::Colon, i3::Range) = _sview(a, ContRank{2}, i1, i2, i3)
-view(a::Array, i1::Colon, i2::CSubs, i3::Subs) = _sview(a, ContRank{2}, i1, i2, i3)
+view(a::Array, i1::Colon, i2::Union(Real,Range1), i3::Real) = _cview(a, i1, i2, i3)
+view(a::Array, i1::Colon, i2::Union(Real,Range1), i3::SubsRange) = _sview(a, ContRank{2}, i1, i2, i3)
 view(a::Array, i1::Colon, i2::Range, i3::Subs) = _sview(a, ContRank{1}, i1, i2, i3)
 
-view(a::Array, i1::Range1, i2::Real, i3::Subs) = _sview(a, ContRank{2}, i1, i2, i3)
+view(a::Array, i1::Range1, i2::Real, i3::Real) = _cview(a, i1, i2, i3)
+view(a::Array, i1::Range1, i2::Real, i3::SubsRange) = _sview(a, ContRank{2}, i1, i2, i3)
 view(a::Array, i1::Range1, i2::SubsRange, i3::Subs) = _sview(a, ContRank{1}, i1, i2, i3)
 view(a::Array, i1::Range, i2::Subs, i3::Subs) = _sview(a, ContRank{0}, i1, i2, i3)
 
