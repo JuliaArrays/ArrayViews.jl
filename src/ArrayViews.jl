@@ -6,11 +6,12 @@ module ArrayViews
     export ArrayView, ContRank, iscontiguous, contiguousrank
     export ContiguousView, contiguous_view
     export StridedView, strided_view
-    export view
+    export view, contrank
 
     include("generic.jl")
     include("contiguousview.jl")
     include("stridedview.jl")
+    include("contrank.jl")
     include("subviews.jl")
 
 end

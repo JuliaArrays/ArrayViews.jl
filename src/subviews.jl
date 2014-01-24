@@ -1,13 +1,5 @@
 # subviews of a dense array
 
-typealias Indexer Union(Real,Range1,Range)
-
-typealias Subs Union(Real,Colon,Range1,Range)
-typealias CSubs Union(Real,Colon,Range1)
-
-typealias SubsRange Union(Colon,Range1,Range)
-typealias CSubsRange Union(Colon,Range1)
-
 #### auxiliary
 
 _step(i::Real) = 1

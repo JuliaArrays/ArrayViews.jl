@@ -25,6 +25,16 @@ ndims{T,N}(a::ArrayView{T,N}) = N
 contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
 
 type ContRank{M} end
+contrank{T,N}(a::Array{T,N}) = ContRank{N}
+contrank{T,N,M}(a::ArrayView{T,N,M}) = ContRank{M}
+
+typealias Indexer Union(Real,Range1,Range)
+
+typealias Subs Union(Real,Colon,Range1,Range)
+typealias CSubs Union(Real,Colon,Range1)
+
+typealias SubsRange Union(Colon,Range1,Range)
+typealias CSubsRange Union(Colon,Range1)    
 
 # size
 
