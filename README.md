@@ -4,7 +4,23 @@ ArrayViews.jl
 A Julia package to explore a new system of array views.
 [![Build Status](https://travis-ci.org/lindahua/ArrayViews.jl.png)](https://travis-ci.org/lindahua/ArrayViews.jl)
 
+
 -----------------------------
+
+Main Features
+--------------
+
+- An efficient ``view`` function that implements array views
+- Support of arrays of arbitrary dimension and arbitrary combinations of indexers
+- Support view composition (*i.e.* construct views over views)
+- Special attention to ensure type stability in most cases
+- Efficient indexing (both cartesian and linear)
+- Light weight view construction
+- A systematic approach to detect contiguous views (statically)
+
+
+Function and View Types
+-------------------------
 
 The key function in this package is ``view``. This function is similar to ``sub`` in Julia Base, except that it returns an view instance with more efficient representation:
 
