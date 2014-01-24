@@ -17,6 +17,8 @@ contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) =
 
 contiguous_view{T,N}(arr::Array{T}, shp::NTuple{N,Int}) = contiguous_view(arr, 0, shp)
 
+parent(a::ContiguousView) = a.arr
+
 # length & size
 
 length(a::ContiguousView) = a.len

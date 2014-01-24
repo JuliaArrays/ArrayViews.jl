@@ -1,7 +1,7 @@
 module ArrayViews
 
     import Base: eltype, ndims, size, length, stride, strides
-    import Base: to_index, getindex, setindex!
+    import Base: to_index, getindex, setindex!, parent
 
     export ArrayView, ContRank, iscontiguous, contiguousrank
     export ContiguousView, contiguous_view

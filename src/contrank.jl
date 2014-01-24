@@ -1,8 +1,8 @@
 # arithmetics on contiguous ranks
 
 for m=0:3, n=0:3
-	global addrank
-	@eval addrank(::Type{ContRank{$m}}, ::Type{ContRank{$n}}) = ContRank{$(m+n)}
+    global addrank
+    @eval addrank(::Type{ContRank{$m}}, ::Type{ContRank{$n}}) = ContRank{$(m+n)}
 end
 
 addrank{M,N}(::Type{ContRank{M}}, ::Type{ContRank{N}}) = ContRank{M+N}
@@ -10,16 +10,16 @@ addrank{N}(::Type{ContRank{0}}, ::Type{ContRank{N}}) = ContRank{N}
 addrank{N}(::Type{ContRank{N}}, ::Type{ContRank{0}}) = ContRank{N}
 
 for m=0:3, n=0:3
-	global minrank
-	@eval minrank(::Type{ContRank{$m}}, ::Type{ContRank{$n}}) = ContRank{$(min(m,n))}
+    global restrict_crank
+    @eval restrict_crank(::Type{ContRank{$m}}, ::NTuple{$n,Int}) = ContRank{$(min(m,n))}
 end
 
-minrank{M,N}(::Type{ContRank{M}}, ::Type{ContRank{N}}) = ContRank{min(M,N)}
-minrank{N}(::Type{ContRank{0}}, ::Type{ContRank{N}}) = ContRank{0}
-minrank{N}(::Type{ContRank{N}}, ::Type{ContRank{0}}) = ContRank{0}
+restrict_crank{M,N}(::Type{ContRank{M}}, ::NTuple{N,Int}) = ContRank{min(M,N)}
+restrict_crank{N}(::Type{ContRank{0}}, ::NTuple{N,Int}) = ContRank{0}
+restrict_crank{N}(::Type{ContRank{N}}, ::()) = ContRank{0}
 
 
-# contiguous rank computation
+# contiguous rank computation based on indices
 
 _nprefixreals() = ContRank{0}
 _nprefixreals(i::Real) = ContRank{1}

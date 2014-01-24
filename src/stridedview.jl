@@ -21,6 +21,8 @@ function strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, ::Type{ContRank{
 	StridedView{T,N,M,typeof(arr)}(arr, 0, *(shp...), shp, strides)
 end
 
+parent(a::StridedView) = a.arr
+
 # length & size
 
 length(a::StridedView) = a.len
