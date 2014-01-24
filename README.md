@@ -1,14 +1,13 @@
-ArrayViews.jl
-=============
+# ArrayViews.jl
 
 A Julia package to explore a new system of array views.
 [![Build Status](https://travis-ci.org/lindahua/ArrayViews.jl.png)](https://travis-ci.org/lindahua/ArrayViews.jl)
 
+This is **Work in Progress** -- some functionalities have not been implemented. 
 
 -----------------------------
 
-Main Features
---------------
+## Main Features
 
 - An efficient ``view`` function that implements array views
 - Support of arrays of arbitrary dimension and arbitrary combinations of indexers
@@ -19,8 +18,7 @@ Main Features
 - A systematic approach to detect contiguous views (statically)
 
 
-Function and View Types
--------------------------
+## Overview
 
 The key function in this package is ``view``. This function is similar to ``sub`` in Julia Base, except that it returns an view instance with more efficient representation:
 
@@ -33,7 +31,61 @@ view(a, 1:2, 1:2:5, 4)
 view(a, 2, :, 3:6)
 ```
 
-The package has two view types ``ContiguousView`` and ``StridedView``. They are respectively defined as follows:
+The ``view`` function returns a view of type ``ArrayView``. Here, ``ArrayView`` is an abstract type with two derived types (``ContiguousView`` and ``StridedView``), defined as:
+
+```julia
+abstract ArrayView{T,N,M} <: DenseArray{T,N}
+```
+We can see that each view type has three static properties: element type ``T``, the number of dimensions ``N``, and the *contiguous rank* ``M``. 
+
+#### Contiguous Rank
+
+The *contiguous rank* plays an important role in determining (statically) the contiguousness of a subview. Below are illustrations of 2D views respective with contiguous rank ``0``, ``1``, and ``2``.
+
+**2D View with contiguous rank 0**
+
+```
+* * * * * * 
+. . . . . .
+* * * * * *
+. . . . . . 
+* * * * * *
+. . . . . .
+```
+Here, ``*`` indicates a position covered by the view, and ``.`` otherwise. We can see that the columns are not contiguous.
+
+**2D View with contiguous rank 1**
+
+```
+* * * * * * 
+* * * * * *
+* * * * * *
+* * * * * *
+. . . . . .
+. . . . . .
+```
+We can see that each column is contiguous, while the entire view is not.
+
+
+**2D View with contiguous rank 2**
+
+```
+* * * * * * 
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+```
+The entire 2D view is contiguous.
+
+
+Formally, when ``v`` is a view with contiguous rank ``M``, then ``view(v, :, :, ..., :, 1)`` must be contiguous when the number of colons is less than or equal to ``M``.
+
+
+#### View Types
+
+The package has two view types ``ContiguousView`` and ``StridedView`` (both are sub types of ``ArrayView``). They are respectively defined as follows:
 
 - ``ContiguousView`` is used to represent a view of an array (or a part of an array) that has contiguous memory layout:
 
@@ -45,7 +97,7 @@ The package has two view types ``ContiguousView`` and ``StridedView``. They are 
         shp::NTuple{N,Int}     # view shape
     end
     ```
-    Here, ``T`` is the element type, ``N`` is the number of dimensions, and ``Arr`` is the type of the underlying array.
+    Here, ``T`` is the element type, ``N`` is the number of dimensions, and ``Arr`` is the type of the underlying array. Obviously, the contiguous rank of a contiguous view is ``N``. 
 
 
 - ``StridedView`` is used to represent a view of an array (or a part of an array) that is not necessarily contiguous (*i.e.*, the contiguousness cannot be determined statically).
@@ -59,5 +111,21 @@ The package has two view types ``ContiguousView`` and ``StridedView``. They are 
         strides::NTuple{N,Int}    # strides of all dimensions
     end
     ```
-    Here, ``M`` is called the *contiguous rank*, which plays an important role in determining (statically) the contiguousness of a subview.The notion of *contiguous rank* will be explained later.
+    Here, ``M`` is the contiguous rank. 
 
+
+#### View Types in Action
+
+The following example illustrates how contiguous rank is used to determine view types in practice.
+
+```julia
+a = rand(m, n)
+
+v0 = view(a, :)         # of type ContiguousView{Float64, 1}
+
+u1 = view(a, a:b, :)    # of type StridedView{Float64, 2, 1}
+u2 = view(u1, :, i)     # of type ContiguousView{Float64, 1}
+
+v1 = view(a, a:2:b, :)  # of type StridedView{Float64, 2, 0}
+v2 = view(v1, :, i)     # of type StridedView{Float64, 1, 0} 
+```
