@@ -129,3 +129,31 @@ u2 = view(u1, :, i)     # of type ContiguousView{Float64, 1}
 v1 = view(a, a:2:b, :)  # of type StridedView{Float64, 2, 0}
 v2 = view(v1, :, i)     # of type StridedView{Float64, 1, 0} 
 ```
+
+Four kinds of indexers are supported, integer, range (*e.g.* ``a:b``), stepped range (*e.g.* ``a:b:c``), and colon (*i.e.*, ``:``). 
+Unlike the ``sub`` function in Julia Base, the colon ``:`` is specially treated rather than converted to ``1:size(v,d)``, as it plays a crucial role in determining contiguousness. For example, the contiguous rank of ``view(a, :, a:b)`` is 2, while that of ``view(a, i:j, a:b)`` is 1.
+
+
+
+## View Construction
+
+The procedure of constructing a view consists of several steps:
+
+1. Compute the shape of a view. This is done by an internal function ``vshape``.
+
+2. Compute the offset of a view. This is done by an internal function ``aoffset``. The computation is based on the following formula:
+
+    ```
+    offset(v(I1, I2, ..., Im)) = (first(I1) - 1) * stride(v, 1) 
+                               + (first(I2) - 1) * stride(v, 2)
+                               + ...
+                               + (first(Im) - 1) * stride(v, m)
+    ```
+
+3. Compute the contiguous rank, based on both view shape and the combination of indexer types. A type ``ContRank{M}`` is introduced for static computation of contiguous rank (please refer to ``src/contrank.jl`` for details). 
+
+4. Construct a view, where the view type is determined by both the number of dimensions and the value of contiguous rank (which is determined statically).
+   
+For runtime efficiency, specialized methods of these functions are implemented for views of 1D, 2D, and 3D. These methods are extensively tested.
+
+
