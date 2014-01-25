@@ -194,16 +194,16 @@ make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Sub
     strided_view(parent(a), aoffset(a, i1, i2, i3, i4, I...), shp, cr, vstrides(a, i1, i2, i3, i4, I...))
 
 
-view(a::Array, i::Subs) = 
-    (shp = vshape(a, i); make_view(a, restrict_crank(contrank(i), shp), shp, i))
+view(a::DenseArray, i::Subs) = 
+    (shp = vshape(a, i); make_view(a, restrict_crank(contrank(a, i), shp), shp, i))
 
-view(a::Array, i1::Subs, i2::Subs) = 
-    (shp = vshape(a, i1, i2); make_view(a, restrict_crank(contrank(i1, i2), shp), shp, i1, i2))
+view(a::DenseArray, i1::Subs, i2::Subs) = 
+    (shp = vshape(a, i1, i2); make_view(a, restrict_crank(contrank(a, i1, i2), shp), shp, i1, i2))
 
-view(a::Array, i1::Subs, i2::Subs, i3::Subs) = 
-    (shp = vshape(a, i1, i2, i3); make_view(a, restrict_crank(contrank(i1, i2, i3), shp), shp, i1, i2, i3))
+view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) = 
+    (shp = vshape(a, i1, i2, i3); make_view(a, restrict_crank(contrank(a, i1, i2, i3), shp), shp, i1, i2, i3))
 
-view(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
+view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
     (shp = vshape(a, i1, i2, i3, i4, I...); 
-     make_view(a, restrict_crank(contrank(i1, i2, i3, i4, I...), shp), shp, i1, i2, i3, i4, I...))
+     make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4, I...), shp), shp, i1, i2, i3, i4, I...))
 
