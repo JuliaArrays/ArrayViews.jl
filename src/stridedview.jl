@@ -22,6 +22,7 @@ function strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, ::Type{ContRank{
 end
 
 parent(a::StridedView) = a.arr
+offset(a::StridedView) = a.offset
 
 # length & size
 

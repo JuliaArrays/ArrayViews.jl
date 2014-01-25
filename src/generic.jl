@@ -43,6 +43,12 @@ size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d);
 
 similar{T}(a::ArrayView{T}) = Array(T, size(a))
 similar{T}(a::ArrayView{T}, dims::Dims) = Array(T, dims)
+similar{T}(a::ArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
+
+# pointer
+
+pointer(a::ArrayView) = pointer(parent(a), offset(a)+1)
+convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
 
 # getindex
 
