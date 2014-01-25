@@ -3,8 +3,6 @@
 A Julia package to explore a new system of array views.
 [![Build Status](https://travis-ci.org/lindahua/ArrayViews.jl.png)](https://travis-ci.org/lindahua/ArrayViews.jl)
 
-This is **Work in Progress** -- some functionalities have not been implemented. 
-
 -----------------------------
 
 ## Main Features
