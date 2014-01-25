@@ -55,7 +55,7 @@ uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int, i3::Int) = ((i2 == i3 == 1) || 
 
 # 2D view
 
-uindex{T}(a::StridedView{T,2}, i::Int) = ((i1, i2) = ind2sub(a.shp, i); uindex(a, i1, i2))
+uindex{T}(a::StridedView{T,2}, i::Int) = uindex(a, ind2sub(size(a), i)...)
 
 uindex{T}(a::StridedView{T,2,0}, i1::Int, i2::Int) = a.offset + 1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2]
 uindex{T}(a::StridedView{T,2,1}, i1::Int, i2::Int) = a.offset + i1 + (i2-1)*a.strides[2]
@@ -65,10 +65,9 @@ uindex{T}(a::StridedView{T,2}, i1::Int, i2::Int, i3::Int) = (i3 == 1 || throw(Bo
 
 # 3D view
 
-uindex{T}(a::StridedView{T,3}, i::Int) = ((i1, i2, i3) = ind2sub(a.shp, i); uindex(a, i1, i2, i3))
+uindex{T}(a::StridedView{T,3}, i::Int) = uindex(a, ind2sub(size(a), i)...)
 
-uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int) = 
-    ((i2_, i3_) = ind2sub((a.shp[2], a.shp[3]), i2); uindex(a, i1, i2_, i3_))
+uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int) = uindex(a, i1, ind2sub((a.shp[2], a.shp[3]), i2)...)
 
 uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int, i3::Int) = 
     a.offset + i1 + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
@@ -79,7 +78,7 @@ uindex{T}(a::StridedView{T,3,0}, i1::Int, i2::Int, i3::Int) =
 
 # general (probably slow) fallback
 
-uindex(a::StridedView, i::Int) = uindex(a, ind2sub(a.shp, i)...)
+uindex(a::StridedView, i::Int) = uindex(a, ind2sub(size(a), i)...)
 uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int) = uindex(a, i1, ind2sub(a.shp[2:N], i2)...)
 
 uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int, i3::Int) = 
