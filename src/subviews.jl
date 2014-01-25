@@ -34,8 +34,8 @@ aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs.
 roffset(a::ContiguousArray, i::Colon) = 0
 roffset(a::ContiguousArray, i::Indexer) = _offset(i)
 
-roffset(a::StridedArray, i::Colon) = 0
-roffset(a::StridedArray, i::Indexer) = _offset(i) * stride(a,1)
+roffset{T}(a::StridedArray{T,1}, i::Colon) = 0
+roffset{T}(a::StridedArray{T,1}, i::Indexer) = _offset(i) * stride(a,1)
 
 # 2D view
 
@@ -43,6 +43,11 @@ roffset(a::ContiguousArray, i1::Colon, i2::Colon) = 0
 roffset(a::ContiguousArray, i1::Colon, i2::Indexer) = size(a,1) * _offset(i2)
 roffset(a::ContiguousArray, i1::Indexer, i2::Colon) = _offset(i1)
 roffset(a::ContiguousArray, i1::Indexer, i2::Indexer) = _offset(i1) + size(a,1) * _offset(i2)
+
+roffset{T}(a::StridedArray{T,2}, i1::Colon, i2::Colon) = 0
+roffset{T}(a::StridedArray{T,2}, i1::Colon, i2::Indexer) = _offset(i2) * stride(a,2)
+roffset{T}(a::StridedArray{T,2}, i1::Indexer, i2::Colon) = _offset(i1) * stride(a,1)
+roffset{T}(a::StridedArray{T,2}, i1::Indexer, i2::Indexer) = _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
 
 # 3D view
 

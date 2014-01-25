@@ -30,23 +30,33 @@ function test_view2(a, subs1, subs2)
         if v2[i] != v2r[i]         
         	print_subs(subs1, subs2)
             println("v = ")
-            println(v)
+            println(v2)
             println("r = ")
-            println(r)
+            println(v2r)
             error("Incorrect content.")
         end
     end
 end
 
 
+a = rand(12, 7, 6, 5)
+
 # 1D --> 1D
 
-a = rand(8, 7, 6, 5)
+for sa in {(:), 1:36, 2:2:36}
+	v1 = view(a, sa)
+	for sb in {4, (:), 1:length(v1), 3:2:length(v1)}
+		test_view2(a, (sa,), (sb,))
+	end
+end
 
-for s1 in {(:), 1:36, 2:2:36}
-	v1 = view(a, s1)
-	for s2 in {4, (:), 1:length(v1), 3:2:length(v1)}
-		test_view2(a, (s1,), (s2,))
+# 2D --> 2D
+
+for sa1 in {(:), 1:10, 2:2:12}, sa2 = {(:), 1:12, 2:2:16}
+	v1 = view(a, sa1, sa2)
+	for sb1 in {4, (:), 2:size(v1,1), 2:2:size(v1,1)}, 
+		sb2 in {4, (:), 2:size(v1,2), 2:2:size(v1,2)}
+		test_view2(a, (sa1, sa2), (sb1, sb2))
 	end
 end
 
