@@ -13,7 +13,7 @@ ab = a * b
 @test ab == view(a, :, :) * view(b, :, :)
 
 for j = 1:size(b,2)
-    @test ab[:,j] == view(a, :, :) * view(b, :, j)
+    @test_approx_eq ab[:,j] view(a,:,:) * view(b,:,j)
 end
 
 @test a[:, 2:2:7] * b[1:3, 1:2:5] == view(a, :, 2:2:7) * view(b, 1:3, 1:2:5)
