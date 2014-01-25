@@ -34,6 +34,9 @@ aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs.
 roffset(a::ContiguousArray, i::Colon) = 0
 roffset(a::ContiguousArray, i::Indexer) = _offset(i)
 
+roffset(a::StridedArray, i::Colon) = 0
+roffset(a::StridedArray, i::Indexer) = _offset(i) * stride(a,1)
+
 # 2D view
 
 roffset(a::ContiguousArray, i1::Colon, i2::Colon) = 0
