@@ -3,28 +3,28 @@
 using ArrayViews
 
 function _test_view(a, r, subs...)
-	v = view(a, subs...)
+    v = view(a, subs...)
 
-	siz_r = size(r)
-	siz_v = size(v)
+    siz_r = size(r)
+    siz_v = size(v)
 
-	if siz_r != siz_v
-		error("Incorrect size: get $(siz_v), but expect $(siz_r)")
-	end
+    if siz_r != siz_v
+        error("Incorrect size: get $(siz_v), but expect $(siz_r)")
+    end
 
-	for i = 1 : length(v)
-		if v[i] != r[i]			
-			println("v = ")
-			println(v)
-			println("r = ")
-			println(r)
-			error("Incorrect content.")
-		end
-	end
+    for i = 1 : length(v)
+        if v[i] != r[i]         
+            println("v = ")
+            println(v)
+            println("r = ")
+            println(r)
+            error("Incorrect content.")
+        end
+    end
 end
 
 macro test_view(a_, subs...)
-	esc(:(_test_view($a_, ($a)[$(subs...)], $(subs...))))
+    esc(:(_test_view($a_, ($a)[$(subs...)], $(subs...))))
 end
 
 
@@ -144,4 +144,65 @@ a = reshape(1.:1680., (8, 7, 6, 5))
 @test_view(a, 1:2:7, 1:2:5, 2:5)
 @test_view(a, 1:2:7, 1:2:5, 1:2:6)
 
+# Some 4D Tests
+
+@test_view(a, 4, :,     3, 4)
+@test_view(a, 4, :,     :, 4)
+@test_view(a, 4, :,   3:5, 4)
+@test_view(a, 4, :, 1:2:5, 4)
+
+@test_view(a, :, :,     3, 4)
+@test_view(a, :, :,     :, 4)
+@test_view(a, :, :,   3:5, 4)
+@test_view(a, :, :, 1:2:5, 4)
+
+@test_view(a, 2:7, :,     3, 4)
+@test_view(a, 2:7, :,     :, 4)
+@test_view(a, 2:7, :,   3:5, 4)
+@test_view(a, 2:7, :, 1:2:5, 4)
+
+@test_view(a, 1:2:7, :,     3, 4)
+@test_view(a, 1:2:7, :,     :, 4)
+@test_view(a, 1:2:7, :,   3:5, 4)
+@test_view(a, 1:2:7, :, 1:2:5, 4)
+
+@test_view(a, 4, :,     3, :)
+@test_view(a, 4, :,     :, :)
+@test_view(a, 4, :,   3:5, :)
+@test_view(a, 4, :, 1:2:5, :)
+
+@test_view(a, :, :,     3, :)
+@test_view(a, :, :,     :, :)
+@test_view(a, :, :,   3:5, :)
+@test_view(a, :, :, 1:2:5, :)
+
+@test_view(a, 2:7, :,     3, :)
+@test_view(a, 2:7, :,     :, :)
+@test_view(a, 2:7, :,   3:5, :)
+@test_view(a, 2:7, :, 1:2:5, :)
+
+@test_view(a, 1:2:7, :,     3, :)
+@test_view(a, 1:2:7, :,     :, :)
+@test_view(a, 1:2:7, :,   3:5, :)
+@test_view(a, 1:2:7, :, 1:2:5, :)
+
+@test_view(a, 4, :,     3, 2:5)
+@test_view(a, 4, :,     :, 2:5)
+@test_view(a, 4, :,   3:5, 2:5)
+@test_view(a, 4, :, 1:2:5, 2:5)
+
+@test_view(a, :, :,     3, 2:5)
+@test_view(a, :, :,     :, 2:5)
+@test_view(a, :, :,   3:5, 2:5)
+@test_view(a, :, :, 1:2:5, 2:5)
+
+@test_view(a, 2:7, :,     3, 2:5)
+@test_view(a, 2:7, :,     :, 2:5)
+@test_view(a, 2:7, :,   3:5, 2:5)
+@test_view(a, 2:7, :, 1:2:5, 2:5)
+
+@test_view(a, 1:2:7, :,     3, 2:5)
+@test_view(a, 1:2:7, :,     :, 2:5)
+@test_view(a, 1:2:7, :,   3:5, 2:5)
+@test_view(a, 1:2:7, :, 1:2:5, 2:5)
 

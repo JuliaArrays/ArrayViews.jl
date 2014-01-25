@@ -82,6 +82,7 @@ _dim{N}(siz::NTuple{N,Int}, d::Int, r::Colon) = d <= N ? siz[d] : 1
 _dim(siz::Tuple, d::Int, r::Ranges) = length(r)
 _dim(siz::Tuple, d::Int, r::Real) = 1
 
+
 # 1D view
 
 vshape(a::DenseArray, i::Real) = ()
@@ -120,9 +121,12 @@ vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Ranges) = (_dim(a,1,i1), _dim(a,2,
 vshape{T,N}(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
     _vshape(size(a), i1, i2, i3, i4, I...)
 
+_vshape{N}(siz::NTuple{N,Int}, i1::Real) = ()
 _vshape{N}(siz::NTuple{N,Int}, i1::Real, i2::Real...) = ()
-_vshape{N}(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
 
+_vshape{N}(siz::NTuple{N,Int}, i1::Colon) = (prod(siz),)
+_vshape{N}(siz::NTuple{N,Int}, i1::Union(Range,Range1)) = (length(i1),)
+_vshape{N}(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
 
 
 #### compute view strides (for necessary cases)
@@ -163,8 +167,7 @@ _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs) = (ss[k] * _step(i1)
 
 _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real, i3::Real, I::Real...) = ()
 _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...) = 
-    tuple(ss[k] * _step(i1), _vstrides(ss[2:N], k+1, i2, i3, I...)...)
-
+    tuple(ss[k] * _step(i1), _vstrides(ss, k+1, i2, i3, I...)...)
 
 
 #### generic make_view methods
