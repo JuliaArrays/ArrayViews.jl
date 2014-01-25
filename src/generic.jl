@@ -41,6 +41,9 @@ typealias CSubsRange Union(Colon,Range1)
 getdim{N}(s::NTuple{N,Int}, d::Integer) = (d > 0 || error("dimension out of range."); d <= N ? s[d] : 1)
 size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d);
 
+similar{T}(a::ArrayView{T}) = Array(T, size(a))
+similar{T}(a::ArrayView{T}, dims::Dims) = Array(T, dims)
+
 # getindex
 
 getindex(a::ArrayView, i::Real) = getindex(a, to_index(i))
