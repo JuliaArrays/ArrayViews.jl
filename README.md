@@ -14,6 +14,7 @@ A Julia package to explore a new system of array views.
 - Efficient indexing (both cartesian and linear)
 - Light weight view construction
 - A systematic approach to detect contiguous views (statically)
+- Views work with linear algebra functions
 
 
 ## Overview
