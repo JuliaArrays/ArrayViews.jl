@@ -60,15 +60,15 @@ roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) +
 roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) + size(a,1) * _offset(i2)
 roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Indexer) = _offset(i1) + size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
 
-# roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Colon) = 0
-# roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Indexer) = _offset(i3) * stride(a,3)
-# roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Colon) = _offset(i2) * stride(a,2)
-# roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Indexer) = _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
-# roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Colon) = _offset(i1) * stride(a,1)
-# roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) * stride(a,1) + _offset(i3) * stride(a,3)
-# roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
-# roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Indexer) = 
-#     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Colon) = 0
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Indexer) = _offset(i3) * stride(a,3)
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Colon) = _offset(i2) * stride(a,2)
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Indexer) = _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
+roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Colon) = _offset(i1) * stride(a,1)
+roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Indexer) = _offset(i1) * stride(a,1) + _offset(i3) * stride(a,3)
+roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Colon) = _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
+roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Indexer) = 
+    _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
 
 
 # multi-dimensional 
