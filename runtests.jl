@@ -1,8 +1,6 @@
-tests = ["viewtypes", 
-         "linalg", 
+tests = ["viewtypes",  
          "contrank", 
-         "subviews", 
-         "subviews2"]
+         "subviews"]
 
 for t in tests
     fp = joinpath("test", "$(t).jl")
