@@ -2,7 +2,7 @@
 
 using ArrayViews
 using Base.Test
-import ArrayViews.Subs
+import ArrayViews: Subs, ContRank, contrank
 
 const irealn = 3
 const icolon = (:)

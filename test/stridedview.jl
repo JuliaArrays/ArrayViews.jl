@@ -3,6 +3,8 @@
 using ArrayViews
 using Base.Test
 
+import ArrayViews.ContRank
+
 a = reshape(1.:1680., (8, 7, 6, 5))
 
 ### ND=1, CR=1 
