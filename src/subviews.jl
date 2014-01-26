@@ -2,10 +2,19 @@
 
 #### auxiliary
 
+typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
+
+typealias Indexer Union(Real,Range1,Range)
+typealias Subs Union(Real,Colon,Range1,Range)
+typealias CSubs Union(Real,Colon,Range1)
+typealias SubsRange Union(Colon,Range1,Range)
+typealias CSubsRange Union(Colon,Range1) 
+
 _step(i::Real) = 1
 _step(i::Colon) = 1
 _step(i::Ranges) = step(i)
 
+include("contrank.jl")
 
 #### compute view offset
 
