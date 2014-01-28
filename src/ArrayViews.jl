@@ -5,6 +5,7 @@ import Base: to_index, getindex, setindex!, parent, similar
 import Base: convert, Ptr, pointer
 
 export ArrayView, ContiguousView, StridedView
+export ContiguousArray, ContiguousVector, ContiguousMatrix
 export contiguous_view, strided_view, view
 export iscontiguous, contiguousrank
 
@@ -353,6 +354,8 @@ aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs.
 # for contiguous arrays
 
 typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
+typealias ContiguousVector{T} ContiguousArray{T,1}
+typealias ContiguousMatrix{T} ContiguousArray{T,2}
 
 roffset(a::ContiguousArray, i::Colon) = 0
 roffset(a::ContiguousArray, i::Indexer) = _offset(i)
