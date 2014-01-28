@@ -91,6 +91,8 @@ similar{T}(a::ArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
 
 # methods specific to ContiguousView
 
+offset(a::Array) = 0
+
 parent(a::ContiguousView) = a.arr
 offset(a::ContiguousView) = a.offset
 length(a::ContiguousView) = a.len
