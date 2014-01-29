@@ -569,6 +569,8 @@ make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Sub
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
     strided_view(parent(a), aoffset(a, i1, i2, i3, i4, I...), shp, cr, vstrides(a, i1, i2, i3, i4, I...))
 
+view(a::Array) = contiguous_view(a, size(a))
+view(a::ArrayView) = a
 
 view(a::DenseArray, i::Subs) = 
     (shp = vshape(a, i); make_view(a, restrict_crank(contrank(a, i), shp), shp, i))
