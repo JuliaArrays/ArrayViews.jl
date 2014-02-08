@@ -12,7 +12,8 @@ before_install:
     - git config --global user.email "travis@example.net"
 script:
     - julia -e 'versioninfo(); Pkg.init()'
-    - mkdir -p ~/.julia/ArrayViews
-    - cp -R ./* ~/.julia/ArrayViews/
+    - mkdir -p ~/.julia/v0.3/ArrayViews
+    - cp -R ./* ~/.julia/v0.3/ArrayViews/
     - julia ~/.julia/ArrayViews/runtests.jl
+    
     
