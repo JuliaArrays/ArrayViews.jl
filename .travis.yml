@@ -14,6 +14,6 @@ script:
     - julia -e 'versioninfo(); Pkg.init()'
     - mkdir -p ~/.julia/v0.3/ArrayViews
     - cp -R ./* ~/.julia/v0.3/ArrayViews/
-    - julia ~/.julia/ArrayViews/runtests.jl
+    - julia ~/.julia/ArrayViews/v0.3/runtests.jl
     
     
