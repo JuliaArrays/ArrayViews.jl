@@ -425,7 +425,7 @@ roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Indexer) =
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
 
 roffset(a::StridedArray, i1::Subs, i2::Subs, i3::Subs, I::Subs...) = 
-    _roffset(strides(a), tuple(i1, i2, i3, I...))
+    _roffset(strides(a), tuple(i1, i2, i3, I...))::Int
 
 function _roffset{N}(ss::NTuple{N,Int}, subs::NTuple{N})
     o = _offset(subs[1]) * ss[1]
@@ -481,10 +481,31 @@ vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Colon) =
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Ranges) = 
     (_dim(a,1,i1), _dim(a,2,i2), length(i3))
 
+# 4D
+
+_succlen4{T}(a::DenseArray{T,1}) = 1
+_succlen4{T}(a::DenseArray{T,2}) = 1
+_succlen4{T}(a::DenseArray{T,3}) = 1
+_succlen4{T}(a::DenseArray{T,4}) = size(a, 4) 
+_succlen4{T}(a::DenseArray{T,5}) = size(a, 4) * size(a, 5)
+_succlen4(a::DenseArray) = prod(size(a)[4:end])::Int
+
+vshape(a::DenseArray, i1::Real, i2::Real, i3::Real, i4::Real) = ()
+vshape(a::DenseArray, i1::SubsRange, i2::Real, i3::Real, i4::Real) = (_dim(a,1,i1),)
+vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real, i4::Real) = 
+    (_dim(a,1,i1), _dim(a,2,i2))
+vshape(a::DenseArray, i1::Subs, i2::Subs, i3::SubsRange, i4::Real) = 
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3))
+
+vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Colon) = 
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), _succlen4(a))
+vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Ranges) = 
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), length(i4))
+
 # multi-dimensional
 
-vshape{T,N}(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
-    _vshape(size(a), i1, i2, i3, i4, I...)
+vshape{T,N}(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
+    _vshape(size(a), i1, i2, i3, i4, i5, I...)
 
 _vshape{N}(siz::NTuple{N,Int}, i1::Real) = ()
 _vshape{N}(siz::NTuple{N,Int}, i1::Real, i2::Real...) = ()
@@ -597,7 +618,7 @@ view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...
 
 #### Arithmetics on contiguous ranks
 
-for m=0:3, n=0:3
+for m=0:4, n=0:4
     global addrank
     @eval addrank(::Type{ContRank{$m}}, ::Type{ContRank{$n}}) = ContRank{$(m+n)}
 end
@@ -606,7 +627,7 @@ addrank{M,N}(::Type{ContRank{M}}, ::Type{ContRank{N}}) = ContRank{M+N}
 addrank{N}(::Type{ContRank{0}}, ::Type{ContRank{N}}) = ContRank{N}
 addrank{N}(::Type{ContRank{N}}, ::Type{ContRank{0}}) = ContRank{N}
 
-for m=0:3, n=0:3
+for m=0:4, n=0:4
     global minrank
     @eval minrank(::Type{ContRank{$m}}, ::Type{ContRank{$n}}) = ContRank{$(min(m,n))}
 end
@@ -615,7 +636,7 @@ minrank{M,N}(::Type{ContRank{M}}, ::Type{ContRank{N}}) = ContRank{min(M,N)}
 minrank{N}(::Type{ContRank{0}}, ::Type{ContRank{N}}) = ContRank{0}
 minrank{N}(::Type{ContRank{N}}, ::Type{ContRank{0}}) = ContRank{0}
 
-for m=0:3, n=0:3
+for m=0:4, n=0:4
     global restrict_crank
     @eval restrict_crank(::Type{ContRank{$m}}, ::NTuple{$n,Int}) = ContRank{$(min(m,n))}
 end
