@@ -6,7 +6,7 @@ import Base: convert, Ptr, pointer
 
 export ArrayView, ContiguousView, StridedView
 export ContiguousArray, ContiguousVector, ContiguousMatrix
-export contiguous_view, strided_view, view
+export contiguous_view, strided_view, view, ellipview
 export iscontiguous, contiguousrank
 
 #### View types
@@ -614,6 +614,15 @@ view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
 view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
     (shp = vshape(a, i1, i2, i3, i4, i5, I...); 
      make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
+
+
+### ellipview
+
+ellipview{T}(a::DenseArray{T,2}, i::Integer) = view(a, :, i)
+ellipview{T}(a::DenseArray{T,3}, i::Integer) = view(a, :, :, i)
+ellipview{T}(a::DenseArray{T,4}, i::Integer) = view(a, :, :, :, i)
+ellipview{T}(a::DenseArray{T,5}, i::Integer) = view(a, :, :, :, :, i)
+ellipview{T,N}(a::DenseArray{T,N}, i::Integer) = view(a, ntuple(N-1, i->Colon())..., i)
 
 
 #### Arithmetics on contiguous ranks
