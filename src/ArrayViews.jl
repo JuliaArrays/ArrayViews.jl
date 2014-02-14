@@ -554,8 +554,11 @@ make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs,
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) = 
     contiguous_view(parent(a), aoffset(a, i1, i2, i3), shp)
 
-make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4, I...), shp)
+make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = 
+    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4), shp)
+
+make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
+    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i::Subs) = 
     strided_view(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
@@ -566,8 +569,11 @@ make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Sub
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) = 
     strided_view(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
 
-make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
-    strided_view(parent(a), aoffset(a, i1, i2, i3, i4, I...), shp, cr, vstrides(a, i1, i2, i3, i4, I...))
+make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = 
+    strided_view(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
+
+make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
+    strided_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
 
 view(a::Array) = contiguous_view(a, size(a))
 view(a::ArrayView) = a
@@ -581,9 +587,12 @@ view(a::DenseArray, i1::Subs, i2::Subs) =
 view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) = 
     (shp = vshape(a, i1, i2, i3); make_view(a, restrict_crank(contrank(a, i1, i2, i3), shp), shp, i1, i2, i3))
 
-view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) = 
-    (shp = vshape(a, i1, i2, i3, i4, I...); 
-     make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4, I...), shp), shp, i1, i2, i3, i4, I...))
+view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = 
+    (shp = vshape(a, i1, i2, i3, i4); make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4), shp), shp, i1, i2, i3, i4))
+
+view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
+    (shp = vshape(a, i1, i2, i3, i4, i5, I...); 
+     make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
 
 
 #### Arithmetics on contiguous ranks
@@ -645,9 +654,16 @@ contrank(i1::Colon) = ContRank{1}
 contrank(i1::Colon, i2::CSubs) = ContRank{2}
 contrank(i1::Colon, i2::Range) = ContRank{1}
 
-contrank(i1::Colon, i2::Colon, i3::Colon,  I::Subs...) = 
-    addrank(ContRank{3}, contrank(I...))
-contrank(i1::Colon, i2::Colon, i3::Real,   I::Subs...) = 
+contrank(i1::Colon, i2::Colon, i3::Real) = ContRank{3}
+contrank(i1::Colon, i2::Colon, i3::CSubsRange) = ContRank{3}
+contrank(i1::Colon, i2::Colon, i3::Range) = ContRank{2}
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::Real) = ContRank{4}
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::CSubsRange) = ContRank{4}
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::Range) = ContRank{3}
+
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::Colon, i5::Colon, I::Subs...) = 
+    addrank(ContRank{5}, contrank(I...))
+contrank(i1::Colon, i2::Colon, i3::Real, I::Subs...) = 
     addrank(ContRank{3}, _nprefixreals(I...))
 contrank(i1::Colon, i2::Colon, i3::Range1, I::Subs...) = 
     addrank(ContRank{3}, _nprefixreals(I...))
