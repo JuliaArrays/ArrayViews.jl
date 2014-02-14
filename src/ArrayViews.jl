@@ -46,6 +46,9 @@ contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) =
 
 contiguous_view(arr::Array, shp::Dims) = contiguous_view(arr, 0, shp)
 
+contiguous_view(v::ContiguousView, shp::Dims) = contiguous_view(v.arr, v.offset, shp)
+contiguous_view(v::ContiguousView, offset::Int, shp::Dims) = contiguous_view(v.arr, offset + v.offset, shp)
+
 # use StridedView otherwise
 # condition: M <= N
 immutable StridedView{T,N,M,Arr<:Array{T}} <: ArrayView{T,N,M}
