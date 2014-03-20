@@ -185,6 +185,8 @@ end
 
 # getindex
 
+getindex(a::ArrayView) = arrayref(a.arr, a.offset + 1)
+
 getindex(a::ArrayView, i::Int) = arrayref(a.arr, uindex(a, i))
 getindex(a::ArrayView, i1::Int, i2::Int) = arrayref(a.arr, uindex(a, i1, i2))
 getindex(a::ArrayView, i1::Int, i2::Int, i3::Int) = 
