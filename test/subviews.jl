@@ -204,6 +204,22 @@ avparent = reshape(1.:1680., (8, 7, 6, 5))
 @test_arrview(avparent, 1:2:7, :,   3:5, 2:5)
 @test_arrview(avparent, 1:2:7, :, 1:2:5, 2:5)
 
+#### ellipview
+
+a = rand(10)
+@test isequal(view(a, 5), ellipview(a, 5))
+@test isequal(view(a, 2:3), ellipview(a, 2:3))
+a = rand(10,20)
+@test isequal(view(a, :, 5), ellipview(a, 5))
+@test isequal(view(a, :, 2:3), ellipview(a, 2:3))
+a = rand(10,20,30)
+@test isequal(view(a, :, :, 5), ellipview(a, 5))
+@test isequal(view(a, :, :, 2:3), ellipview(a, 2:3))
+a = rand(10,20,30,40)
+@test isequal(view(a, :, :, :, 5), ellipview(a, 5))
+@test isequal(view(a, :, :, :, 2:3), ellipview(a,2:3))
+
+
 
 #### Test Subviews of Views
 
