@@ -696,8 +696,9 @@ contrank(i1::Colon, i2::Colon, i3::Colon, i4::Real) = ContRank{4}
 contrank(i1::Colon, i2::Colon, i3::Colon, i4::CSubsRange) = ContRank{4}
 contrank(i1::Colon, i2::Colon, i3::Colon, i4::Range) = ContRank{3}
 
-contrank(i1::Colon, i2::Colon, i3::Colon, i4::Colon, i5::Colon, I::Subs...) = 
-    addrank(ContRank{5}, contrank(I...))
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::Colon) = ContRank{4}
+contrank(i1::Colon, i2::Colon, i3::Colon, i4::Colon, I::Subs...) = 
+    addrank(ContRank{4}, contrank(I...))
 contrank(i1::Colon, i2::Colon, i3::Real, I::Subs...) = 
     addrank(ContRank{3}, _nprefixreals(I...))
 contrank(i1::Colon, i2::Colon, i3::Range1, I::Subs...) = 

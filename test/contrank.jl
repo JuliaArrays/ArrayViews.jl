@@ -148,3 +148,7 @@ crank(I::Subs...) = crank(contrank(I...))
 @test crank(icolon, icolon, istepr, irange) == 2
 @test crank(icolon, icolon, istepr, istepr) == 2
 
+# Some 5D
+
+@test crank(icolon, icolon, icolon, icolon, irealn) == 5
+
