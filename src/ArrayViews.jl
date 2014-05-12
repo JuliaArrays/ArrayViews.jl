@@ -42,7 +42,7 @@ immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
 end
 
 contiguous_view{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) = 
-    ContiguousView{T,N,typeof(arr)}(arr, offset, *(shp...), shp)
+    ContiguousView{T,N,typeof(arr)}(arr, offset, prod(shp), shp)
 
 contiguous_view(arr::Array, shp::Dims) = contiguous_view(arr, 0, shp)
 
@@ -62,13 +62,13 @@ end
 function strided_view{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}, 
                              ::Type{ContRank{M}}, strides::NTuple{N,Int})
     @assert M <= N
-    StridedView{T,N,M,typeof(arr)}(arr, offset, *(shp...), shp, strides)
+    StridedView{T,N,M,typeof(arr)}(arr, offset, prod(shp), shp, strides)
 end
 
 function strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int}, 
                              ::Type{ContRank{M}}, strides::NTuple{N,Int})
     @assert M <= N
-    StridedView{T,N,M,typeof(arr)}(arr, 0, *(shp...), shp, strides)
+    StridedView{T,N,M,typeof(arr)}(arr, 0, prod(shp), shp, strides)
 end
 
 
