@@ -83,9 +83,6 @@ end
 
 # generic methods
 
-eltype{T}(a::ArrayView{T}) = T
-ndims{T,N}(a::ArrayView{T,N}) = N
-
 contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
 contrank{T,N}(a::Array{T,N}) = ContRank{N}
 contrank{T,N,M}(a::ArrayView{T,N,M}) = ContRank{M}
@@ -350,11 +347,11 @@ typealias SubsRange Union(Colon,Range)
 _offset(i::Colon) = 0
 _offset(i::Int) = i - 1
 _offset(i::Real) = to_index(i) - 1
-_offset(i::Ranges) = to_index(first(i)) - 1
+_offset(i::Range) = to_index(first(i)) - 1
 
 _step(i::Real) = 1
 _step(i::Colon) = 1
-_step(i::Ranges) = step(i)
+_step(i::Range) = step(i)
 
 # aoffset: offset w.r.t. the underlying array (i.e. parent)
 
@@ -469,17 +466,17 @@ end
 ##### Compute view shape #####
 
 _dim(a::AbstractArray, d::Int, r::Colon) = size(a, d)
-_dim(a::AbstractArray, d::Int, r::Ranges) = length(r)
+_dim(a::AbstractArray, d::Int, r::Range) = length(r)
 _dim(a::AbstractArray, d::Int, r::Real) = 1
 
 _dim{N}(siz::NTuple{N,Int}, d::Int, r::Colon) = d <= N ? siz[d] : 1
-_dim(siz::Tuple, d::Int, r::Ranges) = length(r)
+_dim(siz::Tuple, d::Int, r::Range) = length(r)
 _dim(siz::Tuple, d::Int, r::Real) = 1
 
 # 1D
 vshape(a::DenseArray, i::Real) = ()
 vshape(a::DenseArray, i::Colon) = (length(a),)
-vshape(a::DenseArray, i::Ranges) = (length(i),)
+vshape(a::DenseArray, i::Range) = (length(i),)
 
 # 2D
 
@@ -491,7 +488,7 @@ _succlen2(a::DenseArray) = prod(size(a)[2:end])::Int
 vshape(a::DenseArray, i1::Real, i2::Real) = ()
 vshape(a::DenseArray, i1::SubsRange, i2::Real) = (_dim(a,1,i1),)
 vshape(a::DenseArray, i1::Subs, i2::Colon) = (_dim(a,1,i1), _succlen2(a))
-vshape(a::DenseArray, i1::Subs, i2::Ranges) = (_dim(a,1,i1), length(i2))
+vshape(a::DenseArray, i1::Subs, i2::Range) = (_dim(a,1,i1), length(i2))
 
 # 3D
 
@@ -508,7 +505,7 @@ vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real) =
 
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Colon) = 
     (_dim(a,1,i1), _dim(a,2,i2), _succlen3(a))
-vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Ranges) = 
+vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Range) = 
     (_dim(a,1,i1), _dim(a,2,i2), length(i3))
 
 # 4D
@@ -529,7 +526,7 @@ vshape(a::DenseArray, i1::Subs, i2::Subs, i3::SubsRange, i4::Real) =
 
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Colon) = 
     (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), _succlen4(a))
-vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Ranges) = 
+vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Range) = 
     (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), length(i4))
 
 # multi-dimensional
@@ -541,7 +538,7 @@ _vshape{N}(siz::NTuple{N,Int}, i1::Real) = ()
 _vshape{N}(siz::NTuple{N,Int}, i1::Real, i2::Real...) = ()
 
 _vshape{N}(siz::NTuple{N,Int}, i1::Colon) = (prod(siz),)
-_vshape{N}(siz::NTuple{N,Int}, i1::Union(Range,Range1)) = (length(i1),)
+_vshape{N}(siz::NTuple{N,Int}, i1::Range) = (length(i1),)
 _vshape{N}(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
 
 
