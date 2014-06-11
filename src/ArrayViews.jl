@@ -340,12 +340,7 @@ end
 
 typealias Subs Union(Real,Colon,Range)
 typealias SubsNC Union(Real,Range)
-
-typealias Indexer Union(Real,Range1,Range)
-typealias CSubs Union(Real,Colon,Range1)
-typealias SubsRange Union(Colon,Range1,Range)
-typealias CSubsRange Union(Colon,Range1) 
-
+typealias SubsRange Union(Colon,Range)
 
 ##### Compute offset #####
 
@@ -557,7 +552,7 @@ vstrides(a::DenseArray, i::Subs) = (stride(a,1) * _step(i),)
 # 2D
 
 vstrides(a::ContiguousArray, i1::Subs, i2::Real) = (_step(i1),)
-vstrides(a::ContiguousArray, i1::Subs, i2::CSubs) = (_step(i1), stride(a,2))
+vstrides(a::ContiguousArray, i1::Subs, i2::Union(Colon,UnitRange)) = (_step(i1), stride(a,2))
 vstrides(a::ContiguousArray, i1::Subs, i2::Range) = (_step(i1), stride(a,2) * _step(i2))
 
 vstrides(a::DenseArray, i1::Subs, i2::Real) = (stride(a,1) * _step(i1),)
