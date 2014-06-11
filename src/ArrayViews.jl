@@ -337,8 +337,11 @@ end
 ## auxiliary union types to simplify method definition
 ## (for internal use only)
 
+
+typealias Subs Union(Real,Colon,Range)
+typealias SubsNC Union(Real,Range)
+
 typealias Indexer Union(Real,Range1,Range)
-typealias Subs Union(Real,Colon,Range1,Range)
 typealias CSubs Union(Real,Colon,Range1)
 typealias SubsRange Union(Colon,Range1,Range)
 typealias CSubsRange Union(Colon,Range1) 
@@ -385,56 +388,56 @@ typealias ContiguousMatrix{T} ContiguousArray{T,2}
 # 1D
 
 roffset(a::ContiguousArray, i::Colon) = 0
-roffset(a::ContiguousArray, i::Indexer) = _offset(i)
+roffset(a::ContiguousArray, i::SubsNC) = _offset(i)
 
-roffset{T}(a::StridedArray{T,1}, i::Colon) = 0
-roffset{T}(a::StridedArray{T,1}, i::Indexer) = _offset(i) * stride(a,1)
+roffset(a::StridedVector, i::Colon) = 0
+roffset(a::StridedVector, i::SubsNC) = _offset(i) * stride(a,1)
 
 # 2D
 
 roffset(a::ContiguousArray, i1::Colon, i2::Colon) = 0
-roffset(a::ContiguousArray, i1::Colon, i2::Indexer) = size(a,1) * _offset(i2)
-roffset(a::ContiguousArray, i1::Indexer, i2::Colon) = _offset(i1)
-roffset(a::ContiguousArray, i1::Indexer, i2::Indexer) = 
+roffset(a::ContiguousArray, i1::Colon, i2::SubsNC) = size(a,1) * _offset(i2)
+roffset(a::ContiguousArray, i1::SubsNC, i2::Colon) = _offset(i1)
+roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC) = 
     _offset(i1) + size(a,1) * _offset(i2)
 
-roffset{T}(a::StridedArray{T,2}, i1::Colon, i2::Colon) = 0
-roffset{T}(a::StridedArray{T,2}, i1::Colon, i2::Indexer) = _offset(i2) * stride(a,2)
-roffset{T}(a::StridedArray{T,2}, i1::Indexer, i2::Colon) = _offset(i1) * stride(a,1)
-roffset{T}(a::StridedArray{T,2}, i1::Indexer, i2::Indexer) = 
+roffset(a::StridedMatrix, i1::Colon, i2::Colon) = 0
+roffset(a::StridedMatrix, i1::Colon, i2::SubsNC) = _offset(i2) * stride(a,2)
+roffset(a::StridedMatrix, i1::SubsNC, i2::Colon) = _offset(i1) * stride(a,1)
+roffset(a::StridedMatrix, i1::SubsNC, i2::SubsNC) = 
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
 
 # 3D
 
 roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon) = 0
-roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Indexer) = 
+roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::SubsNC) = 
     size(a,1) * size(a,2) * _offset(i3)
-roffset(a::ContiguousArray, i1::Colon, i2::Indexer, i3::Colon) = 
+roffset(a::ContiguousArray, i1::Colon, i2::SubsNC, i3::Colon) = 
     size(a,1) * _offset(i2)
-roffset(a::ContiguousArray, i1::Colon, i2::Indexer, i3::Indexer) = 
+roffset(a::ContiguousArray, i1::Colon, i2::SubsNC, i3::SubsNC) = 
     size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
-roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Colon) = _offset(i1)
-roffset(a::ContiguousArray, i1::Indexer, i2::Colon, i3::Indexer) = 
+roffset(a::ContiguousArray, i1::SubsNC, i2::Colon, i3::Colon) = _offset(i1)
+roffset(a::ContiguousArray, i1::SubsNC, i2::Colon, i3::SubsNC) = 
     _offset(i1) + (size(a,1) * size(a,2) * _offset(i3))
-roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Colon) = 
+roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC, i3::Colon) = 
     _offset(i1) + size(a,1) * _offset(i2)
-roffset(a::ContiguousArray, i1::Indexer, i2::Indexer, i3::Indexer) = 
+roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC, i3::SubsNC) = 
     _offset(i1) + size(a,1) * (_offset(i2) + size(a,2) * _offset(i3))
 
 roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Colon) = 0
-roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Indexer) = 
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::SubsNC) = 
     _offset(i3) * stride(a,3)
-roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Colon) = 
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::SubsNC, i3::Colon) = 
     _offset(i2) * stride(a,2)
-roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::Indexer, i3::Indexer) = 
+roffset{T}(a::StridedArray{T,3}, i1::Colon, i2::SubsNC, i3::SubsNC) = 
     _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
-roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Colon) = 
+roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::Colon, i3::Colon) = 
     _offset(i1) * stride(a,1)
-roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Colon, i3::Indexer) = 
+roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::Colon, i3::SubsNC) = 
     _offset(i1) * stride(a,1) + _offset(i3) * stride(a,3)
-roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Colon) = 
+roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::Colon) = 
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
-roffset{T}(a::StridedArray{T,3}, i1::Indexer, i2::Indexer, i3::Indexer) = 
+roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::SubsNC) = 
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
 
 # General
