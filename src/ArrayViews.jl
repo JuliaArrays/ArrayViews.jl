@@ -109,7 +109,10 @@ parent(a::ContiguousView) = a.arr
 offset(a::ContiguousView) = a.offset
 length(a::ContiguousView) = a.len
 size(a::ContiguousView) = a.shp
-iscontiguous(a::ContiguousView) = true;
+
+iscontiguous(a::AbstractArray) = false
+iscontiguous(a::Array) = true
+iscontiguous(a::ContiguousView) = true
 
 strides{T}(a::ContiguousView{T,1}) = (1,)
 strides{T}(a::ContiguousView{T,2}) = (1, a.shp[1])
