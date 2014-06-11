@@ -9,7 +9,14 @@ export ContiguousArray, ContiguousVector, ContiguousMatrix
 export contiguous_view, strided_view, view, ellipview
 export iscontiguous, contiguousrank
 
-#### View types
+
+#################################################
+#
+#  View types
+#
+#################################################
+
+### Type definitions
 
 # type parameters:
 #   T: element type
@@ -72,7 +79,9 @@ function strided_view{T,N,M}(arr::Array{T}, shp::NTuple{N,Int},
 end
 
 
-#### Basic methods
+### Basic methods
+
+# generic methods
 
 eltype{T}(a::ArrayView{T}) = T
 ndims{T,N}(a::ArrayView{T,N}) = N
@@ -178,7 +187,11 @@ function _iscontiguous{N}(shp::NTuple{N,Int}, strides::NTuple{N,Int})
 end
 
 
-#### Indexing
+#################################################
+#
+#  Indexing
+#
+#################################################
 
 # Note: each subtype of ArrayView should implement uindex methods,
 # which getindex and setindex! rely on to locate the element position
@@ -306,7 +319,11 @@ function _uindex{T,N,L}(a::StridedView{T,N}, subs::NTuple{L,Int})
 end
 
 
-#### Subviews
+#################################################
+#
+#  Sub-views
+#
+#################################################
 
 # Note: construction of subviews involve several steps:
 #
@@ -326,7 +343,8 @@ typealias CSubs Union(Real,Colon,Range1)
 typealias SubsRange Union(Colon,Range1,Range)
 typealias CSubsRange Union(Colon,Range1) 
 
-### Compute offset
+
+##### Compute offset #####
 
 _offset(i::Colon) = 0
 _offset(i::Int) = i - 1
@@ -363,6 +381,8 @@ aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs.
 typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
 typealias ContiguousVector{T} ContiguousArray{T,1}
 typealias ContiguousMatrix{T} ContiguousArray{T,2}
+
+# 1D
 
 roffset(a::ContiguousArray, i::Colon) = 0
 roffset(a::ContiguousArray, i::Indexer) = _offset(i)
@@ -441,7 +461,7 @@ function _roffset{N}(ss::NTuple{N,Int}, subs::NTuple{N})
 end
 
 
-### Compute view shape
+##### Compute view shape #####
 
 _dim(a::AbstractArray, d::Int, r::Colon) = size(a, d)
 _dim(a::AbstractArray, d::Int, r::Ranges) = length(r)
@@ -520,7 +540,7 @@ _vshape{N}(siz::NTuple{N,Int}, i1::Union(Range,Range1)) = (length(i1),)
 _vshape{N}(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
 
 
-### Compute strides
+##### Compute strides #####
 
 # 1D
 
@@ -569,7 +589,7 @@ _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...
     tuple(ss[k] * _step(i1), _vstrides(ss, k+1, i2, i3, I...)...)
 
 
-### Make views
+##### View construction ######
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i::Subs) = 
     contiguous_view(parent(a), aoffset(a, i), shp)
@@ -620,8 +640,7 @@ view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...
     (shp = vshape(a, i1, i2, i3, i4, i5, I...); 
      make_view(a, restrict_crank(contrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
 
-
-### ellipview
+## ellipview
 
 ellipview{T}(a::DenseArray{T,2}, i::Integer) = view(a, :, i)
 ellipview{T}(a::DenseArray{T,3}, i::Integer) = view(a, :, :, i)
@@ -630,7 +649,7 @@ ellipview{T}(a::DenseArray{T,5}, i::Integer) = view(a, :, :, :, :, i)
 ellipview{T,N}(a::DenseArray{T,N}, i::Integer) = view(a, ntuple(N-1, i->Colon())..., i)
 
 
-#### Arithmetics on contiguous ranks
+##### Arithmetics on contiguous ranks #####
 
 for m=0:4, n=0:4
     global addrank
