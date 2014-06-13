@@ -6,7 +6,7 @@ import Base: convert, Ptr, pointer
 
 export ArrayView, ContiguousView, StridedView
 export ContiguousArray, ContiguousVector, ContiguousMatrix
-export contiguous_view, strided_view, view, ellipview
+export contiguous_view, strided_view, view, ellipview, reshape_view
 export iscontiguous, contiguousrank
 
 
@@ -641,6 +641,14 @@ view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
 view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) = 
     (shp = vshape(a, i1, i2, i3, i4, i5, I...); 
      make_view(a, restrict_crank(acontrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
+
+## reshape_view
+
+function reshape_view{N}(a::ContiguousArray, shp::NTuple{N,Int})
+    prod(shp) == length(a) || throw(DimensionMismatch("Inconsistent array size."))
+    contiguous_view(parent(a), offset(a), shp)
+end
+
 
 ## ellipview
 
