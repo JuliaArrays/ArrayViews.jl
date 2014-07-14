@@ -3,7 +3,7 @@ tests = ["viewtypes",
          "subviews"]
 
 for t in tests
-    fp = joinpath("test", "$(t).jl")
+    fp = string(t, ".jl")
     println("* running $fp ...")
     include(fp)
 end
