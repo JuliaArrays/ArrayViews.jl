@@ -9,6 +9,9 @@ export ContiguousArray, ContiguousVector, ContiguousMatrix
 export contiguous_view, strided_view, view, ellipview, reshape_view
 export iscontiguous, contiguousrank
 
+export @view
+
+include("viewmacro.jl")
 
 #################################################
 #
