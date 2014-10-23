@@ -41,7 +41,7 @@ abstract ArrayView{T,N,M} <: DenseArray{T,N}
 type ContRank{M} end
 
 # use ContiguousView when contiguousness can be determined statically
-immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
+immutable ContiguousView{T,N,Arr<:Array} <: ArrayView{T,N,N}
     arr::Arr
     offset::Int
     len::Int
@@ -58,7 +58,7 @@ contiguous_view(v::ContiguousView, offset::Int, shp::Dims) = contiguous_view(v.a
 
 # use StridedView otherwise
 # condition: M <= N
-immutable StridedView{T,N,M,Arr<:Array{T}} <: ArrayView{T,N,M}
+immutable StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
     arr::Arr
     offset::Int
     len::Int
