@@ -247,7 +247,7 @@ avparent = reshape(1:6912, (12, 12, 8, 6))
 # 1D --> 1D
 for sa in Any[Colon(), 1:36, 2:2:36]
     v1 = view(avparent, sa)
-    for sb in {4, (:), 1:length(v1), 3:2:length(v1)}
+    for sb in Any[4, Colon(), 1:length(v1), 3:2:length(v1)]
         test_arrview2(avparent, (sa,), (sb,))
     end
 end
