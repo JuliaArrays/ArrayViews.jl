@@ -9,7 +9,7 @@ const icolon = (:)
 const irange = 1:5
 const istepr = 1:2:5
 
-const tinds = {irealn, icolon, irange, istepr}
+const tinds = Any[irealn, icolon, irange, istepr]
 
 crank{M}(::Type{ContRank{M}}) = M
 crank(I::Subs...) = crank(contrank(I...))

@@ -245,7 +245,7 @@ end
 avparent = reshape(1:6912, (12, 12, 8, 6))
 
 # 1D --> 1D
-for sa in {(:), 1:36, 2:2:36}
+for sa in Any[Colon(), 1:36, 2:2:36]
     v1 = view(avparent, sa)
     for sb in {4, (:), 1:length(v1), 3:2:length(v1)}
         test_arrview2(avparent, (sa,), (sb,))
@@ -253,23 +253,23 @@ for sa in {(:), 1:36, 2:2:36}
 end
 
 # 2D --> 2D
-for sa1 in {(:), 1:10, 2:2:12}, sa2 = {(:), 1:12, 2:2:16}
+for sa1 in Any[Colon(), 1:10, 2:2:12], sa2 = Any[Colon(), 1:12, 2:2:16]
     v1 = view(avparent, sa1, sa2)
-    for sb1 in {4, (:), 2:size(v1,1), 2:2:size(v1,1)}, 
-        sb2 in {4, (:), 2:size(v1,2), 2:2:size(v1,2)}
+    for sb1 in Any[4, Colon(), 2:size(v1,1), 2:2:size(v1,1)], 
+        sb2 in Any[4, Colon(), 2:size(v1,2), 2:2:size(v1,2)]
         test_arrview2(avparent, (sa1, sa2), (sb1, sb2))
     end
 end
 
 # 3D --> 3D
-for sa1 in {(:), 1:10, 2:2:12}, 
-    sa2 in {(:), 1:10, 2:2:12}, 
-    sa3 in {(:), 1:7, 2:2:8}
+for sa1 in Any[Colon(), 1:10, 2:2:12], 
+    sa2 in Any[Colon(), 1:10, 2:2:12], 
+    sa3 in Any[Colon(), 1:7, 2:2:8]
     v1 = view(avparent, sa1, sa2, sa3)
     (d1, d2, d3) = size(v1)
-    for sb1 in {(:), 2:d1, 2:2:d1}, 
-        sb2 in {(:), 2:d2, 2:2:d2}, 
-        sb3 in {(:), 2:d3, 2:2:d3}
+    for sb1 in Any[Colon(), 2:d1, 2:2:d1], 
+        sb2 in Any[Colon(), 2:d2, 2:2:d2], 
+        sb3 in Any[Colon(), 2:d3, 2:2:d3]
         test_arrview2(avparent, (sa1, sa2, sa3), (sb1, sb2, sb3))
     end
 end
