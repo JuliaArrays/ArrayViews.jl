@@ -89,7 +89,7 @@ The package has two view types ``ContiguousView`` and ``StridedView`` (both are 
 - ``ContiguousView`` is used to represent a view of an array (or a part of an array) that has contiguous memory layout:
 
     ```julia
-    immutable ContiguousView{T,N,Arr<:Array{T}} <: ArrayView{T,N,N}
+    immutable ContiguousView{T,N,Arr<:Array} <: ArrayView{T,N,N}
         arr::Arr               # underlying array
         offset::Int            # offset relative to the arr's origin
         len::Int               # number of elements
@@ -102,7 +102,7 @@ The package has two view types ``ContiguousView`` and ``StridedView`` (both are 
 - ``StridedView`` is used to represent a view of an array (or a part of an array) that is not necessarily contiguous (*i.e.*, the contiguousness cannot be determined statically).
 
     ```julia
-    immutable StridedView{T,N,M,Arr<:Array{T}} <: ArrayView{T,N,M}
+    immutable StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
         arr::Arr                  # underlying array
         offset::Int               # offset relative to arr's origin
         len::Int                  # number of elements
