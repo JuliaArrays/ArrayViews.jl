@@ -18,7 +18,6 @@ A Julia package to explore a new system of array views.
 - A systematic approach to detect contiguous views (statically)
 - Views work with linear algebra functions
 
-
 ## Overview
 
 The key function in this package is ``view``. This function is similar to ``sub`` in Julia Base, except that it returns an view instance with more efficient representation:
@@ -31,6 +30,8 @@ view(a, :, 2)
 view(a, 1:2, 1:2:5, 4)
 view(a, 2, :, 3:6)
 ```
+
+The ``@view`` macro can be used to convert an array indexed with square bracket syntax to a call to the `view` function. For example, ``@view(a[:, 2])`` translates to ``view(a, :, 2)``.
 
 The ``view`` function returns a view of type ``ArrayView``. Here, ``ArrayView`` is an abstract type with two derived types (``ContiguousView`` and ``StridedView``), defined as:
 

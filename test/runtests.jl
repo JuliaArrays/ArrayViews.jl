@@ -1,6 +1,7 @@
 tests = ["viewtypes",  
          "contrank", 
-         "subviews"]
+         "subviews",
+         "viewmacro"]
 
 for t in tests
     fp = string(t, ".jl")
