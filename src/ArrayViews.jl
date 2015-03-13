@@ -9,7 +9,6 @@ export ContiguousArray, ContiguousVector, ContiguousMatrix
 export contiguous_view, strided_view, view, ellipview, reshape_view
 export iscontiguous, contiguousrank
 
-
 #################################################
 #
 #  View types
@@ -92,7 +91,11 @@ getdim{N}(s::NTuple{N,Int}, d::Integer) =
 size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d)
 
 pointer(a::ArrayView) = pointer(parent(a), offset(a)+1)
-convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
+if VERSION < v"0.4.0-dev+3768"
+    convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
+else
+    unsafe_convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
+end
 
 similar{T}(a::ArrayView{T}) = Array(T, size(a))
 similar{T}(a::ArrayView{T}, dims::Dims) = Array(T, dims)
