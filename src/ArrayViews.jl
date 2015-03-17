@@ -2,7 +2,12 @@ module ArrayViews
 
 import Base: eltype, ndims, size, length, stride, strides
 import Base: to_index, getindex, setindex!, parent, similar
-import Base: convert, Ptr, pointer
+import Base: Ptr, pointer
+if VERSION < v"0.4.0-dev+3768"
+    import Base: convert
+else
+    import Base: unsafe_convert
+end
 
 export ArrayView, ContiguousView, StridedView
 export ContiguousArray, ContiguousVector, ContiguousMatrix
