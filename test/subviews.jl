@@ -204,23 +204,6 @@ avparent = reshape(1.:1680., (8, 7, 6, 5))
 @test_arrview(avparent, 1:2:7, :,   3:5, 2:5)
 @test_arrview(avparent, 1:2:7, :, 1:2:5, 2:5)
 
-#### ellipview
-
-a = rand(10)
-@test isequal(view(a, 5), ellipview(a, 5))
-@test isequal(view(a, 2:3), ellipview(a, 2:3))
-a = rand(10,20)
-@test isequal(view(a, :, 5), ellipview(a, 5))
-@test isequal(view(a, :, 2:3), ellipview(a, 2:3))
-a = rand(10,20,30)
-@test isequal(view(a, :, :, 5), ellipview(a, 5))
-@test isequal(view(a, :, :, 2:3), ellipview(a, 2:3))
-a = rand(10,20,30,40)
-@test isequal(view(a, :, :, :, 5), ellipview(a, 5))
-@test isequal(view(a, :, :, :, 2:3), ellipview(a,2:3))
-
-
-
 #### Test Subviews of Views
 
 function print_subscripts(subs1, subs2)
@@ -289,21 +272,3 @@ for sa1 in Any[Colon(), 1:10, 2:2:12],
         test_arrview2(avparent, (sa1, sa2, sa3), (sb1, sb2, sb3))
     end
 end
-
-# Test Linear Algebra on views
-
-avparent = rand(7, 8)
-bvparent = rand(8, 5)
-
-_ab = avparent * bvparent
-
-@test _ab == view(avparent, :, :) * bvparent
-@test _ab == avparent * view(bvparent, :, :)
-@test _ab == view(avparent, :, :) * view(bvparent, :, :)
-
-for j = 1:size(bvparent,2)
-    @test_approx_eq _ab[:,j] view(avparent,:,:) * view(bvparent,:,j)
-end
-
-@test avparent[:, 2:2:7] * bvparent[1:3, 1:2:5] == view(avparent, :, 2:2:7) * view(bvparent, 1:3, 1:2:5)
-
