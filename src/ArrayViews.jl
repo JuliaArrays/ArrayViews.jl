@@ -9,10 +9,24 @@ else
     import Base: unsafe_convert
 end
 
-export ArrayView, ContiguousView, StridedView
-export ContiguousArray, ContiguousVector, ContiguousMatrix
-export contiguous_view, strided_view, view, ellipview, reshape_view
-export iscontiguous, contiguousrank
+export
+    ArrayView,
+    ContiguousView,
+    StridedView,
+    ContiguousArray,
+    ContiguousVector,
+    ContiguousMatrix,
+
+    contiguous_view,
+    strided_view,
+    view,
+    ellipview,
+    diagview,
+    rowvec_view,
+    flatten_view,
+    reshape_view,
+    iscontiguous,
+    contiguousrank
 
 ## source files
 
