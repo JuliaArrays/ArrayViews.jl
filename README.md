@@ -172,8 +172,8 @@ flatten_view(a)   # make a contiguous view of `a` as a vector
 reshape_view(a, shp)   # make a contiguous view of `a` of shape `shp`
                        # `a` needs to be contiguous here.
 
-rowvec_vec(a, i)   # make a view of `a[i,:]` as a strided vector.
-                   # `a` needs to be a matrix here (contiguous or strided)
+rowvec_view(a, i)   # make a view of `a[i,:]` as a strided vector.
+                    # `a` needs to be a matrix here (contiguous or strided)
 
 ellipview(a, i)     # make a view of the i-th slice of a
                     # e.g. `a` is a matrix => this is equiv. to `view(a, :, i)`
