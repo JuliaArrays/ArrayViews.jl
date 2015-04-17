@@ -38,11 +38,11 @@ iscontiguous{T,N}(a::StridedView{T,N,N}) = true;
 iscontiguous{T,N}(a::StridedView{T,N,N}) = true;
 iscontiguous{T,N}(a::StridedView{T,N}) = _iscontiguous(a.shp, a.strides)
 
-_iscontiguous(shp::(), strides::()) = true
-_iscontiguous(shp::(Int,), strides::(Int,)) = (strides[1] == 1)
-_iscontiguous(shp::(Int,Int), strides::(Int,Int)) =
+_iscontiguous(shp::NTuple{0,Int}, strides::NTuple{0,Int}) = true
+_iscontiguous(shp::NTuple{1,Int}, strides::NTuple{1,Int}) = (strides[1] == 1)
+_iscontiguous(shp::NTuple{2,Int}, strides::NTuple{2,Int}) =
     (strides[1] == 1 && strides[2] == shp[1])
-_iscontiguous(shp::(Int,Int,Int), strides::(Int,Int,Int)) =
+_iscontiguous(shp::NTuple{3,Int}, strides::NTuple{3,Int}) =
     (strides[1] == 1 &&
      strides[2] == shp[1] &&
      strides[3] == shp[1] * shp[2])

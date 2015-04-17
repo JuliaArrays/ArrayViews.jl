@@ -25,7 +25,7 @@ end
 
 restrict_crank{M,N}(::Type{ContRank{M}}, ::NTuple{N,Int}) = ContRank{min(M,N)}
 restrict_crank{N}(::Type{ContRank{0}}, ::NTuple{N,Int}) = ContRank{0}
-restrict_crank{N}(::Type{ContRank{N}}, ::()) = ContRank{0}
+restrict_crank{N}(::Type{ContRank{N}}, ::NTuple{0,Int}) = ContRank{0}
 
 ### contiguous rank computation based on indices
 
