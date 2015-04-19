@@ -31,6 +31,7 @@ export
 ## source files
 
 include("common.jl")
+include("indexing.jl")
 include("contiguousviews.jl")
 include("stridedviews.jl")
 include("contrank.jl")
