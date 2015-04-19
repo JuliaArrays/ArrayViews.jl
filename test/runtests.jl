@@ -1,5 +1,4 @@
-tests = ["stridedviews",
-         "arrviews",
+tests = ["arrviews",
          "contrank",
          "subviews",
          "linalg",
