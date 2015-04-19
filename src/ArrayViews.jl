@@ -12,9 +12,12 @@ end
 export
     StridedArrayView,
     ArrayView,
-    UnsafeArrayView,
     ContiguousView,
     StridedView,
+    UnsafeArrayView,
+    UnsafeContiguousView,
+    UnsafeStridedView,
+
     ContiguousArray,
     ContiguousVector,
     ContiguousMatrix,
@@ -22,6 +25,7 @@ export
     contiguous_view,
     strided_view,
     view,
+    unsafe_view,
     ellipview,
     diagview,
     rowvec_view,
@@ -39,5 +43,7 @@ include("indexing.jl")
 include("contrank.jl")
 include("subviews.jl")
 include("convenience.jl")
+
+include("deprecates.jl")
 
 end  # module ArrayViews

@@ -253,36 +253,70 @@ _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...
 ##### View construction ######
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i::Subs) =
-    contiguous_view(parent(a), aoffset(a, i), shp)
+    ContiguousView(parent(a), aoffset(a, i), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3, i4), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i::Subs) =
-    strided_view(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
+    StridedView(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
+    StridedView(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
+    StridedView(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
+    StridedView(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
+    StridedView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
 
-view(a::Array) = contiguous_view(a, size(a))
+
+make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i::Subs) =
+    UnsafeContiguousView(parent(a), aoffset(a, i), shp)
+
+make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
+    UnsafeContiguousView(parent(a), aoffset(a, i1, i2), shp)
+
+make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
+    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3), shp)
+
+make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3, i4), shp)
+
+make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
+
+make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i::Subs) =
+    UnsafeStridedView(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
+
+make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
+    UnsafeStridedView(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
+
+make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
+    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
+
+make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
+
+make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
+
+
+##### Interface
+
+view(a::Array) = ContiguousView(a, size(a))
 view(a::ArrayView) = a
 
 view(a::DenseArray, i::Subs) =
@@ -300,3 +334,23 @@ view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
 view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     (shp = vshape(a, i1, i2, i3, i4, i5, I...);
      make_view(a, restrict_crank(acontrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
+
+
+unsafe_view(a::Array) = ContiguousView(a, size(a))
+unsafe_view(a::ArrayView) = a
+
+unsafe_view(a::DenseArray, i::Subs) =
+    (shp = vshape(a, i); make_unsafe_view(a, restrict_crank(acontrank(a, i), shp), shp, i))
+
+unsafe_view(a::DenseArray, i1::Subs, i2::Subs) =
+    (shp = vshape(a, i1, i2); make_unsafe_view(a, restrict_crank(acontrank(a, i1, i2), shp), shp, i1, i2))
+
+unsafe_view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) =
+    (shp = vshape(a, i1, i2, i3); make_unsafe_view(a, restrict_crank(acontrank(a, i1, i2, i3), shp), shp, i1, i2, i3))
+
+unsafe_view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+    (shp = vshape(a, i1, i2, i3, i4); make_unsafe_view(a, restrict_crank(acontrank(a, i1, i2, i3, i4), shp), shp, i1, i2, i3, i4))
+
+unsafe_view(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+    (shp = vshape(a, i1, i2, i3, i4, i5, I...);
+     make_unsafe_view(a, restrict_crank(acontrank(a, i1, i2, i3, i4, i5, I...), shp), shp, i1, i2, i3, i4, i5, I...))
