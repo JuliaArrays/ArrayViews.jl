@@ -60,30 +60,30 @@ similar{T}(a::ArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
 
 # getindex
 
-@inline getindex(a::ArrayView) = getindex(a.arr, a.offset + 1)
+getindex(a::ArrayView) = getindex(a.arr, a.offset + 1)
 
-@inline getindex(a::ArrayView, i::Int) = getindex(a.arr, uindex(a, i))
-@inline getindex(a::ArrayView, i1::Int, i2::Int) = getindex(a.arr, uindex(a, i1, i2))
-@inline getindex(a::ArrayView, i1::Int, i2::Int, i3::Int) =
+getindex(a::ArrayView, i::Int) = getindex(a.arr, uindex(a, i))
+getindex(a::ArrayView, i1::Int, i2::Int) = getindex(a.arr, uindex(a, i1, i2))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int) =
     getindex(a.arr, uindex(a, i1, i2, i3))
-@inline getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int) =
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int) =
     getindex(a.arr, uindex(a, i1, i2, i3, i4))
-@inline getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
     getindex(a.arr, uindex(a, i1, i2, i3, i4, i5))
-@inline getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int) =
-    getindex(a.arr, uindex(a, i1, i2, i3, i4, i5, i6))
+getindex(a::ArrayView, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int, I::Int...) =
+    getindex(a.arr, uindex(a, i1, i2, i3, i4, i5, i6, I...))
 
-@inline getindex(a::ArrayView, i::Real) = getindex(a, to_index(i))
-@inline getindex(a::ArrayView, i1::Real, i2::Real) = getindex(a, to_index(i1), to_index(i2))
-@inline getindex(a::ArrayView, i1::Real, i2::Real, i3::Real) =
+getindex(a::ArrayView, i::Real) = getindex(a, to_index(i))
+getindex(a::ArrayView, i1::Real, i2::Real) = getindex(a, to_index(i1), to_index(i2))
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real) =
     getindex(a, to_index(i1), to_index(i2), to_index(i3))
-@inline getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real) =
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real) =
     getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4))
-@inline getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real) =
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real) =
     getindex(a, to_index(i1), to_index(i2), to_index(i3), to_index(i4), to_index(i5))
-@inline getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real, i6::Real) =
+getindex(a::ArrayView, i1::Real, i2::Real, i3::Real, i4::Real, i5::Real, i6::Real, I::Int...) =
     getindex(a, to_index(i1), to_index(i2), to_index(i3),
-                to_index(i4), to_index(i5), to_index(i6))
+                to_index(i4), to_index(i5), to_index(i6), I...)
 
 # setindex!
 
