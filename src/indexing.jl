@@ -104,59 +104,39 @@ getindex(a::ArrayView) = uget(a, 1)
 
 getindex(a::ContViews, i::Int) = uget(a, i)
 getindex(a::ContViews, i1::Int, i2::Int) = uget(a, sub2ind(size(a), i1, i2))
-getindex(a::ContViews, i1::Int, i2::Int, i3::Int) =
-    uget(a, sub2ind(size(a), i1, i2, i3))
-getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int) =
-    uget(a, sub2ind(size(a), i1, i2, i3, i4))
-getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
-    uget(a, sub2ind(size(a), i1, i2, i3, i4, i5))
+getindex(a::ContViews, i1::Int, i2::Int, i3::Int) = uget(a, sub2ind(size(a), i1, i2, i3))
+getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int) = uget(a, sub2ind(size(a), i1, i2, i3, i4))
+getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uget(a, sub2ind(size(a), i1, i2, i3, i4, i5))
 
 getindex(a::NonContViews, i::Int) = uget(a, uindex(a, i))
 getindex(a::NonContViews, i1::Int, i2::Int) = uget(a, uindex(a, i1, i2))
-getindex(a::NonContViews, i1::Int, i2::Int, i3::Int) =
-    uget(a, uindex(a, i1, i2, i3))
-getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int) =
-    uget(a, uindex(a, i1, i2, i3, i4))
-getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
-    uget(a, uindex(a, i1, i2, i3, i4, i5))
+getindex(a::NonContViews, i1::Int, i2::Int, i3::Int) = uget(a, uindex(a, i1, i2, i3))
+getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int) = uget(a, uindex(a, i1, i2, i3, i4))
+getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uget(a, uindex(a, i1, i2, i3, i4, i5))
 
 getindex(a::StridedArrayView, i::Integer) = getindex(a, idx(i))
 getindex(a::StridedArrayView, i1::Integer, i2::Integer) = getindex(a, idx(i1), idx(i2))
-getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer) =
-    getindex(a, idx(i1), idx(i2), idx(i3))
-getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer) =
-    getindex(a, idx(i1), idx(i2), idx(i3), idx(i4))
-getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) =
-    getindex(a, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
+getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer) = getindex(a, idx(i1), idx(i2), idx(i3))
+getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer) = getindex(a, idx(i1), idx(i2), idx(i3), idx(i4))
+getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) = getindex(a, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
 
 
 ### setindex!
 
 setindex!{T}(a::ContViews{T}, v, i::Int) = uset!(a, convert(T, v), i)
-setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int) =
-    uset!(a, convert(T, v), sub2ind(size(a), i1, i2))
-setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int) =
-    uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3))
-setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) =
-    uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4))
-setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
-    uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4, i5))
+setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int) = uset!(a, convert(T, v), sub2ind(size(a), i1, i2))
+setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int) = uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3))
+setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) = uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4))
+setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4, i5))
 
 setindex!{T}(a::NonContViews{T}, v, i::Int) = uset!(a, convert(T, v), uindex(a, i))
-setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int) =
-    uset!(a, convert(T, v), uindex(a, i1, i2))
-setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int) =
-    uset!(a, convert(T, v), uindex(a, i1, i2, i3))
-setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) =
-    uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4))
-setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
-    uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4, i5))
+setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int) = uset!(a, convert(T, v), uindex(a, i1, i2))
+setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int) = uset!(a, convert(T, v), uindex(a, i1, i2, i3))
+setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) = uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4))
+setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4, i5))
 
 setindex!(a::StridedArrayView, v, i::Integer) = setindex!(a, v, idx(i))
 setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer) = setindex!(a, v, idx(i1), idx(i2))
-setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer) =
-    setindex!(a, v, idx(i1), idx(i2), idx(i3))
-setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer) =
-    setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4))
-setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) =
-    setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
+setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer) = setindex!(a, v, idx(i1), idx(i2), idx(i3))
+setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer) = setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4))
+setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) = setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
