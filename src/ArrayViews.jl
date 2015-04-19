@@ -31,8 +31,8 @@ export
 ## source files
 
 include("common.jl")
-include("indexing.jl")
 include("arrviews.jl")
+include("indexing.jl")
 include("contrank.jl")
 include("subviews.jl")
 include("convenience.jl")

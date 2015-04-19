@@ -67,15 +67,8 @@ stride{T,N}(a::ContiguousView{T,N}, d::Integer) =
      d <= N ? *(a.shp[1:d-1]...) : length(a))::Int
 
 
-### Indexing
-
-uindex{T,N}(a::ArrayView{T,N,N}, i::Int) = a.offset + i
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int) =
-    a.offset + sub2ind(size(a), i1, i2)
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int) =
-    a.offset + sub2ind(size(a), i1, i2, i3)
-uindex{T,N}(a::ArrayView{T,N,N}, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) =
-    a.offset + sub2ind(size(a), i1, i2, i3, i4, I...)
+uget(a::ContiguousView, i::Int) = getindex(a.arr, a.offset + i)
+uset!{T}(a::ContiguousView{T}, v::T, i::Int) = setindex!(a.arr, v, a.offset + i)
 
 
 # use StridedView otherwise
@@ -137,59 +130,5 @@ function _iscontiguous{N}(shp::NTuple{N,Int}, strides::NTuple{N,Int})
     return true
 end
 
-
-### Indexing
-
-uindex{T}(a::StridedView{T,0}, i::Int) = 1
-
-uindex{T}(a::StridedView{T,1,0}, i::Int) = a.offset + 1 + (i-1)*a.strides[1]
-uindex{T}(a::StridedView{T,1,1}, i::Int) = a.offset + i
-uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int) =
-    (i2 == 1 || throw(BoundsError()); uindex(a, i1))
-uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int, i3::Int) =
-    ((i2 == i3 == 1) || throw(BoundsError()); uindex(a, i1))
-
-uindex{T}(a::StridedView{T,2}, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T}(a::StridedView{T,2,0}, i1::Int, i2::Int) =
-    a.offset + 1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2,1}, i1::Int, i2::Int) =
-    a.offset + i1 + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2,2}, i1::Int, i2::Int) =
-    a.offset + i1 + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2}, i1::Int, i2::Int, i3::Int) =
-    (i3 == 1 || throw(BoundsError()); uindex(a, i1, i2))
-
-uindex{T}(a::StridedView{T,3}, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int) =
-    uindex(a, i1, ind2sub((a.shp[2], a.shp[3]), i2)...)
-uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int, i3::Int) =
-    a.offset + i1 + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
-uindex{T}(a::StridedView{T,3,0}, i1::Int, i2::Int, i3::Int) =
-    a.offset + 1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
-
-uindex(a::StridedView, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int) =
-    uindex(a, i1, ind2sub(a.shp[2:N], i2)...)
-uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int, i3::Int) =
-    uindex(a, i1, i2, ind2sub(a.shp[3:N], i3)...)
-uindex{T}(a::StridedView{T}, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) =
-    _uindex(a, tuple(i1, i2, i3, i4, I...))::Int
-
-function _uindex{T,N,L}(a::StridedView{T,N}, subs::NTuple{L,Int})
-    if L == N
-        s = a.offset + 1
-        for i = 1:N
-            s += (subs[i] - 1) * a.strides[i]
-        end
-        return s
-
-    elseif L < N
-        return uindex(a, tuple(subs[1:L-1]..., ind2sub(a.shp[L+1:N], subs[L])...))
-
-    else # L > N
-        for i = N+1:L
-            subs[i] == 1 || throw(BoundsError())
-        end
-        return uindex(a, subs[1:N]...)
-    end
-end
+uget(a::StridedView, i::Int) = getindex(a.arr, a.offset + i)
+uset!{T}(a::StridedView{T}, v::T, i::Int) = setindex!(a.arr, v, a.offset + i)

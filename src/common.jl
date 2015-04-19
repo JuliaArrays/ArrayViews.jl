@@ -17,9 +17,9 @@
 # linear indexing and type-stable subview
 # calculation.
 #
-abstract AbstractArrayView{T,N} <: DenseArray{T,N}
-abstract ArrayView{T,N,M} <: AbstractArrayView{T,N}
-abstract UnsafeArrayView{T,N,M} <: AbstractArrayView{T,N}
+abstract StridedArrayView{T,N,M} <: DenseArray{T,N}
+abstract ArrayView{T,N,M} <: StridedArrayView{T,N,M}
+abstract UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M}
 
 # a type for indicating contiguous rank (statically)
 type ContRank{M} end
@@ -37,12 +37,10 @@ typealias SubsRange Union(Colon,Range)
 iscontiguous(a::AbstractArray) = false
 iscontiguous(a::Array) = true
 
-contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
-contiguousrank{T,N,M}(a::UnsafeArrayView{T,N,M}) = M
+contiguousrank{T,N,M}(a::StridedArrayView{T,N,M}) = M
 
 contrank{T,N}(a::Array{T,N}) = ContRank{N}
-contrank{T,N,M}(a::ArrayView{T,N,M}) = ContRank{M}
-contrank{T,N,M}(a::UnsafeArrayView{T,N,M}) = ContRank{M}
+contrank{T,N,M}(a::StridedArrayView{T,N,M}) = ContRank{M}
 
 getdim{N}(s::NTuple{N,Int}, d::Integer) = (1 <= d <= N ? s[d] : 1)
 size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d)
@@ -53,13 +51,13 @@ pointer(a::ArrayView) = pointer(parent(a), offset(a)+1)
 pointer(a::UnsafeArrayView) = a.ptr
 
 if VERSION < v"0.4.0-dev+3768"
-    convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
+    convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
 else
-    unsafe_convert{T}(::Type{Ptr{T}}, a::ArrayView{T}) = pointer(a)
+    unsafe_convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
 end
 
 ## Create similar array
 
-similar{T}(a::AbstractArrayView{T}) = Array(T, size(a))
-similar{T}(a::AbstractArrayView{T}, dims::Dims) = Array(T, dims)
-similar{T}(a::AbstractArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
+similar{T}(a::StridedArrayView{T}) = Array(T, size(a))
+similar{T}(a::StridedArrayView{T}, dims::Dims) = Array(T, dims)
+similar{T}(a::StridedArrayView{T}, ::Type{T}, dims::Dims) = Array(T, dims)
