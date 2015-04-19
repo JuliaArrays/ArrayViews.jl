@@ -10,7 +10,9 @@ else
 end
 
 export
+    StridedArrayView,
     ArrayView,
+    UnsafeArrayView,
     ContiguousView,
     StridedView,
     ContiguousArray,
