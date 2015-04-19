@@ -86,33 +86,25 @@ Formally, when ``v`` is a view with contiguous rank ``M``, then ``view(v, :, :, 
 
 #### View Types
 
-The package has two view types ``ContiguousView`` and ``StridedView`` (both are sub types of ``ArrayView``). They are respectively defined as follows:
+The package provide a hierarchy of view types (defined as follows):
 
-- ``ContiguousView`` is used to represent a view of an array (or a part of an array) that has contiguous memory layout:
+```julia
+# T: the element type
+# N: the number of dimensions
+# M: the contiguous rank
 
-    ```julia
-    immutable ContiguousView{T,N,Arr<:Array} <: ArrayView{T,N,N}
-        arr::Arr               # underlying array
-        offset::Int            # offset relative to the arr's origin
-        len::Int               # number of elements
-        shp::NTuple{N,Int}     # view shape
-    end
-    ```
-    Here, ``T`` is the element type, ``N`` is the number of dimensions, and ``Arr`` is the type of the underlying array. Obviously, the contiguous rank of a contiguous view is ``N``.
+abstract StridedArrayView{T,N,M} <: DenseArray{T,N}
+abstract ArrayView{T,N,M} <: StridedArrayView{T,N,M}
+abstract UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M}
 
+immutable ContiguousView{T,N,Arr<:Array} <: ArrayView{T,N,N}
+immutable StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
 
-- ``StridedView`` is used to represent a view of an array (or a part of an array) that is not necessarily contiguous (*i.e.*, the contiguousness cannot be determined statically).
+immutable UnsafeContiguousView{T,N} <: UnsafeArrayView{T,N,N}
+immutable UnsafeStridedView{T,N,M} <: UnsafeArrayView{T,N,M}
+```
 
-    ```julia
-    immutable StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
-        arr::Arr                  # underlying array
-        offset::Int               # offset relative to arr's origin
-        len::Int                  # number of elements
-        shp::NTuple{N,Int}        # view shape
-        strides::NTuple{N,Int}    # strides of all dimensions
-    end
-    ```
-    Here, ``M`` is the contiguous rank.
+Here, an instance of ``ArrayView`` maintains a reference to the underlying array, and is generally safe to use in most cases. An instance of ``UnsafeArrayView`` maintains a raw pointer, and should only be used within a local scope (as it does not guarantee that the source array remains valid if it is passed out of a function).
 
 
 #### View Types in Action
@@ -122,6 +114,8 @@ The following example illustrates how contiguous rank is used to determine view 
 ```julia
 a = rand(m, n)
 
+# safe views
+
 v0 = view(a, :)         # of type ContiguousView{Float64, 1}
 
 u1 = view(a, a:b, :)    # of type StridedView{Float64, 2, 1}
@@ -129,6 +123,16 @@ u2 = view(u1, :, i)     # of type ContiguousView{Float64, 1}
 
 v1 = view(a, a:2:b, :)  # of type StridedView{Float64, 2, 0}
 v2 = view(v1, :, i)     # of type StridedView{Float64, 1, 0}
+
+# unsafe views
+
+v0 = unsafe_view(a, :)         # of type UnsafeContiguousView{Float64, 1}
+
+u1 = unsafe_view(a, a:b, :)    # of type UnsafeStridedView{Float64, 2, 1}
+u2 = unsafe_view(u1, :, i)     # of type UnsafeContiguousView{Float64, 1}
+
+v1 = unsafe_view(a, a:2:b, :)  # of type UnsafeStridedView{Float64, 2, 0}
+v2 = unsafe_view(v1, :, i)     # of type UnsafeStridedView{Float64, 1, 0}
 ```
 
 Four kinds of indexers are supported, integer, range (*e.g.* ``a:b``), stepped range (*e.g.* ``a:b:c``), and colon (*i.e.*, ``:``).
