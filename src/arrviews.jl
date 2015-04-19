@@ -25,8 +25,6 @@ offset(a::ContiguousView) = a.offset
 length(a::ContiguousView) = a.len
 size(a::ContiguousView) = a.shp
 
-iscontiguous(a::AbstractArray) = false
-iscontiguous(a::Array) = true
 iscontiguous(a::ContiguousView) = true
 
 strides{T}(a::ContiguousView{T,1}) = (1,)

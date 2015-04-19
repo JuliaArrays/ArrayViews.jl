@@ -34,6 +34,9 @@ typealias SubsRange Union(Colon,Range)
 
 ### Common methods
 
+iscontiguous(a::AbstractArray) = false
+iscontiguous(a::Array) = true
+
 contiguousrank{T,N,M}(a::ArrayView{T,N,M}) = M
 contiguousrank{T,N,M}(a::UnsafeArrayView{T,N,M}) = M
 
