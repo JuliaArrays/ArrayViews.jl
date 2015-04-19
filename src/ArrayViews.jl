@@ -32,6 +32,7 @@ export
 
 include("common.jl")
 include("arrviews.jl")
+include("layout.jl")
 include("indexing.jl")
 include("contrank.jl")
 include("subviews.jl")

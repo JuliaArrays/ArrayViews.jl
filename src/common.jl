@@ -37,18 +37,17 @@ typealias SubsRange Union(Colon,Range)
 iscontiguous(a::AbstractArray) = false
 iscontiguous(a::Array) = true
 
+offset(a::Array) = 0
+
 contiguousrank{T,N,M}(a::StridedArrayView{T,N,M}) = M
 
 contrank{T,N}(a::Array{T,N}) = ContRank{N}
 contrank{T,N,M}(a::StridedArrayView{T,N,M}) = ContRank{M}
 
 getdim{N}(s::NTuple{N,Int}, d::Integer) = (1 <= d <= N ? s[d] : 1)
-size{T,N}(a::ArrayView{T,N}, d::Integer) = getdim(size(a), d)
+size{T,N}(a::StridedArrayView{T,N}, d::Integer) = getdim(size(a), d)
 
-## Get pointer
-
-pointer(a::ArrayView) = pointer(parent(a), offset(a)+1)
-pointer(a::UnsafeArrayView) = a.ptr
+## pointer conversion
 
 if VERSION < v"0.4.0-dev+3768"
     convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)

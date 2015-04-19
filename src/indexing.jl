@@ -1,8 +1,4 @@
 
-typealias ContViews{T,N} ContiguousView{T,N}
-typealias NonContViews{T,N,M} StridedView{T,N,M}
-
-
 ### Common indexing functions
 
 # Note: each array view type should implement
