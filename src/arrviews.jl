@@ -52,18 +52,42 @@ function StridedView{T,N,M}(arr::Array{T}, shp::NTuple{N,Int},
     StridedView{T,N,M,typeof(arr)}(arr, 0, prod(shp), shp, strides)
 end
 
+immutable UnsafeStridedView{T,N,M} <: UnsafeArrayView{T,N,M}
+    ptr::Ptr{T}
+    len::Int
+    shp::NTuple{N,Int}
+    strides::NTuple{N,Int}
+end
+
+function UnsafeStridedView{T,N,M}(ptr::Ptr{T}, shp::NTuple{N,Int},
+                                  ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M < N
+    UnsafeStridedView{T,N,M}(ptr, prod(shp), shp, strides)
+end
+
+function UnsafeStridedView{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int},
+                                  ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M < N
+    UnsafeStridedView(pointer(arr, offset+1), shp, ContRank{M}, strides)
+end
+
+function UnsafeStridedView{T,N,M}(arr::Array{T}, shp::NTuple{N,Int},
+                                  ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M < N
+    UnsafeStridedView(pointer(arr), shp, ContRank{M}, strides)
+end
+
+
 
 ### basic methods
 
 parent(a::ArrayView) = a.arr
-length(a::ArrayView) = a.len
-size(a::ArrayView) = a.shp
 
 uget(a::ArrayView, i::Int) = getindex(a.arr, a.offset + i)
 uset!{T}(a::ArrayView{T}, v::T, i::Int) = setindex!(a.arr, v, a.offset + i)
 
 uget(a::UnsafeArrayView, i::Int) = unsafe_load(a.ptr, i)
-uset!{T}(a::ArrayView{T}, v::T, i::Int) = unsafe_store!(a.ptr, v, i)
+uset!{T}(a::UnsafeArrayView{T}, v::T, i::Int) = unsafe_store!(a.ptr, v, i)
 
 offset(a::ArrayView) = a.offset
 pointer(a::ArrayView) = pointer(parent(a), a.offset+1)

@@ -12,9 +12,12 @@ end
 export
     StridedArrayView,
     ArrayView,
-    UnsafeArrayView,
     ContiguousView,
     StridedView,
+    UnsafeArrayView,
+    UnsafeContiguousView,
+    UnsafeStridedView,
+
     ContiguousArray,
     ContiguousVector,
     ContiguousMatrix,

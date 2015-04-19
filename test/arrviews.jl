@@ -128,10 +128,10 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
 end
 
 
-function verify_cview{T,N}(src::Array{T}, o::Int, siz::NTuple{N,Int})
+function verify_cview{T,N}(VType, src::Array{T}, o::Int, siz::NTuple{N,Int})
     @assert o + prod(siz) <= length(src)
-    v = ContiguousView(src, o, siz)
-    @test isa(v, ContiguousView{T,N})
+    v = VType(src, o, siz)
+    @test isa(v, VType{T,N})
     @test eltype(v) == T
     @test ndims(v) == N
     @test size(v) == siz
@@ -160,7 +160,7 @@ function verify_cview{T,N}(src::Array{T}, o::Int, siz::NTuple{N,Int})
     end
 end
 
-function verify_sview{T,N,M}(src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int})
+function verify_sview{T,N,M}(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int})
     # ss: strides
     @assert ss[1] >= 1
     for d = 2:N
@@ -168,8 +168,8 @@ function verify_sview{T,N,M}(src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type
     end
 
     @assert o + ss[N] * siz[N]  <= length(src)
-    v = StridedView(src, o, siz, cr, ss)
-    @test isa(v, StridedView{T,N,M})
+    v = VType(src, o, siz, cr, ss)
+    @test isa(v, VType{T,N,M})
     @test eltype(v) == T
     @test ndims(v) == N
     @test size(v) == siz
@@ -198,14 +198,29 @@ src = Float64[1.0 * x for x = 1:4096]
 for N = 1:5
     println("    -- testing ContiguousView{T,$N}")
     siz = tuple((6:-1:(6-N+1))...)
-    verify_cview(src, 0, siz)
-    verify_cview(src, 8, siz)
+    verify_cview(ContiguousView, src, 0, siz)
+    verify_cview(ContiguousView, src, 8, siz)
+end
+
+for N = 1:5
+    println("    -- testing UnsafeContiguousView{T,$N}")
+    siz = tuple((6:-1:(6-N+1))...)
+    verify_cview(UnsafeContiguousView, src, 0, siz)
+    verify_cview(UnsafeContiguousView, src, 8, siz)
 end
 
 for N = 1:5, M = 0:N-1
     println("    -- testing StridedView{T,$N,$M}")
     siz = tuple((6:-1:(6-N+1))...)
     ss = strides_e1(siz, M)
-    verify_sview(src, 0, siz, ContRank{M}, ss)
-    verify_sview(src, 8, siz, ContRank{M}, ss)
+    verify_sview(StridedView, src, 0, siz, ContRank{M}, ss)
+    verify_sview(StridedView, src, 8, siz, ContRank{M}, ss)
+end
+
+for N = 1:5, M = 0:N-1
+    println("    -- testing UnsafeStridedView{T,$N,$M}")
+    siz = tuple((6:-1:(6-N+1))...)
+    ss = strides_e1(siz, M)
+    verify_sview(UnsafeStridedView, src, 0, siz, ContRank{M}, ss)
+    verify_sview(UnsafeStridedView, src, 8, siz, ContRank{M}, ss)
 end
