@@ -14,60 +14,87 @@ typealias NonContViews{T,N,M} StridedView{T,N,M}
 idx(i::Integer) = convert(Int, i)::Int
 idx(i::Int) = i
 
-### uindex
 
-uindex{T}(a::StridedView{T,1,0}, i::Int) = 1 + (i-1)*a.strides[1]
-uindex{T}(a::StridedView{T,1,1}, i::Int) = i
-uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int) =
-    (i2 == 1 || throw(BoundsError()); uindex(a, i1))
-uindex{T}(a::StridedView{T,1}, i1::Int, i2::Int, i3::Int) =
-    ((i2 == i3 == 1) || throw(BoundsError()); uindex(a, i1))
+### uindex (for non-contiguous views)
 
-uindex{T}(a::StridedView{T,2}, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T}(a::StridedView{T,2,0}, i1::Int, i2::Int) =
-    1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2,1}, i1::Int, i2::Int) =
-    i1 + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2,2}, i1::Int, i2::Int) =
-    i1 + (i2-1)*a.strides[2]
-uindex{T}(a::StridedView{T,2}, i1::Int, i2::Int, i3::Int) =
-    (i3 == 1 || throw(BoundsError()); uindex(a, i1, i2))
+xoffset0(s::NTuple{1,Int}, i1::Int) = (i1-1) * s[1]
+xoffset0(s::NTuple{2,Int}, i1::Int, i2::Int) = (i1-1) * s[1] + (i2-1) * s[2]
+xoffset0(s::NTuple{3,Int}, i1::Int, i2::Int, i3::Int) =
+    (i1-1) * s[1] + (i2-1) * s[2] + (i3-1) * s[3]
+xoffset0(s::NTuple{4,Int}, i1::Int, i2::Int, i3::Int, i4::Int) =
+    (i1-1) * s[1] + (i2-1) * s[2] + (i3-1) * s[3] + (i4-1) * s[4]
+xoffset0(s::NTuple{5,Int}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
+    (i1-1) * s[1] + (i2-1) * s[2] + (i3-1) * s[3] + (i4-1) * s[4] + (i5-1) * s[5]
 
-uindex{T}(a::StridedView{T,3}, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int) =
-    uindex(a, i1, ind2sub((a.shp[2], a.shp[3]), i2)...)
-uindex{T}(a::StridedView{T,3}, i1::Int, i2::Int, i3::Int) =
-    i1 + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
-uindex{T}(a::StridedView{T,3,0}, i1::Int, i2::Int, i3::Int) =
-    1 + (i1-1)*a.strides[1] + (i2-1)*a.strides[2] + (i3-1)*a.strides[3]
-
-uindex(a::StridedView, i::Int) = uindex(a, ind2sub(size(a), i)...)
-uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int) =
-    uindex(a, i1, ind2sub(a.shp[2:N], i2)...)
-uindex{T,N}(a::StridedView{T,N}, i1::Int, i2::Int, i3::Int) =
-    uindex(a, i1, i2, ind2sub(a.shp[3:N], i3)...)
-uindex{T}(a::StridedView{T}, i1::Int, i2::Int, i3::Int, i4::Int, I::Int...) =
-    _uindex(a, tuple(i1, i2, i3, i4, I...))::Int
+# for cases with s[1] == 1
+#
+xoffset(s::NTuple{1,Int}, i1::Int) = (i1-1)
+xoffset(s::NTuple{2,Int}, i1::Int, i2::Int) = (i1-1) + (i2-1) * s[2]
+xoffset(s::NTuple{3,Int}, i1::Int, i2::Int, i3::Int) =
+    (i1-1) + (i2-1) * s[2] + (i3-1) * s[3]
+xoffset(s::NTuple{4,Int}, i1::Int, i2::Int, i3::Int, i4::Int) =
+    (i1-1) + (i2-1) * s[2] + (i3-1) * s[3] + (i4-1) * s[4]
+xoffset(s::NTuple{5,Int}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
+    (i1-1) + (i2-1) * s[2] + (i3-1) * s[3] + (i4-1) * s[4] + (i5-1) * s[5]
 
 
-function _uindex{T,N,L}(a::StridedView{T,N}, subs::NTuple{L,Int})
-    if L == N
-        s = 1
-        for i = 1:N
-            s += (subs[i] - 1) * a.strides[i]
-        end
-        return s
+# 1D
 
-    elseif L < N
-        return uindex(a, tuple(subs[1:L-1]..., ind2sub(a.shp[L+1:N], subs[L])...))
+uindex{T}(a::NonContViews{T,1}, i1::Int) = 1 + xoffset(strides(a), i1)
+uindex{T}(a::NonContViews{T,1,0}, i1::Int) = 1 + xoffset0(strides(a), i1)
+uindex{T}(a::NonContViews{T,1}, i1::Int, i2::Int) = uindex(a, i1)
+uindex{T}(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int) = uindex(a, i1)
+uindex{T}(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int, i4::Int) = uindex(a, i1)
+uindex{T}(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uindex(a, i1)
 
-    else # L > N
-        for i = N+1:L
-            subs[i] == 1 || throw(BoundsError())
-        end
-        return uindex(a, subs[1:N]...)
-    end
-end
+# 2D
+
+uindex{T}(a::NonContViews{T,2}, i1::Int) = ((j1, j2) = ind2sub(size(a), i1); uindex(a, j1, j2))
+
+uindex{T}(a::NonContViews{T,2}, i1::Int, i2::Int) = 1 + xoffset(strides(a), i1, i2)
+uindex{T}(a::NonContViews{T,2,0}, i1::Int, i2::Int) = 1 + xoffset0(strides(a), i1, i2)
+
+uindex{T}(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int) = uindex(a, i1, i2)
+uindex{T}(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int, i4::Int) = uindex(a, i1, i2)
+uindex{T}(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uindex(a, i1, i2)
+
+# 3D
+
+uindex{T}(a::NonContViews{T,3}, i1::Int) = ((j1, j2, j3) = ind2sub(size(a), i1); uindex(a, j1, j2, j3))
+uindex{T}(a::NonContViews{T,3}, i1::Int, i2::Int) = ((j2, j3) = ind2sub(size(a)[2:3], i2); uindex(a, i1, j2, j3))
+
+uindex{T}(a::NonContViews{T,3,0}, i1::Int, i2::Int, i3::Int) = 1 + xoffset0(strides(a), i1, i2, i3)
+uindex{T}(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int) = 1 + xoffset(strides(a), i1, i2, i3)
+
+uindex{T}(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int, i4::Int) = uindex(a, i1, i2, i3)
+uindex{T}(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uindex(a, i1, i2, i3)
+
+# 4D
+
+uindex{T}(a::NonContViews{T,4}, i1::Int) = ((j1, j2, j3, j4) = ind2sub(size(a), i1); uindex(a, j1, j2, j3, j4))
+uindex{T}(a::NonContViews{T,4}, i1::Int, i2::Int) = ((j2, j3, j4) = ind2sub(size(a)[2:4], i2); uindex(a, i1, j2, j3, j4))
+uindex{T}(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int) = ((j3, j4) = ind2sub(size(a)[3:4], i3); uindex(a, i1, i2, j3, j4))
+
+uindex{T}(a::NonContViews{T,4,0}, i1::Int, i2::Int, i3::Int, i4::Int) = 1 + xoffset0(strides(a), i1, i2, i3, i4)
+uindex{T}(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int, i4::Int) = 1 + xoffset(strides(a), i1, i2, i3, i4)
+
+uindex{T}(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) = uindex(a, i1, i2, i3, i4)
+
+# 5D
+
+uindex{T}(a::NonContViews{T,5}, i1::Int) =
+    ((j1, j2, j3, j4, j5) = ind2sub(size(a), i1); uindex(a, j1, j2, j3, j4, j5))
+uindex{T}(a::NonContViews{T,5}, i1::Int, i2::Int) =
+    ((j2, j3, j4, j5) = ind2sub(size(a)[2:5], i2); uindex(a, i1, j2, j3, j4, j5))
+uindex{T}(a::NonContViews{T,5}, i1::Int, i2::Int, i3::Int) =
+    ((j3, j4, j5) = ind2sub(size(a)[3:5], i3); uindex(a, i1, i2, j3, j4, j5))
+uindex{T}(a::NonContViews{T,5}, i1::Int, i2::Int, i3::Int, i4::Int) =
+    ((j4, j5) = ind2sub(size(a)[4:5], i4); uindex(a, i1, i2, i3, j4, j5))
+
+uindex{T}(a::NonContViews{T,5,0}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
+    1 + xoffset0(strides(a), i1, i2, i3, i4, i5)
+uindex{T}(a::NonContViews{T,5}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
+    1 + xoffset(strides(a), i1, i2, i3, i4, i5)
 
 
 
@@ -83,8 +110,6 @@ getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int) =
     uget(a, sub2ind(size(a), i1, i2, i3, i4))
 getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
     uget(a, sub2ind(size(a), i1, i2, i3, i4, i5))
-getindex(a::ContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int) =
-    uget(a, sub2ind(size(a), i1, i2, i3, i4, i5, i6))
 
 getindex(a::NonContViews, i::Int) = uget(a, uindex(a, i))
 getindex(a::NonContViews, i1::Int, i2::Int) = uget(a, uindex(a, i1, i2))
@@ -94,8 +119,6 @@ getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int) =
     uget(a, uindex(a, i1, i2, i3, i4))
 getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
     uget(a, uindex(a, i1, i2, i3, i4, i5))
-getindex(a::NonContViews, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int) =
-    uget(a, uindex(a, i1, i2, i3, i4, i5, i6))
 
 getindex(a::StridedArrayView, i::Integer) = getindex(a, idx(i))
 getindex(a::StridedArrayView, i1::Integer, i2::Integer) = getindex(a, idx(i1), idx(i2))
@@ -105,8 +128,6 @@ getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer
     getindex(a, idx(i1), idx(i2), idx(i3), idx(i4))
 getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) =
     getindex(a, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
-getindex(a::StridedArrayView, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer, i6::Integer) =
-    getindex(a, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5), idx(i6))
 
 
 ### setindex!
@@ -120,8 +141,6 @@ setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) =
     uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4))
 setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
     uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4, i5))
-setindex!{T}(a::ContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int) =
-    uset!(a, convert(T, v), sub2ind(size(a), i1, i2, i3, i4, i5, i6))
 
 setindex!{T}(a::NonContViews{T}, v, i::Int) = uset!(a, convert(T, v), uindex(a, i))
 setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int) =
@@ -132,8 +151,6 @@ setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int) =
     uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4))
 setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
     uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4, i5))
-setindex!{T}(a::NonContViews{T}, v, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int, i6::Int) =
-    uset!(a, convert(T, v), uindex(a, i1, i2, i3, i4, i5, i6))
 
 setindex!(a::StridedArrayView, v, i::Integer) = setindex!(a, v, idx(i))
 setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer) = setindex!(a, v, idx(i1), idx(i2))
@@ -143,5 +160,3 @@ setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Int
     setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4))
 setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer) =
     setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5))
-setindex!(a::StridedArrayView, v, i1::Integer, i2::Integer, i3::Integer, i4::Integer, i5::Integer, i6::Integer) =
-    setindex!(a, v, idx(i1), idx(i2), idx(i3), idx(i4), idx(i5), idx(i6))
