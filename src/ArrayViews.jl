@@ -25,6 +25,7 @@ export
     contiguous_view,
     strided_view,
     view,
+    unsafe_view,
     ellipview,
     diagview,
     rowvec_view,

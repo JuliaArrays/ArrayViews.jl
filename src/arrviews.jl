@@ -82,6 +82,7 @@ end
 ### basic methods
 
 parent(a::ArrayView) = a.arr
+parent(a::UnsafeArrayView) = error("Getting parent of an unsafe view is not allowed.")
 
 uget(a::ArrayView, i::Int) = getindex(a.arr, a.offset + i)
 uset!{T}(a::ArrayView{T}, v::T, i::Int) = setindex!(a.arr, v, a.offset + i)
