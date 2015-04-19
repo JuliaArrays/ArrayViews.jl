@@ -32,8 +32,7 @@ export
 
 include("common.jl")
 include("indexing.jl")
-include("contiguousviews.jl")
-include("stridedviews.jl")
+include("arrviews.jl")
 include("contrank.jl")
 include("subviews.jl")
 include("convenience.jl")
