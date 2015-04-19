@@ -3,6 +3,10 @@
 typealias ContViews{T,N} ContiguousView{T,N}
 typealias NonContViews{T,N,M} StridedView{T,N,M}
 
+typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
+typealias ContiguousVector{T} ContiguousArray{T,1}
+typealias ContiguousMatrix{T} ContiguousArray{T,2}
+
 ## strides method
 
 strides{T}(a::ContViews{T,1}) = (1,)

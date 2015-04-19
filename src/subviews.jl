@@ -39,12 +39,6 @@ aoffset(a::ArrayView, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs.
 
 # roffset: offset w.r.t. the first element of the view
 
-# for contiguous arrays
-
-typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
-typealias ContiguousVector{T} ContiguousArray{T,1}
-typealias ContiguousMatrix{T} ContiguousArray{T,2}
-
 # 1D
 
 roffset(a::ContiguousArray, i::Colon) = 0
