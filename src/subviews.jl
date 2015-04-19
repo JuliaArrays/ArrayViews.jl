@@ -253,36 +253,36 @@ _vstrides{N}(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...
 ##### View construction ######
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i::Subs) =
-    contiguous_view(parent(a), aoffset(a, i), shp)
+    ContiguousView(parent(a), aoffset(a, i), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3, i4), shp)
 
 make_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    contiguous_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
+    ContiguousView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i::Subs) =
-    strided_view(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
+    StridedView(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
+    StridedView(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
+    StridedView(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
+    StridedView(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
 
 make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    strided_view(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
+    StridedView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
 
-view(a::Array) = contiguous_view(a, size(a))
+view(a::Array) = ContiguousView(a, size(a))
 view(a::ArrayView) = a
 
 view(a::DenseArray, i::Subs) =

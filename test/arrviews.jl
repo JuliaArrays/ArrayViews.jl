@@ -130,7 +130,7 @@ end
 
 function verify_cview{T,N}(src::Array{T}, o::Int, siz::NTuple{N,Int})
     @assert o + prod(siz) <= length(src)
-    v = contiguous_view(src, o, siz)
+    v = ContiguousView(src, o, siz)
     @test isa(v, ContiguousView{T,N})
     @test eltype(v) == T
     @test ndims(v) == N
@@ -168,7 +168,7 @@ function verify_sview{T,N,M}(src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type
     end
 
     @assert o + ss[N] * siz[N]  <= length(src)
-    v = strided_view(src, o, siz, cr, ss)
+    v = StridedView(src, o, siz, cr, ss)
     @test isa(v, StridedView{T,N,M})
     @test eltype(v) == T
     @test ndims(v) == N

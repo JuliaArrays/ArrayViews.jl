@@ -40,4 +40,6 @@ include("contrank.jl")
 include("subviews.jl")
 include("convenience.jl")
 
+include("deprecates.jl")
+
 end  # module ArrayViews
