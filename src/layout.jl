@@ -7,6 +7,14 @@ typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
 typealias ContiguousVector{T} ContiguousArray{T,1}
 typealias ContiguousMatrix{T} ContiguousArray{T,2}
 
+if VERSION >= v"0.4.0-dev+1784"
+    import Base: linearindexing, LinearFast, LinearSlow
+
+    linearindexing(a::ContViews) = LinearFast()
+    linearindexing(a::NonContViews) = LinearSlow()
+    linearindexing{T}(a::NonContViews{T,1}) = LinearFast()
+end
+
 ## strides method
 
 strides{T}(a::ContViews{T,1}) = (1,)

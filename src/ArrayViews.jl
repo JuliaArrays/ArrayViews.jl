@@ -8,7 +8,6 @@ if VERSION >= v"0.4.0-dev+2085"
     import Base: iscontiguous
 end
 
-
 if VERSION < v"0.4.0-dev+3768"
     import Base: convert
 else
