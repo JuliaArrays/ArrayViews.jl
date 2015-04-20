@@ -3,6 +3,12 @@ module ArrayViews
 import Base: eltype, ndims, size, length, stride, strides
 import Base: to_index, getindex, setindex!, parent, similar
 import Base: Ptr, pointer
+
+if VERSION >= v"0.4.0-dev+2085"
+    import Base: iscontiguous
+end
+
+
 if VERSION < v"0.4.0-dev+3768"
     import Base: convert
 else

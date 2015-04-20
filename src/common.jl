@@ -34,7 +34,7 @@ typealias SubsRange Union(Colon,Range)
 
 ### Common methods
 
-iscontiguous(a::AbstractArray) = false
+iscontiguous(a::DenseArray) = false
 iscontiguous(a::Array) = true
 
 offset(a::Array) = 0
