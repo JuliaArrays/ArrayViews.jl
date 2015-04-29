@@ -6,7 +6,7 @@ using ArrayViews
 
 mps(a::AbstractArray, rtimes::Int, et::Float64) = length(a) * 1.0e-6 * rtimes / et
 
-myrepr(r::Ranges) = repr(r)
+myrepr(r::Range) = repr(r)
 myrepr(r::Real) = repr(r)
 myrepr(r::Colon) = ":"
 
