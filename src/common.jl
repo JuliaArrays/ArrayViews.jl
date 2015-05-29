@@ -60,6 +60,4 @@ end
 
 ## Create similar array
 
-similar{T}(a::StridedArrayView{T}) = Array(T, size(a))
-similar{T}(a::StridedArrayView{T}, dims::Dims) = Array(T, dims)
-similar{T}(a::StridedArrayView{T}, ::Type{T}, dims::Dims) = Array(T, dims)
+similar{T}(a::StridedArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
