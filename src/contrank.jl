@@ -68,20 +68,20 @@ acontrank(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs) = contrank(i1, i2, i
 acontrank(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     contrank(i1, i2, i3, i4, i5, I...)
 
-acontrank{T,N}(a::ArrayView{T,N,N}, i1::Subs) = contrank(i1)
-acontrank{T,N}(a::ArrayView{T,N,N}, i1::Subs, i2::Subs) = contrank(i1, i2)
-acontrank{T,N}(a::ArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs) = contrank(i1, i2, i3)
-acontrank{T,N}(a::ArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+acontrank{T,N}(a::StridedArrayView{T,N,N}, i1::Subs) = contrank(i1)
+acontrank{T,N}(a::StridedArrayView{T,N,N}, i1::Subs, i2::Subs) = contrank(i1, i2)
+acontrank{T,N}(a::StridedArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs) = contrank(i1, i2, i3)
+acontrank{T,N}(a::StridedArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
     contrank(i1, i2, i3, i4)
-acontrank{T,N}(a::ArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+acontrank{T,N}(a::StridedArrayView{T,N,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     contrank(i1, i2, i3, i4, i5, I...)
 
-acontrank{T,N,M}(a::ArrayView{T,N,M}, i1::Subs) = minrank(contrank(i1), ContRank{M})
-acontrank{T,N,M}(a::ArrayView{T,N,M}, i1::Subs, i2::Subs) =
+acontrank{T,N,M}(a::StridedArrayView{T,N,M}, i1::Subs) = minrank(contrank(i1), ContRank{M})
+acontrank{T,N,M}(a::StridedArrayView{T,N,M}, i1::Subs, i2::Subs) =
     minrank(contrank(i1, i2), ContRank{M})
-acontrank{T,N,M}(a::ArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs) =
+acontrank{T,N,M}(a::StridedArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs) =
     minrank(contrank(i1, i2, i3), ContRank{M})
-acontrank{T,N,M}(a::ArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+acontrank{T,N,M}(a::StridedArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
     minrank(contrank(i1, i2, i3, i4), ContRank{M})
-acontrank{T,N,M}(a::ArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+acontrank{T,N,M}(a::StridedArrayView{T,N,M}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     minrank(contrank(i1, i2, i3, i4, i5, I...), ContRank{M})

@@ -20,12 +20,12 @@ _step(i::Range) = step(i)
 
 # aoffset: offset w.r.t. the underlying array (i.e. parent)
 
-aoffset(a::Array, i::Subs) = roffset(a, i)
-aoffset(a::Array, i1::Subs, i2::Subs) = roffset(a, i1, i2)
-aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs) = roffset(a, i1, i2, i3)
-aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+aoffset(a::Union(Array, UnsafeArrayView), i::Subs) = roffset(a, i)
+aoffset(a::Union(Array, UnsafeArrayView), i1::Subs, i2::Subs) = roffset(a, i1, i2)
+aoffset(a::Union(Array, UnsafeArrayView), i1::Subs, i2::Subs, i3::Subs) = roffset(a, i1, i2, i3)
+aoffset(a::Union(Array, UnsafeArrayView), i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
     roffset(a, i1, i2, i3, i4)
-aoffset(a::Array, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+aoffset(a::Union(Array, UnsafeArrayView), i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     roffset(a, i1, i2, i3, i4, i5, I...)
 
 aoffset(a::ArrayView, i::Subs) = a.offset + roffset(a, i)
@@ -284,34 +284,34 @@ make_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Sub
 
 
 make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i::Subs) =
-    UnsafeContiguousView(parent(a), aoffset(a, i), shp)
+    UnsafeContiguousView(parent_or_ptr(a), aoffset(a, i), shp)
 
 make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    UnsafeContiguousView(parent(a), aoffset(a, i1, i2), shp)
+    UnsafeContiguousView(parent_or_ptr(a), aoffset(a, i1, i2), shp)
 
 make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3), shp)
+    UnsafeContiguousView(parent_or_ptr(a), aoffset(a, i1, i2, i3), shp)
 
 make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3, i4), shp)
+    UnsafeContiguousView(parent_or_ptr(a), aoffset(a, i1, i2, i3, i4), shp)
 
 make_unsafe_view{N}(a::DenseArray, cr::Type{ContRank{N}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    UnsafeContiguousView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
+    UnsafeContiguousView(parent_or_ptr(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp)
 
 make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i::Subs) =
-    UnsafeStridedView(parent(a), aoffset(a, i), shp, cr, vstrides(a, i))
+    UnsafeStridedView(parent_or_ptr(a), aoffset(a, i), shp, cr, vstrides(a, i))
 
 make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs) =
-    UnsafeStridedView(parent(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
+    UnsafeStridedView(parent_or_ptr(a), aoffset(a, i1, i2), shp, cr, vstrides(a, i1, i2))
 
 make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs) =
-    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
+    UnsafeStridedView(parent_or_ptr(a), aoffset(a, i1, i2, i3), shp, cr, vstrides(a, i1, i2, i3))
 
 make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
-    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
+    UnsafeStridedView(parent_or_ptr(a), aoffset(a, i1, i2, i3, i4), shp, cr, vstrides(a, i1, i2, i3, i4))
 
 make_unsafe_view{M,N}(a::DenseArray, cr::Type{ContRank{M}}, shp::NTuple{N,Int}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
-    UnsafeStridedView(parent(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
+    UnsafeStridedView(parent_or_ptr(a), aoffset(a, i1, i2, i3, i4, i5, I...), shp, cr, vstrides(a, i1, i2, i3, i4, i5, I...))
 
 
 ##### Interface

@@ -23,6 +23,9 @@ end
 UnsafeContiguousView{T,N}(ptr::Ptr{T}, shp::NTuple{N,Int}) =
     UnsafeContiguousView{T,N}(ptr, prod(shp), shp)
 
+UnsafeContiguousView{T,N}(ptr::Ptr{T}, offset::Int, shp::NTuple{N,Int}) =
+    UnsafeContiguousView(ptr+offset*sizeof(T), shp)
+
 UnsafeContiguousView(arr::Array, shp::Dims) = UnsafeContiguousView(pointer(arr), shp)
 
 UnsafeContiguousView{T,N}(arr::Array{T}, offset::Int, shp::NTuple{N,Int}) =
@@ -65,6 +68,12 @@ function UnsafeStridedView{T,N,M}(ptr::Ptr{T}, shp::NTuple{N,Int},
     UnsafeStridedView{T,N,M}(ptr, prod(shp), shp, strides)
 end
 
+function UnsafeStridedView{T,N,M}(ptr::Ptr{T}, offset::Int, shp::NTuple{N,Int},
+                                  ::Type{ContRank{M}}, strides::NTuple{N,Int})
+    @assert M < N
+    UnsafeStridedView(ptr+offset*sizeof(T), shp, ContRank{M}, strides)
+end
+
 function UnsafeStridedView{T,N,M}(arr::Array{T}, offset::Int, shp::NTuple{N,Int},
                                   ::Type{ContRank{M}}, strides::NTuple{N,Int})
     @assert M < N
@@ -83,6 +92,8 @@ end
 
 parent(a::ArrayView) = a.arr
 parent(a::UnsafeArrayView) = error("Getting parent of an unsafe view is not allowed.")
+parent_or_ptr(a) = parent(a)
+parent_or_ptr(a::UnsafeArrayView) = a.ptr
 
 uget(a::ArrayView, i::Int) = getindex(a.arr, a.offset + i)
 uset!{T}(a::ArrayView{T}, v::T, i::Int) = setindex!(a.arr, v, a.offset + i)

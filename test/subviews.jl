@@ -6,9 +6,7 @@ using Base.Test
 #### Test Subviews
 
 ## tools to facilitate array view testing
-function _test_arrview(a, r, subs...)
-    v = view(a, subs...)
-
+function _test_arrview_contents(v, r)
     siz_r = size(r)
     siz_v = size(v)
 
@@ -25,6 +23,11 @@ function _test_arrview(a, r, subs...)
             error("Incorrect content.")
         end
     end
+end
+
+function _test_arrview(a, r, subs...)
+    _test_arrview_contents(view(a, subs...), r)
+    _test_arrview_contents(unsafe_view(a, subs...), r)
 end
 
 macro test_arrview(a_, subs...)
@@ -218,27 +221,10 @@ end
 
 function test_arrview2(a, subs1, subs2)
     v = view(a, subs1...)
-    v2 = view(v, subs2...)
     v2r = view(copy(v), subs2...)
-
-    siz_v = size(v2)
-    siz_r = size(v2r)
-
-    if siz_v != siz_r
-        print_subscripts(subs1, subs2)
-        error("Incorrect size: get $(siz_v), but expect $(siz_r)")
-    end
-
-    for i = 1 : length(v2)
-        if v2[i] != v2r[i]
-            print_subscripts(subs1, subs2)
-            println("v = ")
-            println(v2)
-            println("r = ")
-            println(v2r)
-            error("Incorrect content.")
-        end
-    end
+    _test_arrview_contents(view(v, subs2...), v2r)
+    uv = unsafe_view(a, subs1...)
+    _test_arrview_contents(unsafe_view(uv, subs2...), v2r)
 end
 
 avparent = reshape(1:6912, (12, 12, 8, 6))
