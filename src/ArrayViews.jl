@@ -1,3 +1,5 @@
+VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+
 module ArrayViews
 
 import Base: eltype, ndims, size, length, stride, strides
