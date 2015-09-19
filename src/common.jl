@@ -27,9 +27,9 @@ type ContRank{M} end
 ## auxiliary union types to simplify method definition
 ## (for internal use only)
 
-typealias Subs Union(Real,Colon,Range)
-typealias SubsNC Union(Real,Range)
-typealias SubsRange Union(Colon,Range)
+@compat typealias Subs Union{Real,Colon,Range}
+@compat typealias SubsNC Union{Real,Range}
+@compat typealias SubsRange Union{Colon,Range}
 
 
 ### Common methods

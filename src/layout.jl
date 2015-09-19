@@ -1,9 +1,9 @@
 # layout-related functions
 
-typealias ContViews{T,N} Union(ContiguousView{T,N},UnsafeContiguousView{T,N})
-typealias NonContViews{T,N,M} Union(StridedView{T,N,M}, UnsafeStridedView{T,N,M})
+@compat typealias ContViews{T,N} Union{ContiguousView{T,N},UnsafeContiguousView{T,N}}
+@compat typealias NonContViews{T,N,M} Union{StridedView{T,N,M}, UnsafeStridedView{T,N,M}}
 
-typealias ContiguousArray{T,N} Union(Array{T,N}, ContiguousView{T,N})
+@compat typealias ContiguousArray{T,N} Union{Array{T,N}, ContiguousView{T,N}}
 typealias ContiguousVector{T} ContiguousArray{T,1}
 typealias ContiguousMatrix{T} ContiguousArray{T,2}
 
