@@ -2,6 +2,8 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
 
 module ArrayViews
 
+using Compat
+
 import Base: eltype, ndims, size, length, stride, strides
 import Base: to_index, getindex, setindex!, parent, similar
 import Base: Ptr, pointer
