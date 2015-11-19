@@ -30,8 +30,14 @@ function _test_arrview(a, r, subs...)
     _test_arrview_contents(unsafe_view(a, subs...), r)
 end
 
-macro test_arrview(a_, subs...)
-    esc(:(_test_arrview($a_, ($a_)[$(subs...)], $(subs...))))
+if VERSION >= v"0.4"
+    macro test_arrview(a_, subs...)
+        esc(:(_test_arrview($a_, sub($a_, $(subs...)), $(subs...))))
+    end
+else
+    macro test_arrview(a_, subs...)
+        esc(:(_test_arrview($a_, $a_[$(subs...)], $(subs...))))
+    end
 end
 
 #### test views from arrays
