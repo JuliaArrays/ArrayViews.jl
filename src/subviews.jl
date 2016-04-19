@@ -94,6 +94,7 @@ roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::Colon) =
 roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::SubsNC) =
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
 
+
 # 4D (parial)
 function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs)
     o = _offset(i1)
@@ -123,6 +124,7 @@ end
 # General
 
 roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon, i4::Colon, I::Colon...) = 0
+
 
 function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...)
     o = _offset(i1)
