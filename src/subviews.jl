@@ -120,11 +120,9 @@ function roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Subs, i4::Subs)
     return o
 end
 
-
 # General
 
 roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon, i4::Colon, I::Colon...) = 0
-
 
 function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...)
     o = _offset(i1)
@@ -132,7 +130,6 @@ function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::
     o += s * _offset(i2)
     o += (s *= size(a,2)) * _offset(i3)
     o += (s *= size(a,3)) * _offset(i4)
-#    o += (s *= size(a,4)) * _offset(i5)
     for i = 1:length(I)
         o += (s *= size(a,i+3)) * _offset(I[i])
     end
