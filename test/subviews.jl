@@ -213,6 +213,30 @@ avparent = reshape(1.:1680., (8, 7, 6, 5))
 @test_arrview(avparent, 1:2:7, :,   3:5, 2:5)
 @test_arrview(avparent, 1:2:7, :, 1:2:5, 2:5)
 
+@test_arrview(avparent, :, 1, 1, 1)
+@test_arrview(avparent, :, 1, 2, 1)
+@test_arrview(avparent, :, :, 2, 2)
+@test_arrview(avparent, :, :, 1:2, 3:4)
+
+
+# Some 5D tests
+avparent2 = reshape(1.:6720., (8, 7, 6, 5, 4))
+
+@test_arrview(avparent2, :, 1, 1, 1, 1)
+@test_arrview(avparent2, :, 1, 1, 3, 1)
+@test_arrview(avparent2, :, 1, 2, 3, 3:4)
+@test_arrview(avparent2, 2:7, 1, 1, 1, 3:4)
+
+@test_arrview(avparent2, 1, :, 1, 3, 4)
+@test_arrview(avparent2, 2, 3, :, 3, 4)
+@test_arrview(avparent2, 3, 4, 5, :, 4)
+@test_arrview(avparent2, 2, 3, 4, 4, :)
+
+@test_arrview(avparent2, 1, 2:3, 3, 4, 2)
+@test_arrview(avparent2, 2, 1, 3:4, 1, 1)
+@test_arrview(avparent2, 3, 1, 1, 4:5, 2)
+@test_arrview(avparent2, 4, 1, 1, 3:4, 2:4)
+
 #### Test Subviews of Views
 
 function print_subscripts(subs1, subs2)
