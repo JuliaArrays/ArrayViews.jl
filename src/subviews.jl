@@ -95,7 +95,7 @@ roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::SubsNC) =
     _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
 
 
-# 4D (parial)
+# 4D (partial)
 function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs)
     o = _offset(i1)
     s = size(a,1)
