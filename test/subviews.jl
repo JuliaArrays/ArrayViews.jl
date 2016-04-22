@@ -42,7 +42,7 @@ end
 
 #### test views from arrays
 
-avparent = reshape(1.:1680., (8, 7, 6, 5))
+avparent = copy(reshape(1.:1680., (8, 7, 6, 5)))
 
 # 1D
 @test_arrview(avparent, 3)
@@ -220,7 +220,7 @@ avparent = reshape(1.:1680., (8, 7, 6, 5))
 
 
 # Some 5D tests
-avparent2 = reshape(1.:6720., (8, 7, 6, 5, 4))
+avparent2 = copy(reshape(1.:6720., (8, 7, 6, 5, 4)))
 
 @test_arrview(avparent2, :, 1, 1, 1, 1)
 @test_arrview(avparent2, :, 1, 1, 3, 1)
@@ -257,7 +257,7 @@ function test_arrview2(a, subs1, subs2)
     _test_arrview_contents(unsafe_view(uv, subs2...), v2r)
 end
 
-avparent = reshape(1:6912, (12, 12, 8, 6))
+avparent = copy(reshape(1:6912, (12, 12, 8, 6)))
 
 # 1D --> 1D
 for sa in Any[Colon(), 1:36, 2:2:36]
