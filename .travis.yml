@@ -5,13 +5,7 @@ os:
 julia:
    - 0.5
    - nightly
-before_install:
-   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-script:
-   - julia -e 'versioninfo(); Pkg.init(); Pkg.clone(pwd());'
-   - if [ $TRAVIS_JULIA_VERSION = "nightly" ]; then julia -e 'Pkg.test("ArrayViews", coverage=true)'; fi
-   - if [ $TRAVIS_JULIA_VERSION = "release" ]; then julia -e 'Pkg.test("ArrayViews")'; fi
 after_success:
-   - if [ $TRAVIS_JULIA_VERSION = "nightly" ]; then julia -e 'cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'; fi
+   - julia -e 'cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
 notifications:
   email: false

@@ -34,12 +34,12 @@ function _test_arrview(a, r, subs...)
 end
 
 macro test_arrview(a_, subs...)
-    esc(:(_test_arrview($a_, ($a_)[$(subs...)], $(subs...))))
+    esc(:(_test_arrview($a_, $a_[$(subs...)], $(subs...))))
 end
 
 #### test views from arrays
 
-avparent = Array(reshape(1.:1680., (8, 7, 6, 5)))
+avparent = copy(reshape(1.:1680., (8, 7, 6, 5)))
 
 # 1D
 println("    -- testing 1D views")
@@ -218,6 +218,30 @@ println("    -- testing 4D views")
 @test_arrview(avparent, 1:2:7, :,   3:5, 2:5)
 @test_arrview(avparent, 1:2:7, :, 1:2:5, 2:5)
 
+@test_arrview(avparent, :, 1, 1, 1)
+@test_arrview(avparent, :, 1, 2, 1)
+@test_arrview(avparent, :, :, 2, 2)
+@test_arrview(avparent, :, :, 1:2, 3:4)
+
+
+# Some 5D tests
+avparent2 = copy(reshape(1.:6720., (8, 7, 6, 5, 4)))
+
+@test_arrview(avparent2, :, 1, 1, 1, 1)
+@test_arrview(avparent2, :, 1, 1, 3, 1)
+@test_arrview(avparent2, :, 1, 2, 3, 3:4)
+@test_arrview(avparent2, 2:7, 1, 1, 1, 3:4)
+
+@test_arrview(avparent2, 1, :, 1, 3, 4)
+@test_arrview(avparent2, 2, 3, :, 3, 4)
+@test_arrview(avparent2, 3, 4, 5, :, 4)
+@test_arrview(avparent2, 2, 3, 4, 4, :)
+
+@test_arrview(avparent2, 1, 2:3, 3, 4, 2)
+@test_arrview(avparent2, 2, 1, 3:4, 1, 1)
+@test_arrview(avparent2, 3, 1, 1, 4:5, 2)
+@test_arrview(avparent2, 4, 1, 1, 3:4, 2:4)
+
 #### Test Subviews of Views
 
 function print_subscripts(subs1, subs2)
@@ -238,7 +262,7 @@ function test_arrview2(a, subs1, subs2)
     _test_arrview_contents(unsafe_aview(uv, subs2...), v2r)
 end
 
-avparent = Array(reshape(1:6912, (12, 12, 8, 6)))
+avparent = copy(reshape(1:6912, (12, 12, 8, 6)))
 
 # 1D --> 1D
 println("    -- testing 1D sub-views of 1D views")

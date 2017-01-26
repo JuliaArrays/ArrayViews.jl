@@ -11,6 +11,44 @@ A Julia package to explore a new system of array views.
 
 -----------------------------
 
+## For users of julia 0.4 or higher
+
+By and large, this package is no longer necessary: base julia now has
+efficient `SubArrays` (i.e., `sub` and `slice`).  In choosing whether
+to use `SubArray`s or the `ArrayView`s package, here are some
+considerations:
+
+Reasons to prefer `SubArrays`:
+
+- `ArrayViews` can only make a view of an `Array`, whereas `SubArray`s
+  can create a view of any `AbstractArray`.
+
+- The views created by `ArrayViews` are most efficient for
+  `ContiguousView`s such as column slices. In contrast, the views
+  created by `SubArray`s are efficient for any type of view (e.g.,
+  also row slices), in some cases resulting in a 3- to 10-fold
+  advantage. In either case, it's generally recommended to write functions
+  using cartesian indexing rather than linear indexing (e.g.,
+  `for I in eachindex(S)` rather than `for i = 1:length(S)`),
+  although in both cases there are some view types that are also
+  efficient under linear indexing.
+
+- `SubArray`s allow more general slicing behavior, e.g., you can make
+  a view with `S = sub(A, [1,3,17], :)`.
+
+- By default, `SubArray`s check bounds upon construction whereas
+  `ArrayView`s do not: `V = view(A, -5:10, :)` does not generate an
+  error, and if `V` is used in a function with an `@inbounds`
+  declaration you are likely to get a segfault.  (You can bypass
+  bounds checking with `Base._sub` and `Base._slice`, in cases where
+  you want out-of-bounds construction for `SubArray`s.)
+
+Reasons to prefer `ArrayViews`:
+
+- Construction of `SubArray`s is frequently (but not always) 2-4 times
+  slower than construction of `view`s. If you are constructing many
+  column views, `ArrayView`s may still be the better choice.
+
 ## Main Features
 
 - An efficient ``aview`` function that implements array views
@@ -141,8 +179,6 @@ v2 = unsafe_aview(v1, :, i)     # of type UnsafeStridedView{Float64, 1, 0}
 ```
 
 Four kinds of indexers are supported, integer, range (*e.g.* ``a:b``), stepped range (*e.g.* ``a:b:c``), and colon (*i.e.*, ``:``).
-Unlike the ``sub`` function in Julia Base, the colon ``:`` is specially treated rather than converted to ``1:size(v,d)``, as it plays a crucial role in determining contiguousness. For example, the contiguous rank of ``aview(a, :, a:b)`` is 2, while that of ``aview(a, i:j, a:b)`` is 1.
-
 
 ## View Construction
 
