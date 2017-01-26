@@ -5,14 +5,14 @@ using ArrayViews
 function traverse_row_subs(a::Array, r::Int)
     m = size(a, 1)
     for _ = 1:r, i = 1:m
-        sub(a, i, :)
+        Base.view(a, i, :)
     end
 end
 
 function traverse_row_views(a::Array, r::Int)
     m = size(a, 1)
     for _ = 1:r, i = 1:m
-        view(a, i, :)
+        aview(a, i, :)
     end
 end
 
@@ -26,14 +26,14 @@ end
 function traverse_column_subs(a::Array, r::Int)
     n = size(a, 2)
     for _ = 1:r, i = 1:n
-        sub(a, :, i)
+        Base.view(a, :, i)
     end
 end
 
 function traverse_column_views(a::Array, r::Int)
     n = size(a, 2)
     for _ = 1:r, i = 1:n
-        view(a, :, i)
+        aview(a, :, i)
     end
 end
 
@@ -64,7 +64,7 @@ m1 = 1.0 / et1
 m2 = 1.0 / et2
 m3 = 1.0 / et3
 
-@printf("Traverse Rows:  subs => %7.4f M/sec   views => %7.4f M/sec (%6.3fx)   unsafe_views => %7.4f M/sec (%6.3fx)\n",
+@printf("Traverse Rows:  Base.view => %7.4f M/sec   aview => %7.4f M/sec (%6.3fx)   unsafe_aview => %7.4f M/sec (%6.3fx)\n",
     m1, m2, m2 / m1, m3, m3 / m1)
 
 # traverse cols
@@ -81,5 +81,5 @@ m1 = 1.0 / et1
 m2 = 1.0 / et2
 m3 = 1.0 / et3
 
-@printf("Traverse Cols:  subs => %7.4f M/sec   views => %7.4f M/sec (%6.3fx)   unsafe_views => %7.4f M/sec (%6.3fx)\n",
+@printf("Traverse Cols:  Base.view => %7.4f M/sec   aview => %7.4f M/sec (%6.3fx)   unsafe_aview => %7.4f M/sec (%6.3fx)\n",
     m1, m2, m2 / m1, m3, m3 / m1)

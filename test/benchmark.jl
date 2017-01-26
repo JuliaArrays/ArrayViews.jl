@@ -69,11 +69,11 @@ end
 
 
 function perf_view(a::Array, i1; rtimes::Int=100000)
-    et_s, _ = time_view1d(sub(a, i1), rtimes)
-    et_v, _ = time_view1d(view(a, i1), rtimes)
+    et_s, _ = time_view1d(Base.view(a, i1), rtimes)
+    et_v, _ = time_view1d(aview(a, i1), rtimes)
     et_u, _ = time_view1d(unsafe_aview(a, i1), rtimes)
 
-    v = view(a, i1)
+    v = aview(a, i1)
     mps_s = mps(v, rtimes, et_s)
     mps_v = mps(v, rtimes, et_v)
     mps_u = mps(v, rtimes, et_u)
@@ -83,11 +83,11 @@ function perf_view(a::Array, i1; rtimes::Int=100000)
 end
 
 function perf_view(a::Array, i1, i2; rtimes::Int=100000)
-    et_s, _ = time_view2d(sub(a, i1, i2), rtimes)
-    et_v, _ = time_view2d(view(a, i1, i2), rtimes)
+    et_s, _ = time_view2d(Base.view(a, i1, i2), rtimes)
+    et_v, _ = time_view2d(aview(a, i1, i2), rtimes)
     et_u, _ = time_view2d(unsafe_aview(a, i1, i2), rtimes)
 
-    v = view(a, i1, i2)
+    v = aview(a, i1, i2)
     mps_s = mps(v, rtimes, et_s)
     mps_v = mps(v, rtimes, et_v)
     mps_u = mps(v, rtimes, et_u)
@@ -97,11 +97,11 @@ function perf_view(a::Array, i1, i2; rtimes::Int=100000)
 end
 
 function perf_view(a::Array, i1, i2, i3; rtimes::Int=100000)
-    et_s, _ = time_view3d(sub(a, i1, i2, i3), rtimes)
-    et_v, _ = time_view3d(view(a, i1, i2, i3), rtimes)
+    et_s, _ = time_view3d(Base.view(a, i1, i2, i3), rtimes)
+    et_v, _ = time_view3d(aview(a, i1, i2, i3), rtimes)
     et_u, _ = time_view3d(unsafe_aview(a, i1, i2, i3), rtimes)
 
-    v = view(a, i1, i2, i3)
+    v = aview(a, i1, i2, i3)
     mps_s = mps(v, rtimes, et_s)
     mps_v = mps(v, rtimes, et_v)
     mps_u = mps(v, rtimes, et_u)
@@ -112,12 +112,12 @@ end
 
 # benchmarks
 
-println("Indexing                      sub              view                       unsafe_aview")
+println("Indexing                      Base.view              aview                       unsafe_aview")
 println("--------------------------------------------------------------------------------------------------")
 
 const a1 = rand(1024)
 
-gc_disable()
+gc_enable(false)
 
 println("1D views")
 perf_view(a1, :)
@@ -125,11 +125,11 @@ perf_view(a1, 1:1024)
 perf_view(a1, 1:2:1024)
 println()
 
-gc_enable()
+gc_enable(true)
 
 const a2 = rand(32, 32)
 
-gc_disable()
+gc_enable(false)
 
 println("2D views")
 perf_view(a2, :, :)
@@ -145,11 +145,11 @@ perf_view(a2, 1:2:30, 1:32)
 perf_view(a2, 1:2:30, 1:2:32)
 println()
 
-gc_enable()
+gc_enable(true)
 
 const a3 = rand(16, 8, 8)
 
-gc_disable()
+gc_enable(false)
 
 println("3D views")
 perf_view(a3, :, :, :)
@@ -189,4 +189,4 @@ perf_view(a3, 1:2:16, 1:2:8, 1:8)
 perf_view(a3, 1:2:16, 1:2:8, 1:2:8)
 println()
 
-gc_enable()
+gc_enable(true)
