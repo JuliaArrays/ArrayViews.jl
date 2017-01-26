@@ -19,7 +19,7 @@ end
 function traverse_row_unsafeviews(a::Array, r::Int)
     m = size(a, 1)
     for _ = 1:r, i = 1:m
-        unsafe_view(a, i, :)
+        unsafe_aview(a, i, :)
     end
 end
 
@@ -40,7 +40,7 @@ end
 function traverse_column_unsafeviews(a::Array, r::Int)
     n = size(a, 2)
     for _ = 1:r, i = 1:n
-        unsafe_view(a, :, i)
+        unsafe_aview(a, :, i)
     end
 end
 

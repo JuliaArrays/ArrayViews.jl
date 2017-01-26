@@ -71,7 +71,7 @@ end
 function perf_view(a::Array, i1; rtimes::Int=100000)
     et_s, _ = time_view1d(sub(a, i1), rtimes)
     et_v, _ = time_view1d(view(a, i1), rtimes)
-    et_u, _ = time_view1d(unsafe_view(a, i1), rtimes)
+    et_u, _ = time_view1d(unsafe_aview(a, i1), rtimes)
 
     v = view(a, i1)
     mps_s = mps(v, rtimes, et_s)
@@ -85,7 +85,7 @@ end
 function perf_view(a::Array, i1, i2; rtimes::Int=100000)
     et_s, _ = time_view2d(sub(a, i1, i2), rtimes)
     et_v, _ = time_view2d(view(a, i1, i2), rtimes)
-    et_u, _ = time_view2d(unsafe_view(a, i1, i2), rtimes)
+    et_u, _ = time_view2d(unsafe_aview(a, i1, i2), rtimes)
 
     v = view(a, i1, i2)
     mps_s = mps(v, rtimes, et_s)
@@ -99,7 +99,7 @@ end
 function perf_view(a::Array, i1, i2, i3; rtimes::Int=100000)
     et_s, _ = time_view3d(sub(a, i1, i2, i3), rtimes)
     et_v, _ = time_view3d(view(a, i1, i2, i3), rtimes)
-    et_u, _ = time_view3d(unsafe_view(a, i1, i2, i3), rtimes)
+    et_u, _ = time_view3d(unsafe_aview(a, i1, i2, i3), rtimes)
 
     v = view(a, i1, i2, i3)
     mps_s = mps(v, rtimes, et_s)
@@ -112,7 +112,7 @@ end
 
 # benchmarks
 
-println("Indexing                      sub              view                       unsafe_view")
+println("Indexing                      sub              view                       unsafe_aview")
 println("--------------------------------------------------------------------------------------------------")
 
 const a1 = rand(1024)

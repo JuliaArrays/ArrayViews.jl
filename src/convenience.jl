@@ -1,6 +1,6 @@
 # functions for convenience of use
 
-## diagonal view
+## diagonal aview
 
 function diagview{T}(a::DenseArray{T,2})
     m, n = size(a)
@@ -9,7 +9,7 @@ function diagview{T}(a::DenseArray{T,2})
     StridedView(parent(a), offset(a), (len,), ContRank{0}, (s1 + s2,))
 end
 
-## row vector view
+## row vector aview
 
 function rowvec_view{T}(a::DenseArray{T,2}, i::Integer)
     m, n = size(a)
@@ -32,8 +32,8 @@ end
 
 ## ellipview
 
-@compat ellipview{T}(a::DenseArray{T,2}, i::Union{Integer, UnitRange}) = view(a, :, i)
-@compat ellipview{T}(a::DenseArray{T,3}, i::Union{Integer, UnitRange}) = view(a, :, :, i)
-@compat ellipview{T}(a::DenseArray{T,4}, i::Union{Integer, UnitRange}) = view(a, :, :, :, i)
-@compat ellipview{T}(a::DenseArray{T,5}, i::Union{Integer, UnitRange}) = view(a, :, :, :, :, i)
-@compat ellipview{T,N}(a::DenseArray{T,N}, i::Union{Integer, UnitRange}) = view(a, ntuple(i->Colon(),N-1)..., i)
+@compat ellipview{T}(a::DenseArray{T,2}, i::Union{Integer, UnitRange}) = aview(a, :, i)
+@compat ellipview{T}(a::DenseArray{T,3}, i::Union{Integer, UnitRange}) = aview(a, :, :, i)
+@compat ellipview{T}(a::DenseArray{T,4}, i::Union{Integer, UnitRange}) = aview(a, :, :, :, i)
+@compat ellipview{T}(a::DenseArray{T,5}, i::Union{Integer, UnitRange}) = aview(a, :, :, :, :, i)
+@compat ellipview{T,N}(a::DenseArray{T,N}, i::Union{Integer, UnitRange}) = aview(a, ntuple(i->Colon(),N-1)..., i)
