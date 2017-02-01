@@ -51,30 +51,31 @@ Reasons to prefer `ArrayViews`:
 
 ## Main Features
 
-- An efficient ``view`` function that implements array views
+- An efficient ``aview`` function that implements array views
 - Support of arrays of arbitrary dimension and arbitrary combinations of indexers
-- Support view composition (*i.e.* construct views over views)
+- Support ``aview`` composition (*i.e.* construct views over views)
 - Special attention to ensure type stability in most cases
 - Efficient indexing (both cartesian and linear)
-- Light weight view construction
+- Light weight array view construction
 - A systematic approach to detect contiguous views (statically)
 - Views work with linear algebra functions
 
 
 ## Overview
 
-The key function in this package is ``view``:
+The key function in this package is ``aview``. This function is similar to ``sub`` in Julia Base, except that it returns an aview instance with more efficient representation:
 
 ```julia
 a = rand(4, 5, 6)
 
-view(a, :)
-view(a, :, 2)
-view(a, 1:2, 1:2:5, 4)
-view(a, 2, :, 3:6)
+aview(a, :)
+aview(a, :, 2)
+aview(a, 1:2, 1:2:5, 4)
+aview(a, 2, :, 3:6)
 ```
 
-The ``view`` function returns a view of type ``ArrayView``. Here, ``ArrayView`` is an abstract type with two derived types (``ContiguousView`` and ``StridedView``), defined as:
+The ``aview`` function returns an array view of type ``ArrayView``.
+Here, ``ArrayView`` is an abstract type with two derived types (``ContiguousView`` and ``StridedView``), defined as:
 
 ```julia
 abstract ArrayView{T,N,M} <: DenseArray{T,N}
@@ -95,7 +96,7 @@ The *contiguous rank* plays an important role in determining (statically) the co
 * * * * * *
 . . . . . .
 ```
-Here, ``*`` indicates a position covered by the view, and ``.`` otherwise. We can see that the columns are not contiguous.
+Here, ``*`` indicates a position covered by the array view, and ``.`` otherwise. We can see that the columns are not contiguous.
 
 **2D View with contiguous rank 1**
 
@@ -107,7 +108,7 @@ Here, ``*`` indicates a position covered by the view, and ``.`` otherwise. We ca
 . . . . . .
 . . . . . .
 ```
-We can see that each column is contiguous, while the entire view is not.
+We can see that each column is contiguous, while the entire array view is not.
 
 
 **2D View with contiguous rank 2**
@@ -120,15 +121,15 @@ We can see that each column is contiguous, while the entire view is not.
 * * * * * *
 * * * * * *
 ```
-The entire 2D view is contiguous.
+The entire 2D array view is contiguous.
 
 
-Formally, when ``v`` is a view with contiguous rank ``M``, then ``view(v, :, :, ..., :, 1)`` must be contiguous when the number of colons is less than or equal to ``M``.
+Formally, when ``v`` is an array view with contiguous rank ``M``, then ``aview(v, :, :, ..., :, 1)`` must be contiguous when the number of colons is less than or equal to ``M``.
 
 
 #### View Types
 
-The package provide a hierarchy of view types (defined as follows):
+The package provide a hierarchy of array view types (defined as follows):
 
 ```julia
 # T: the element type
@@ -151,42 +152,41 @@ Here, an instance of ``ArrayView`` maintains a reference to the underlying array
 
 #### View Types in Action
 
-The following example illustrates how contiguous rank is used to determine view types in practice.
+The following example illustrates how contiguous rank is used to determine aview types in practice.
 
 ```julia
 a = rand(m, n)
 
 # safe views
 
-v0 = view(a, :)         # of type ContiguousView{Float64, 1}
+v0 = aview(a, :)         # of type ContiguousView{Float64, 1}
 
-u1 = view(a, a:b, :)    # of type StridedView{Float64, 2, 1}
-u2 = view(u1, :, i)     # of type ContiguousView{Float64, 1}
+u1 = aview(a, a:b, :)    # of type StridedView{Float64, 2, 1}
+u2 = aview(u1, :, i)     # of type ContiguousView{Float64, 1}
 
-v1 = view(a, a:2:b, :)  # of type StridedView{Float64, 2, 0}
-v2 = view(v1, :, i)     # of type StridedView{Float64, 1, 0}
+v1 = aview(a, a:2:b, :)  # of type StridedView{Float64, 2, 0}
+v2 = aview(v1, :, i)     # of type StridedView{Float64, 1, 0}
 
 # unsafe views
 
-v0 = unsafe_view(a, :)         # of type UnsafeContiguousView{Float64, 1}
+v0 = unsafe_aview(a, :)         # of type UnsafeContiguousView{Float64, 1}
 
-u1 = unsafe_view(a, a:b, :)    # of type UnsafeStridedView{Float64, 2, 1}
-u2 = unsafe_view(u1, :, i)     # of type UnsafeContiguousView{Float64, 1}
+u1 = unsafe_aview(a, a:b, :)    # of type UnsafeStridedView{Float64, 2, 1}
+u2 = unsafe_aview(u1, :, i)     # of type UnsafeContiguousView{Float64, 1}
 
-v1 = unsafe_view(a, a:2:b, :)  # of type UnsafeStridedView{Float64, 2, 0}
-v2 = unsafe_view(v1, :, i)     # of type UnsafeStridedView{Float64, 1, 0}
+v1 = unsafe_aview(a, a:2:b, :)  # of type UnsafeStridedView{Float64, 2, 0}
+v2 = unsafe_aview(v1, :, i)     # of type UnsafeStridedView{Float64, 1, 0}
 ```
 
 Four kinds of indexers are supported, integer, range (*e.g.* ``a:b``), stepped range (*e.g.* ``a:b:c``), and colon (*i.e.*, ``:``).
 
-
 ## View Construction
 
-The procedure of constructing a view consists of several steps:
+The procedure of constructing a aview consists of several steps:
 
-1. Compute the shape of a view. This is done by an internal function ``vshape``.
+1. Compute the shape of an array view. This is done by an internal function ``vshape``.
 
-2. Compute the offset of a view. This is done by an internal function ``aoffset``. The computation is based on the following formula:
+2. Compute the offset of an array view. This is done by an internal function ``aoffset``. The computation is based on the following formula:
 
     ```
     offset(v(I1, I2, ..., Im)) = (first(I1) - 1) * stride(v, 1)
@@ -197,7 +197,7 @@ The procedure of constructing a view consists of several steps:
 
 3. Compute the contiguous rank, based on both view shape and the combination of indexer types. A type ``ContRank{M}`` is introduced for static computation of contiguous rank (please refer to ``src/contrank.jl`` for details).
 
-4. Construct a view, where the view type is determined by both the number of dimensions and the value of contiguous rank (which is determined statically).
+4. Construct a aview, where the array view type is determined by both the number of dimensions and the value of contiguous rank (which is determined statically).
 
 For runtime efficiency, specialized methods of these functions are implemented for views of 1D, 2D, and 3D. These methods are extensively tested.
 
@@ -221,6 +221,6 @@ rowvec_view(a, i)   # make a view of `a[i,:]` as a strided vector.
                     # `a` needs to be a matrix here (contiguous or strided)
 
 ellipview(a, i)     # make a view of the i-th slice of a
-                    # e.g. `a` is a matrix => this is equiv. to `view(a, :, i)`
-                    #      `a` is a cube => this is equiv. to `view(a, :, :, i)`, etc.
+                    # e.g. `a` is a matrix => this is equiv. to `aview(a, :, i)`
+                    #      `a` is a cube => this is equiv. to `aview(a, :, :, i)`, etc.
 ```

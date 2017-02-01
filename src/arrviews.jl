@@ -16,12 +16,12 @@ ContiguousView(arr::Array, shp::Dims) = ContiguousView(arr, 0, shp)
 
 immutable UnsafeContiguousView{T,N} <: UnsafeArrayView{T,N,N}
     ptr::Ptr{T}
-    len::Int
     shp::NTuple{N,Int}
+    len::Int
 end
 
 UnsafeContiguousView{T,N}(ptr::Ptr{T}, shp::NTuple{N,Int}) =
-    UnsafeContiguousView{T,N}(ptr, prod(shp), shp)
+    UnsafeContiguousView{T,N}(ptr, shp, prod(shp))
 
 UnsafeContiguousView{T,N}(ptr::Ptr{T}, offset::Int, shp::NTuple{N,Int}) =
     UnsafeContiguousView(ptr+offset*sizeof(T), shp)

@@ -1,4 +1,4 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__(true)
+__precompile__(true)
 
 module ArrayViews
 
@@ -7,16 +7,7 @@ using Compat
 import Base: eltype, ndims, size, length, stride, strides
 import Base: to_index, getindex, setindex!, parent, similar
 import Base: Ptr, pointer
-
-if VERSION >= v"0.4.0-dev+2085"
-    import Base: iscontiguous
-end
-
-if VERSION < v"0.4.0-dev+3768"
-    import Base: convert
-else
-    import Base: unsafe_convert
-end
+import Base: iscontiguous, convert, unsafe_convert
 
 export
     StridedArrayView,
@@ -33,8 +24,8 @@ export
 
     contiguous_view,
     strided_view,
-    view,
-    unsafe_view,
+    aview,
+    unsafe_aview,
     ellipview,
     diagview,
     rowvec_view,

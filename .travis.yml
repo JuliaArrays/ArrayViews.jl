@@ -3,10 +3,9 @@ os:
    - linux
    - osx
 julia:
-   - 0.3
-   - 0.4
+   - 0.5
    - nightly
 after_success:
-   - if [ $TRAVIS_JULIA_VERSION != "0.3" ]; then julia -e 'cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'; fi
+   - julia -e 'cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
 notifications:
   email: false
