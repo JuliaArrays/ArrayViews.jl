@@ -33,17 +33,17 @@ restrict_crank{N}(::Type{ContRank{N}}, ::NTuple{0,Int}) = ContRank{0}
 contrank() = ContRank{0}
 
 # 1D
-@compat contrank(i::Union{Colon,UnitRange}) = ContRank{1}
+contrank(i::Union{Colon,UnitRange}) = ContRank{1}
 contrank(i::Subs) = ContRank{0}
 
 # 2D
-@compat contrank(i1::Colon, i2::Union{Colon,UnitRange}) = ContRank{2}
+contrank(i1::Colon, i2::Union{Colon,UnitRange}) = ContRank{2}
 contrank(i1::Colon, i2::Subs) = ContRank{1}
 contrank(i1::UnitRange, i2::Subs) = ContRank{1}
 contrank(i1::Subs, i2::Subs) = ContRank{0}
 
 # 3D
-@compat contrank(i1::Colon, i2::Colon, i3::Union{Colon,UnitRange}) = ContRank{3}
+contrank(i1::Colon, i2::Colon, i3::Union{Colon,UnitRange}) = ContRank{3}
 contrank(i1::Colon, i2::Colon, i3::Subs) = ContRank{2}
 contrank(i1::Colon, i2::UnitRange, i3::Subs) = ContRank{2}
 contrank(i1::Colon, i2::Subs, i3::Subs) = ContRank{1}

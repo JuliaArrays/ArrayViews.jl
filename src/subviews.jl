@@ -20,12 +20,12 @@ _step(i::Range) = step(i)
 
 # aoffset: offset w.r.t. the underlying array (i.e. parent)
 
-@compat aoffset(a::Union{Array, UnsafeArrayView}, i::Subs) = roffset(a, i)
-@compat aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs) = roffset(a, i1, i2)
-@compat aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs) = roffset(a, i1, i2, i3)
-@compat aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
+aoffset(a::Union{Array, UnsafeArrayView}, i::Subs) = roffset(a, i)
+aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs) = roffset(a, i1, i2)
+aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs) = roffset(a, i1, i2, i3)
+aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs, i4::Subs) =
     roffset(a, i1, i2, i3, i4)
-@compat aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
+aoffset(a::Union{Array, UnsafeArrayView}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) =
     roffset(a, i1, i2, i3, i4, i5, I...)
 
 aoffset(a::ArrayView, i::Subs) = a.offset + roffset(a, i)
@@ -237,7 +237,7 @@ vstrides(a::DenseArray, i::Subs) = (stride(a,1) * _step(i),)
 # 2D
 
 vstrides(a::ContiguousArray, i1::Subs, i2::Real) = (_step(i1),)
-@compat vstrides(a::ContiguousArray, i1::Subs, i2::Union{Colon,UnitRange}) = (_step(i1), stride(a,2))
+vstrides(a::ContiguousArray, i1::Subs, i2::Union{Colon,UnitRange}) = (_step(i1), stride(a,2))
 vstrides(a::ContiguousArray, i1::Subs, i2::Range) = (_step(i1), stride(a,2) * _step(i2))
 
 vstrides(a::DenseArray, i1::Subs, i2::Real) = (stride(a,1) * _step(i1),)

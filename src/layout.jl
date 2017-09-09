@@ -1,19 +1,16 @@
 # layout-related functions
 
-@compat typealias ContViews{T,N} Union{ContiguousView{T,N},UnsafeContiguousView{T,N}}
-@compat typealias NonContViews{T,N,M} Union{StridedView{T,N,M}, UnsafeStridedView{T,N,M}}
+typealias ContViews{T,N} Union{ContiguousView{T,N},UnsafeContiguousView{T,N}}
+typealias NonContViews{T,N,M} Union{StridedView{T,N,M}, UnsafeStridedView{T,N,M}}
 
-@compat typealias ContiguousArray{T,N} Union{Array{T,N}, ContiguousView{T,N}}
+typealias ContiguousArray{T,N} Union{Array{T,N}, ContiguousView{T,N}}
 typealias ContiguousVector{T} ContiguousArray{T,1}
 typealias ContiguousMatrix{T} ContiguousArray{T,2}
 
-if VERSION >= v"0.4.0-dev+1784"
-    import Base: linearindexing, LinearFast, LinearSlow
-
-    linearindexing(a::ContViews) = LinearFast()
-    linearindexing(a::NonContViews) = LinearSlow()
-    linearindexing{T}(a::NonContViews{T,1}) = LinearFast()
-end
+import Base: linearindexing, LinearFast, LinearSlow
+linearindexing(a::ContViews) = LinearFast()
+linearindexing(a::NonContViews) = LinearSlow()
+linearindexing{T}(a::NonContViews{T,1}) = LinearFast()
 
 ## strides method
 
