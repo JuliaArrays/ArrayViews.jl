@@ -7,10 +7,10 @@ ContiguousArray{T,N} =  Union{Array{T,N}, ContiguousView{T,N}}
 ContiguousVector{T} =  ContiguousArray{T,1}
 ContiguousMatrix{T} =  ContiguousArray{T,2}
 
-import Base: linearindexing, LinearFast, LinearSlow
-linearindexing(a::ContViews) = LinearFast()
-linearindexing(a::NonContViews) = LinearSlow()
-linearindexing(a::NonContViews{T,1}) where {T} = LinearFast()
+import Base: IndexStyle, IndexLinear, IndexCartesian
+IndexStyle(a::ContViews) = IndexLinear()
+IndexStyle(a::NonContViews) = IndexCartesian()
+IndexStyle(a::NonContViews{T,1}) where {T} = IndexLinear()
 
 ## strides method
 
