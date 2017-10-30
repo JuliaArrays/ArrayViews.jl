@@ -1,19 +1,16 @@
 # layout-related functions
 
-@compat typealias ContViews{T,N} Union{ContiguousView{T,N},UnsafeContiguousView{T,N}}
-@compat typealias NonContViews{T,N,M} Union{StridedView{T,N,M}, UnsafeStridedView{T,N,M}}
+ContViews{T,N} = Union{ContiguousView{T,N},UnsafeContiguousView{T,N}}
+NonContViews{T,N,M} = Union{StridedView{T,N,M}, UnsafeStridedView{T,N,M}}
 
-@compat typealias ContiguousArray{T,N} Union{Array{T,N}, ContiguousView{T,N}}
-typealias ContiguousVector{T} ContiguousArray{T,1}
-typealias ContiguousMatrix{T} ContiguousArray{T,2}
+ContiguousArray{T,N} = Union{Array{T,N}, ContiguousView{T,N}}
+ContiguousVector{T} = ContiguousArray{T,1}
+ContiguousMatrix{T} = ContiguousArray{T,2}
 
-if VERSION >= v"0.4.0-dev+1784"
-    import Base: linearindexing, LinearFast, LinearSlow
-
-    linearindexing(a::ContViews) = LinearFast()
-    linearindexing(a::NonContViews) = LinearSlow()
-    linearindexing{T}(a::NonContViews{T,1}) = LinearFast()
-end
+import Base: IndexStyle, IndexLinear, IndexCartesian
+IndexStyle(a::ContViews) = IndexLinear()
+IndexStyle(a::NonContViews) = IndexCartesian()
+IndexStyle{T}(a::NonContViews{T,1}) = IndexLinear()
 
 ## strides method
 

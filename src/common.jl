@@ -17,9 +17,9 @@
 # linear indexing and type-stable subview
 # calculation.
 #
-abstract StridedArrayView{T,N,M} <: DenseArray{T,N}
-abstract ArrayView{T,N,M} <: StridedArrayView{T,N,M}
-abstract UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M}
+abstract type StridedArrayView{T,N,M} <: DenseArray{T,N} end
+abstract type ArrayView{T,N,M} <: StridedArrayView{T,N,M} end
+abstract type UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M} end
 
 # a type for indicating contiguous rank (statically)
 type ContRank{M} end
@@ -27,9 +27,9 @@ type ContRank{M} end
 ## auxiliary union types to simplify method definition
 ## (for internal use only)
 
-@compat typealias Subs Union{Real,Colon,Range}
-@compat typealias SubsNC Union{Real,Range}
-@compat typealias SubsRange Union{Colon,Range}
+const Subs = Union{Real,Colon,Range}
+const SubsNC = Union{Real,Range}
+const SubsRange = Union{Colon,Range}
 
 
 ### Common methods
@@ -52,11 +52,7 @@ size{T,N}(a::StridedArrayView{T,N}, d::Integer) = getdim(size(a), d)
 
 ## pointer conversion
 
-if VERSION < v"0.4.0-dev+3768"
-    convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
-else
-    unsafe_convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
-end
+unsafe_convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
 
 ## Create similar array
 
