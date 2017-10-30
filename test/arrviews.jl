@@ -35,7 +35,7 @@ function strides_e1(s, m::Int)
     return tuple(ss...)
 end
 
-function _ofs{N,K}(ss::NTuple{N,Int}, subs::NTuple{K,Int})
+function _ofs(ss::NTuple{N,Int}, subs::NTuple{K,Int}) where {N,K}
     r = 0
     for i = 1:N
         r += ss[i] * (subs[i] - 1)
@@ -44,7 +44,7 @@ function _ofs{N,K}(ss::NTuple{N,Int}, subs::NTuple{K,Int})
     return r
 end
 
-function _ofs{N,K}(siz::NTuple{N,Int}, ss::NTuple{N,Int}, subs::NTuple{K,Int})
+function _ofs(siz::NTuple{N,Int}, ss::NTuple{N,Int}, subs::NTuple{K,Int}) where {N,K}
     # println("siz = $siz, ss = $ss, subs = $subs")
     if K >= N
         _ofs(ss, subs)
@@ -56,38 +56,38 @@ function _ofs{N,K}(siz::NTuple{N,Int}, ss::NTuple{N,Int}, subs::NTuple{K,Int})
 end
 
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{1,Int})
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{1,Int}) where T
     n = siz[1]
     @test T[v[i] for i = 1:n] == src[o+(1:n)]
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{2,Int})
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{2,Int}) where T
     d1, d2 = siz
     @test T[v[i1,i2] for i1=1:d1, i2=1:d2] == reshape(src[o+(1:d1*d2)], (d1, d2))
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{3,Int})
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{3,Int}) where T
     d1, d2, d3 = siz
     sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3))
     vr = T[v[i1,i2,i3] for i1=1:d1, i2=1:d2, i3=1:d3]
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{4,Int})
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{4,Int}) where T
     d1, d2, d3, d4 = siz
     sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3, d4))
     vr = T[v[i1,i2,i3,i4] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4]
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{5,Int})
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{5,Int}) where T
     d1, d2, d3, d4, d5 = siz
     sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3, d4, d5))
     vr = T[v[i1,i2,i3,i4,i5] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4, i5=1:d5]
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{1,Int}, ss)
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{1,Int}, ss) where T
     vsiz = size(v)
     n = siz[1]
     sr = T[src[o + 1 + _ofs(vsiz, ss, (i,))] for i = 1:n]
@@ -95,7 +95,7 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{2,Int}, ss)
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{2,Int}, ss) where T
     vsiz = size(v)
     d1, d2 = siz
     sr = T[src[o + 1 + _ofs(vsiz, ss, (i1, i2))] for i1=1:d1, i2=1:d2]
@@ -103,7 +103,7 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{3,Int}, ss)
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{3,Int}, ss) where T
     vsiz = size(v)
     d1, d2, d3 = siz
     sr = T[src[o + 1 + _ofs(vsiz, ss, (i1, i2, i3))] for i1=1:d1, i2=1:d2, i3=1:d3]
@@ -111,7 +111,7 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{4,Int}, ss)
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{4,Int}, ss) where T
     vsiz = size(v)
     d1, d2, d3, d4 = siz
     sr = T[src[o + 1 + _ofs(vsiz, ss, (i1, i2, i3, i4))] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4]
@@ -119,7 +119,7 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
     @test vr == sr
 end
 
-function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{5,Int}, ss)
+function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{5,Int}, ss) where T
     vsiz = size(v)
     d1, d2, d3, d4, d5 = siz
     sr = T[src[o + 1 + _ofs(vsiz, ss, (i1, i2, i3, i4, i5))] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4, i5=1:d5]
@@ -128,7 +128,7 @@ function verify_elements{T}(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple
 end
 
 
-function verify_cview{T,N}(VType, src::Array{T}, o::Int, siz::NTuple{N,Int})
+function verify_cview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}) where {T,N}
     @assert o + prod(siz) <= length(src)
     v = VType(src, o, siz)
     @test isa(v, VType{T,N})
@@ -160,7 +160,7 @@ function verify_cview{T,N}(VType, src::Array{T}, o::Int, siz::NTuple{N,Int})
     end
 end
 
-function verify_sview{T,N,M}(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int})
+function verify_sview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int}) where {T,N,M}
     # ss: strides
     @assert ss[1] >= 1
     for d = 2:N

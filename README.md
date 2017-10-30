@@ -78,7 +78,7 @@ The ``aview`` function returns an array view of type ``ArrayView``.
 Here, ``ArrayView`` is an abstract type with two derived types (``ContiguousView`` and ``StridedView``), defined as:
 
 ```julia
-abstract ArrayView{T,N,M} <: DenseArray{T,N}
+abstract type ArrayView{T,N,M} <: DenseArray{T,N} end
 ```
 We can see that each view type has three static properties: element type ``T``, the number of dimensions ``N``, and the *contiguous rank* ``M``.
 
