@@ -13,7 +13,7 @@ myrepr(r::Colon) = ":"
 
 # timing functions
 
-function time_view1d{T}(a::AbstractArray{T}, rtimes::Int)
+function time_view1d(a::AbstractArray{T}, rtimes::Int) where T
     # warm up
     n::Int = length(a)
     for i = 1:n
@@ -30,7 +30,7 @@ function time_view1d{T}(a::AbstractArray{T}, rtimes::Int)
     return (et, s)
 end
 
-function time_view2d{T}(a::AbstractArray{T}, rtimes::Int)
+function time_view2d(a::AbstractArray{T}, rtimes::Int) where T
     # warm up
     m::Int = size(a, 1)
     n::Int = size(a, 2)
@@ -48,7 +48,7 @@ function time_view2d{T}(a::AbstractArray{T}, rtimes::Int)
     return (et, s)
 end
 
-function time_view3d{T}(a::AbstractArray{T}, rtimes::Int)
+function time_view3d(a::AbstractArray{T}, rtimes::Int) where T
     # warm up
     m::Int = size(a, 1)
     n::Int = size(a, 2)

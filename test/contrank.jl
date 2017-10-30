@@ -11,7 +11,7 @@ const istepr = 1:2:5
 
 const tinds = Any[irealn, icolon, irange, istepr]
 
-crank{M}(::Type{ContRank{M}}) = M
+crank(::Type{ContRank{M}}) where {M} = M
 crank(I::Subs...) = crank(contrank(I...))
 
 function safe_crank(inds...)
