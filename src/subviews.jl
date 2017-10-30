@@ -96,7 +96,7 @@ roffset{T}(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::SubsNC) =
 
 
 # 4D (partial)
-function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs)
+function roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC, i3::SubsNC, i4::SubsNC)
     o = _offset(i1)
     s = size(a,1)
     o += s * _offset(i2)
@@ -105,7 +105,7 @@ function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs)
     return o
 end
 
-function roffset(a::ContiguousArray, i1::Colon, i2::Subs, i3::Subs, i4::Subs)
+function roffset(a::ContiguousArray, i1::Colon, i2::SubsNC, i3::SubsNC, i4::SubsNC)
     s = size(a,1)
     o = s * _offset(i2)
     o += (s *= size(a,2)) * _offset(i3)
@@ -113,7 +113,7 @@ function roffset(a::ContiguousArray, i1::Colon, i2::Subs, i3::Subs, i4::Subs)
     return o
 end
 
-function roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Subs, i4::Subs)
+function roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::SubsNC, i4::SubsNC)
     s = size(a,1)
     o = (s *= size(a,2)) * _offset(i3)
     o += (s *= size(a,3)) * _offset(i4)
