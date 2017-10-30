@@ -122,6 +122,7 @@ end
 
 # General
 
+roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon, i4::Colon) = 0
 roffset(a::ContiguousArray, i1::Colon, i2::Colon, i3::Colon, i4::Colon, I::Colon...) = 0
 
 function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...)
