@@ -17,19 +17,19 @@
 # linear indexing and type-stable subview
 # calculation.
 #
-abstract StridedArrayView{T,N,M} <: DenseArray{T,N}
-abstract ArrayView{T,N,M} <: StridedArrayView{T,N,M}
-abstract UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M}
+abstract type StridedArrayView{T,N,M} <: DenseArray{T,N} end
+abstract type ArrayView{T,N,M} <: StridedArrayView{T,N,M} end
+abstract type UnsafeArrayView{T,N,M} <: StridedArrayView{T,N,M} end
 
 # a type for indicating contiguous rank (statically)
-type ContRank{M} end
+mutable struct ContRank{M} end
 
 ## auxiliary union types to simplify method definition
 ## (for internal use only)
 
-@compat typealias Subs Union{Real,Colon,Range}
-@compat typealias SubsNC Union{Real,Range}
-@compat typealias SubsRange Union{Colon,Range}
+const Subs = Union{Real,Colon,Range}
+const SubsNC = Union{Real,Range}
+const SubsRange = Union{Colon,Range}
 
 
 ### Common methods
@@ -39,25 +39,21 @@ iscontiguous(a::Array) = true
 
 offset(a::Array) = 0
 
-contiguousrank{T,N,M}(a::StridedArrayView{T,N,M}) = M
+contiguousrank(a::StridedArrayView{T,N,M}) where {T,N,M} = M
 
-contrank{T,N}(a::Array{T,N}) = ContRank{N}
-contrank{T,N,M}(a::StridedArrayView{T,N,M}) = ContRank{M}
+contrank(a::Array{T,N}) where {T,N} = ContRank{N}
+contrank(a::StridedArrayView{T,N,M}) where {T,N,M} = ContRank{M}
 
 length(a::StridedArrayView) = a.len
 size(a::StridedArrayView) = a.shp
 
-getdim{N}(s::NTuple{N,Int}, d::Integer) = (1 <= d <= N ? s[d] : 1)
-size{T,N}(a::StridedArrayView{T,N}, d::Integer) = getdim(size(a), d)
+getdim(s::NTuple{N,Int}, d::Integer) where {N} = (1 <= d <= N ? s[d] : 1)
+size(a::StridedArrayView{T,N}, d::Integer) where {T,N} = getdim(size(a), d)
 
 ## pointer conversion
 
-if VERSION < v"0.4.0-dev+3768"
-    convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
-else
-    unsafe_convert{T}(::Type{Ptr{T}}, a::StridedArrayView{T}) = pointer(a)
-end
+unsafe_convert(::Type{Ptr{T}}, a::StridedArrayView{T}) where {T} = pointer(a)
 
 ## Create similar array
 
-similar{T}(a::StridedArrayView, ::Type{T}, dims::Dims) = Array(T, dims)
+similar(a::StridedArrayView, ::Type{T}, dims::Dims) where {T} = Array(T, dims)
