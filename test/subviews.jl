@@ -34,7 +34,10 @@ function _test_arrview(a, r, subs...)
 end
 
 macro test_arrview(a_, subs...)
-    esc(:(_test_arrview($a_, $a_[$(subs...)], $(subs...))))
+    # ArrayViews still allows omitting indices for non-singleton trailing dims,
+    # same as  < Julia 0.6.0, pre #23628.
+    # For the sake of getting tests to pass on 0.7, test against old behavior
+    esc(:(_test_arrview($a_, reshape($(a_),Val($(length(subs))))[$(subs...)], $(subs...))))
 end
 
 #### test views from arrays
