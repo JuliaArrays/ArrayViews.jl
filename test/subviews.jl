@@ -7,11 +7,11 @@ using Base.Test
 
 ## tools to facilitate aview testing
 function _test_arrview_contents(v, r)
-    # siz_r = size(r)
-    # siz_v = size(v)
-    # if siz_r != siz_v
-    #     error("Incorrect size: get $(siz_v), but expect $(siz_r)")
-    # end
+    siz_r = size(r)
+    siz_v = size(v)
+    if siz_r != siz_v
+        error("Incorrect size: get $(siz_v), but expect $(siz_r)")
+    end
 
     if length(v) != length(r)
         error("Unmatched length: get $(length(v)), but expect $(length(r))")

@@ -153,11 +153,9 @@ end
 
 _dim(a::AbstractArray, d::Int, r::Colon) = size(a, d)
 _dim(a::AbstractArray, d::Int, r::Range) = length(r)
-_dim(a::AbstractArray, d::Int, r::Real) = 1
 
 _dim(siz::NTuple{N,Int}, d::Int, r::Colon) where {N} = d <= N ? siz[d] : 1
 _dim(siz::Tuple, d::Int, r::Range) = length(r)
-_dim(siz::Tuple, d::Int, r::Real) = 1
 
 # 1D
 vshape(a::DenseArray, i::Real) = ()
@@ -173,8 +171,10 @@ _succlen2(a::DenseArray) = prod(size(a)[2:end])::Int
 
 vshape(a::DenseArray, i1::Real, i2::Real) = ()
 vshape(a::DenseArray, i1::SubsRange, i2::Real) = (_dim(a,1,i1),)
-vshape(a::DenseArray, i1::Subs, i2::Colon) = (_dim(a,1,i1), _succlen2(a))
-vshape(a::DenseArray, i1::Subs, i2::Range) = (_dim(a,1,i1), length(i2))
+vshape(a::DenseArray, i1::SubsRange, i2::Colon) = (_dim(a,1,i1), _succlen2(a))
+vshape(a::DenseArray, i1::SubsRange, i2::Range) = (_dim(a,1,i1), length(i2))
+vshape(a::DenseArray, i1::Real, i2::Colon) = (_succlen2(a),)
+vshape(a::DenseArray, i1::Real, i2::Range) = (length(i2),)
 
 # 3D
 
@@ -186,47 +186,44 @@ _succlen3(a::DenseArray) = prod(size(a)[3:end])::Int
 
 vshape(a::DenseArray, i1::Real, i2::Real, i3::Real) = ()
 vshape(a::DenseArray, i1::SubsRange, i2::Real, i3::Real) = (_dim(a,1,i1),)
-vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real) =
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::Real) =
     (_dim(a,1,i1), _dim(a,2,i2))
+vshape(a::DenseArray, i1::Real, i2::SubsRange, i3::Real) =
+    (_dim(a,2,i2),)
 
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Colon) =
     (_dim(a,1,i1), _dim(a,2,i2), _succlen3(a))
 vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Range) =
     (_dim(a,1,i1), _dim(a,2,i2), length(i3))
 
-# 4D
+vshape(a::DenseArray, i1::Real, i2::Subs, i3::Colon) =
+    (_dim(a,2,i2), _succlen3(a))
+vshape(a::DenseArray, i1::Real, i2::Subs, i3::Range) =
+    (_dim(a,2,i2), length(i3))
 
-_succlen4(a::DenseArray{T,1}) where {T} = 1
-_succlen4(a::DenseArray{T,2}) where {T} = 1
-_succlen4(a::DenseArray{T,3}) where {T} = 1
-_succlen4(a::DenseArray{T,4}) where {T} = size(a, 4)
-_succlen4(a::DenseArray{T,5}) where {T} = size(a, 4) * size(a, 5)
-_succlen4(a::DenseArray) = prod(size(a)[4:end])::Int
+vshape(a::DenseArray, i1::Subs, i2::Real, i3::Colon) =
+    (_dim(a,1,i1), _succlen3(a))
+vshape(a::DenseArray, i1::Subs, i2::Real, i3::Range) =
+    (_dim(a,1,i1), length(i3))
 
-vshape(a::DenseArray, i1::Real, i2::Real, i3::Real, i4::Real) = ()
-vshape(a::DenseArray, i1::SubsRange, i2::Real, i3::Real, i4::Real) = (_dim(a,1,i1),)
-vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real, i4::Real) =
-    (_dim(a,1,i1), _dim(a,2,i2))
-vshape(a::DenseArray, i1::Subs, i2::Subs, i3::SubsRange, i4::Real) =
-    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3))
+vshape(a::DenseArray, i1::Real, i2::Real, i3::Colon) =
+    (_succlen3(a),)
+vshape(a::DenseArray, i1::Real, i2::Real, i3::Range) =
+    (length(i3),)
 
-vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Colon) =
-    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), _succlen4(a))
-vshape(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Range) =
-    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), length(i4))
 
 # multi-dimensional
 
-vshape(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, i5::Subs, I::Subs...) where {T,N} =
-    _vshape(size(a), i1, i2, i3, i4, i5, I...)
+vshape(a::DenseArray{T,N}, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) where {T,N} =
+    _vshape(size(a), i1, i2, i3, i4, I...)
 
 _vshape(siz::NTuple{N,Int}, i1::Real) where {N} = ()
 _vshape(siz::NTuple{N,Int}, i1::Real, i2::Real...) where {N} = ()
 
 _vshape(siz::NTuple{N,Int}, i1::Colon) where {N} = (prod(siz),)
 _vshape(siz::NTuple{N,Int}, i1::Range) where {N} = (length(i1),)
-_vshape(siz::NTuple{N,Int}, i1::Subs, i2::Subs...) where {N} = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
-
+_vshape(siz::NTuple{N,Int}, i1::SubsRange, i2::Subs...) where {N} = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
+_vshape(siz::NTuple{N,Int}, i1::Real, i2::Subs...) where {N} = tuple(_vshape(siz[2:N], i2...)...)
 
 ##### Compute strides #####
 
@@ -236,45 +233,38 @@ vstrides(a::ContiguousArray, i::Subs) = (_step(i),)
 vstrides(a::DenseArray, i::Subs) = (stride(a,1) * _step(i),)
 
 # 2D
+vstrides(a::ContiguousArray, i1::Real, i2::Real) = ()
+vstrides(a::ContiguousArray, i1::SubsRange, i2::Real) = (_step(i1),)
+vstrides(a::ContiguousArray, i1::SubsRange, i2::Union{Colon,UnitRange}) = (_step(i1), stride(a,2))
+vstrides(a::ContiguousArray, i1::Real, i2::Union{Colon,UnitRange}) = (stride(a,2),)
+vstrides(a::ContiguousArray, i1::SubsRange, i2::Range) = (_step(i1), stride(a,2) * _step(i2))
+vstrides(a::ContiguousArray, i1::Real, i2::Range) = (stride(a,2) * _step(i2),)
 
-vstrides(a::ContiguousArray, i1::Subs, i2::Real) = (_step(i1),)
-vstrides(a::ContiguousArray, i1::Subs, i2::Union{Colon,UnitRange}) = (_step(i1), stride(a,2))
-vstrides(a::ContiguousArray, i1::Subs, i2::Range) = (_step(i1), stride(a,2) * _step(i2))
-
-vstrides(a::DenseArray, i1::Subs, i2::Real) = (stride(a,1) * _step(i1),)
-vstrides(a::DenseArray, i1::Subs, i2::Subs) =
+vstrides(a::DenseArray, i1::Real, i2::Real) = ()
+vstrides(a::DenseArray, i1::SubsRange, i2::Real) = (stride(a,1) * _step(i1),)
+vstrides(a::DenseArray, i1::SubsRange, i2::Subs) =
     (stride(a,1) * _step(i1), stride(a,2) * _step(i2))
-
-# 3D
-
-vstrides(a::ContiguousArray, i1::Subs, i2::Real, i3::Real) =
-    (_step(i1),)
-vstrides(a::ContiguousArray, i1::Subs, i2::Subs, i3::Real) =
-    (_step(i1), stride(a,2) * _step(i2))
-vstrides(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs) =
-    (_step(i1), stride(a,2) * _step(i2), stride(a,3) * _step(i3))
-
-vstrides(a::DenseArray, i1::Subs, i2::Real, i3::Real) =
-    (stride(a,1) * _step(i1),)
-vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Real) =
-    (stride(a,1) * _step(i1), stride(a,2) * _step(i2))
-vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs) =
-    (stride(a,1) * _step(i1), stride(a,2) * _step(i2), stride(a,3) * _step(i3))
+vstrides(a::DenseArray, i1::Real, i2::Subs) =
+    (stride(a,2) * _step(i2),)
 
 # multi-dimensional array
 
-vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::Subs...) =
-    _vstrides(strides(a), 1, i1, i2, i3, i4, I...)
+vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, I::Subs...) =
+    _vstrides(strides(a), 1, i1, i2, i3, I...)
 
 _vstrides(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real) where {N} = ()
-_vstrides(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Real) where {N} =
+_vstrides(ss::NTuple{N,Int}, k::Int, i1::SubsRange, i2::Real) where {N} =
     (ss[k] * _step(i1),)
-_vstrides(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs) where {N} =
+_vstrides(ss::NTuple{N,Int}, k::Int, i1::Real, i2::SubsRange) where {N} =
+    (ss[k+1] * _step(i2),)
+_vstrides(ss::NTuple{N,Int}, k::Int, i1::SubsRange, i2::SubsRange) where {N} =
     (ss[k] * _step(i1), ss[k+1] * _step(i2))
 
 _vstrides(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real, i3::Real, I::Real...) where {N} = ()
-_vstrides(ss::NTuple{N,Int}, k::Int, i1::Subs, i2::Subs, i3::Subs, I::Subs...) where {N} =
+_vstrides(ss::NTuple{N,Int}, k::Int, i1::SubsRange, i2::Subs, i3::Subs, I::Subs...) where {N} =
     tuple(ss[k] * _step(i1), _vstrides(ss, k+1, i2, i3, I...)...)
+_vstrides(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Subs, i3::Subs, I::Subs...) where {N} =
+    _vstrides(ss, k+1, i2, i3, I...)
 
 
 ##### View construction ######
