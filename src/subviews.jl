@@ -222,7 +222,7 @@ _succlen4(a::DenseArray) = prod(size(a)[4:end])::Int
 
 vshape(a::DenseArray, i1::Real, i2::Real, i3::Real, i4::Real) = ()
 vshape(a::DenseArray, i1::SubsRange, i2::Real, i3::Real, i4::Real) = (_dim(a,1,i1),)
-vshape(a::DenseArray, i1::Subs, i2::SubsRange, i3::Real, i4::Real) =
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::Real, i4::Real) =
     (_dim(a,1,i1), _dim(a,2,i2))
 vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::SubsRange, i4::Real) =
     (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3))
