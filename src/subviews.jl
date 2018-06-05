@@ -211,6 +211,27 @@ vshape(a::DenseArray, i1::Real, i2::Real, i3::Colon) =
 vshape(a::DenseArray, i1::Real, i2::Real, i3::Range) =
     (length(i3),)
 
+# 4D
+
+_succlen4(a::DenseArray{T,1}) where T = 1
+_succlen4(a::DenseArray{T,2}) where T = 1
+_succlen4(a::DenseArray{T,3}) where T = 1
+_succlen4(a::DenseArray{T,4}) where T = size(a, 4)
+_succlen4(a::DenseArray{T,5}) where T = size(a, 4) * size(a, 5)
+_succlen4(a::DenseArray) = prod(size(a)[4:end])::Int
+
+vshape(a::DenseArray, i1::Real, i2::Real, i3::Real, i4::Real) = ()
+vshape(a::DenseArray, i1::SubsRange, i2::Real, i3::Real, i4::Real) = (_dim(a,1,i1),)
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::Real, i4::Real) =
+    (_dim(a,1,i1), _dim(a,2,i2))
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::SubsRange, i4::Real) =
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3))
+
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::SubsRange, i4::Colon) =
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), _succlen4(a))
+vshape(a::DenseArray, i1::SubsRange, i2::SubsRange, i3::SubsRange, i4::Range) =
+    (_dim(a,1,i1), _dim(a,2,i2), _dim(a,3,i3), length(i4))
+
 
 # multi-dimensional
 
