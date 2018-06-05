@@ -1,10 +1,9 @@
 # ArrayViews.jl
 
-[![Build Status](https://travis-ci.org/JuliaLang/ArrayViews.jl.svg)](https://travis-ci.org/JuliaLang/ArrayViews.jl)
-[![Coverage Status](https://coveralls.io/repos/JuliaLang/ArrayViews.jl/badge.svg)](https://coveralls.io/r/JuliaLang/ArrayViews.jl)
+[![Build Status](https://travis-ci.org/JuliaArrays/ArrayViews.jl.svg)](https://travis-ci.org/JuliaArrays/ArrayViews.jl)
+[![Coverage Status](https://coveralls.io/repos/JuliaArrays/ArrayViews.jl/badge.svg)](https://coveralls.io/r/JuliaArrays/ArrayViews.jl)
 
-[![ArrayViews](http://pkg.julialang.org/badges/ArrayViews_0.3.svg)](http://pkg.julialang.org/?pkg=ArrayViews&ver=0.3)
-[![ArrayViews](http://pkg.julialang.org/badges/ArrayViews_0.4.svg)](http://pkg.julialang.org/?pkg=ArrayViews&ver=0.4)
+[![ArrayViews](http://pkg.julialang.org/badges/ArrayViews_0.6.svg)](http://pkg.julialang.org/?pkg=ArrayViews&ver=0.6)
 
 A Julia package to explore a new system of array views.
 
