@@ -56,4 +56,4 @@ unsafe_convert(::Type{Ptr{T}}, a::StridedArrayView{T}) where {T} = pointer(a)
 
 ## Create similar array
 
-similar(a::StridedArrayView, ::Type{T}, dims::Dims) where {T} = Array(T, dims)
+similar(a::StridedArrayView, ::Type{T}, dims::Dims) where {T} = Array{T}(dims)
