@@ -1,6 +1,6 @@
 # benchmarking
 
-using ArrayViews
+using ArrayViews, Test
 
 # auxiliary functions
 

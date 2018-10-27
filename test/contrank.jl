@@ -1,7 +1,6 @@
 # contrank arithmetics
 
-using ArrayViews
-using Base.Test
+using ArrayViews, Test
 import ArrayViews: Subs, ContRank, contrank
 
 const irealn = 3

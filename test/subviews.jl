@@ -1,9 +1,6 @@
-# testing subviews
-
-using ArrayViews
-using Base.Test
-
 #### Test Subviews
+
+using ArrayViews, Test
 
 ## tools to facilitate aview testing
 function _test_arrview_contents(v, r)

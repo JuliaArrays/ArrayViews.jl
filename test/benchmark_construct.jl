@@ -1,6 +1,6 @@
 # Benchmark on view construction (overhead)
 
-using ArrayViews
+using ArrayViews, Test
 
 function traverse_row_subs(a::Array, r::Int)
     m = size(a, 1)

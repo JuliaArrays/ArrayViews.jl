@@ -1,5 +1,4 @@
-using ArrayViews
-using Base.Test
+using ArrayViews, test
 
 avparent = rand(7, 8)
 bvparent = rand(8, 5)

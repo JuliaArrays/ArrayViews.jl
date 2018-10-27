@@ -1,5 +1,4 @@
-using ArrayViews
-using Base.Test
+using ArrayViews, Test
 import ArrayViews: ContRank
 
 ### Auxiliary functions

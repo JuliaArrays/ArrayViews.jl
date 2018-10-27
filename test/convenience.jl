@@ -1,7 +1,6 @@
-using ArrayViews
-using Base.Test
-
 #### diagview
+
+using ArrayViews, test
 
 a = rand(5, 6)
 @test diagview(a) == diag(a)
