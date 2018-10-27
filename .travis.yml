@@ -1,11 +1,20 @@
 language: julia
+
 os:
    - linux
    - osx
+
 julia:
-   - 0.6
+   - 0.7
+   - 1.0
    - nightly
-after_success:
-   - julia -e 'cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())';
+
+matrix:
+  allow_failures:
+    - julia: nightly
+
 notifications:
   email: false
+
+after_success:
+   - julia -e 'using Pkg; cd(Pkg.dir("ArrayViews")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
