@@ -26,11 +26,11 @@ for i = 1:size(a,1)
     @test rowvec_view(a, i) == vec(a[i,:])
 end
 
-# a = rand(6, 8)
-# b = aview(a, 2:6, 2:7)
-# for i = 1:size(b,1)
-#     @test rowvec_view(b,i) == vec(a[1+i, 2:7])
-# end
+a = rand(6, 8)
+b = aview(a, 2:6, 2:7)
+for i = 1:size(b,1)
+    @test rowvec_view(b,i) == vec(a[1+i, 2:7])
+end
 
 #### reshape_view
 println("    -- testing reshape_view")
