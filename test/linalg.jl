@@ -1,4 +1,4 @@
-using ArrayViews, test
+using ArrayViews, Test, LinearAlgebra
 
 avparent = rand(7, 8)
 bvparent = rand(8, 5)

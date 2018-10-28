@@ -31,31 +31,31 @@ end
 strides(a::NonContViews) = a.strides
 
 
-## stride method
+## astride method
 
-stride(a::ContiguousView{T,1}, d::Integer) where {T} =
+astride(a::ContiguousView{T,1}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 : length(a))::Int
 
-stride(a::ContiguousView{T,2}, d::Integer) where {T} =
+astride(a::ContiguousView{T,2}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] : length(a))::Int
 
-stride(a::ContiguousView{T,3}, d::Integer) where {T} =
+astride(a::ContiguousView{T,3}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
      d == 3 ? a.shp[1] * a.shp[2] : length(a))::Int
 
- stride(a::ContiguousView{T,4}, d::Integer) where {T} =
+ astride(a::ContiguousView{T,4}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
      d == 3 ? a.shp[1] * a.shp[2] :
      d == 4 ? a.shp[1] * a.shp[2] * a.shp[3] : length(a))::Int
 
-stride(a::ContiguousView{T,5}, d::Integer) where {T} =
+astride(a::ContiguousView{T,5}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
@@ -63,7 +63,7 @@ stride(a::ContiguousView{T,5}, d::Integer) where {T} =
      d == 4 ? a.shp[1] * a.shp[2] * a.shp[3] :
      d == 5 ? a.shp[1] * a.shp[2] * a.shp[3] * a.shp[4] : length(a))::Int
 
-stride(a::NonContViews{T,N}, d::Integer) where {T,N} =
+astride(a::NonContViews{T,N}, d::Integer) where {T,N} =
     (d > 0 || error("dimension out of range.");
      d <= N ? a.strides[d] : a.strides[N])
 
