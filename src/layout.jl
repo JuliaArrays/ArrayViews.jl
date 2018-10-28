@@ -12,15 +12,16 @@ IndexStyle(a::ContViews) = IndexLinear()
 IndexStyle(a::NonContViews) = IndexCartesian()
 IndexStyle(a::NonContViews{T,1}) where {T} = IndexLinear()
 
-## strides method
+## astrides method
 
-strides(a::ContViews{T,1}) where {T} = (1,)
-strides(a::ContViews{T,2}) where {T} = (1, a.shp[1])
-strides(a::ContViews{T,3}) where {T} = ((d1, d2, d3) = size(a); (1, d1, d1 * d2))
+astrides(a::DenseArray) = strides(a)
 
-strides(a::ContViews{T,4}) where {T} = ((d1, d2, d3, d4) = size(a); (1, d1, d1 * d2, d1 * d2 * d3))
+astrides(a::ContViews{T,1}) where {T} = (1,)
+astrides(a::ContViews{T,2}) where {T} = (1, a.shp[1])
+astrides(a::ContViews{T,3}) where {T} = ((d1, d2, d3) = size(a); (1, d1, d1 * d2))
+astrides(a::ContViews{T,4}) where {T} = ((d1, d2, d3, d4) = size(a); (1, d1, d1 * d2, d1 * d2 * d3))
 
-function strides(a::ContViews{T,5}) where T
+function astrides(a::ContViews{T,5}) where T
     (d1, d2, d3, d4, d5) = a.shp
     s3 = d1 * d2
     s4 = s3 * d3
@@ -28,10 +29,11 @@ function strides(a::ContViews{T,5}) where T
     (1, d1, s3, s4, s5)
 end
 
-strides(a::NonContViews) = a.strides
-
+astrides(a::NonContViews) = a.astrides
 
 ## astride method
+
+astride(a::DenseArray, d::Integer) = stride(a, d)
 
 astride(a::ContiguousView{T,1}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
@@ -65,34 +67,34 @@ astride(a::ContiguousView{T,5}, d::Integer) where {T} =
 
 astride(a::NonContViews{T,N}, d::Integer) where {T,N} =
     (d > 0 || error("dimension out of range.");
-     d <= N ? a.strides[d] : a.strides[N])
+     d <= N ? a.astrides[d] : a.astrides[N])
 
 
  # test contiguousness
 
 iscontiguous(a::ContViews) = true
 
-iscontiguous(a::NonContViews{T,N}) where {T,N} = _iscontiguous(size(a), strides(a))
+iscontiguous(a::NonContViews{T,N}) where {T,N} = _iscontiguous(size(a), astrides(a))
 
-_iscontiguous(shp::NTuple{0,Int}, strides::NTuple{0,Int}) = true
-_iscontiguous(shp::NTuple{1,Int}, strides::NTuple{1,Int}) = (strides[1] == 1)
-_iscontiguous(shp::NTuple{2,Int}, strides::NTuple{2,Int}) = (strides[1] == 1 && strides[2] == shp[1])
-_iscontiguous(shp::NTuple{3,Int}, strides::NTuple{3,Int}) =
-    (strides[1] == 1 &&
-     strides[2] == shp[1] &&
-     strides[3] == shp[1] * shp[2])
+_iscontiguous(shp::NTuple{0,Int}, astrides::NTuple{0,Int}) = true
+_iscontiguous(shp::NTuple{1,Int}, astrides::NTuple{1,Int}) = (astrides[1] == 1)
+_iscontiguous(shp::NTuple{2,Int}, astrides::NTuple{2,Int}) = (astrides[1] == 1 && astrides[2] == shp[1])
+_iscontiguous(shp::NTuple{3,Int}, astrides::NTuple{3,Int}) =
+    (astrides[1] == 1 &&
+     astrides[2] == shp[1] &&
+     astrides[3] == shp[1] * shp[2])
 
-function _iscontiguous(shp::NTuple{4,Int}, strides::NTuple{4,Int})
+function _iscontiguous(shp::NTuple{4,Int}, astrides::NTuple{4,Int})
     s2 = shp[1]
     s3 = s2 * shp[2]
     s4 = s3 * shp[3]
-    strides[1] == 1 && strides[2] == s2 && strides[3] == s3 && strides[4] == s4
+    astrides[1] == 1 && astrides[2] == s2 && astrides[3] == s3 && astrides[4] == s4
 end
 
-function _iscontiguous(shp::NTuple{5,Int}, strides::NTuple{5,Int})
+function _iscontiguous(shp::NTuple{5,Int}, astrides::NTuple{5,Int})
     s2 = shp[1]
     s3 = s2 * shp[2]
     s4 = s3 * shp[3]
     s5 = s4 * shp[4]
-    strides[1] == 1 && strides[2] == s2 && strides[3] == s3 && strides[4] == s4 && strides[5] == s5
+    astrides[1] == 1 && astrides[2] == s2 && astrides[3] == s3 && astrides[4] == s4 && astrides[5] == s5
 end

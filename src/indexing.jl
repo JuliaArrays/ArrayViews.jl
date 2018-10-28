@@ -36,8 +36,8 @@ xoffset(s::NTuple{5,Int}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) =
 
 # 1D
 
-uindex(a::NonContViews{T,1}, i1::Int) where {T} = 1 + xoffset(strides(a), i1)
-uindex(a::NonContViews{T,1,0}, i1::Int) where {T} = 1 + xoffset0(strides(a), i1)
+uindex(a::NonContViews{T,1}, i1::Int) where {T} = 1 + xoffset(astrides(a), i1)
+uindex(a::NonContViews{T,1,0}, i1::Int) where {T} = 1 + xoffset0(astrides(a), i1)
 uindex(a::NonContViews{T,1}, i1::Int, i2::Int) where {T} = uindex(a, i1)
 uindex(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int) where {T} = uindex(a, i1)
 uindex(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = uindex(a, i1)
@@ -47,8 +47,8 @@ uindex(a::NonContViews{T,1}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where 
 
 uindex(a::NonContViews{T,2}, i1::Int) where {T} = ((j1, j2) = _ind2sub(size(a), i1); uindex(a, j1, j2))
 
-uindex(a::NonContViews{T,2}, i1::Int, i2::Int) where {T} = 1 + xoffset(strides(a), i1, i2)
-uindex(a::NonContViews{T,2,0}, i1::Int, i2::Int) where {T} = 1 + xoffset0(strides(a), i1, i2)
+uindex(a::NonContViews{T,2}, i1::Int, i2::Int) where {T} = 1 + xoffset(astrides(a), i1, i2)
+uindex(a::NonContViews{T,2,0}, i1::Int, i2::Int) where {T} = 1 + xoffset0(astrides(a), i1, i2)
 
 uindex(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int) where {T} = uindex(a, i1, i2)
 uindex(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = uindex(a, i1, i2)
@@ -59,8 +59,8 @@ uindex(a::NonContViews{T,2}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where 
 uindex(a::NonContViews{T,3}, i1::Int) where {T} = ((j1, j2, j3) = _ind2sub(size(a), i1); uindex(a, j1, j2, j3))
 uindex(a::NonContViews{T,3}, i1::Int, i2::Int) where {T} = ((j2, j3) = _ind2sub(size(a)[2:3], i2); uindex(a, i1, j2, j3))
 
-uindex(a::NonContViews{T,3,0}, i1::Int, i2::Int, i3::Int) where {T} = 1 + xoffset0(strides(a), i1, i2, i3)
-uindex(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int) where {T} = 1 + xoffset(strides(a), i1, i2, i3)
+uindex(a::NonContViews{T,3,0}, i1::Int, i2::Int, i3::Int) where {T} = 1 + xoffset0(astrides(a), i1, i2, i3)
+uindex(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int) where {T} = 1 + xoffset(astrides(a), i1, i2, i3)
 
 uindex(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = uindex(a, i1, i2, i3)
 uindex(a::NonContViews{T,3}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where {T} = uindex(a, i1, i2, i3)
@@ -71,8 +71,8 @@ uindex(a::NonContViews{T,4}, i1::Int) where {T} = ((j1, j2, j3, j4) = _ind2sub(s
 uindex(a::NonContViews{T,4}, i1::Int, i2::Int) where {T} = ((j2, j3, j4) = _ind2sub(size(a)[2:4], i2); uindex(a, i1, j2, j3, j4))
 uindex(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int) where {T} = ((j3, j4) = _ind2sub(size(a)[3:4], i3); uindex(a, i1, i2, j3, j4))
 
-uindex(a::NonContViews{T,4,0}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = 1 + xoffset0(strides(a), i1, i2, i3, i4)
-uindex(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = 1 + xoffset(strides(a), i1, i2, i3, i4)
+uindex(a::NonContViews{T,4,0}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = 1 + xoffset0(astrides(a), i1, i2, i3, i4)
+uindex(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} = 1 + xoffset(astrides(a), i1, i2, i3, i4)
 
 uindex(a::NonContViews{T,4}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where {T} = uindex(a, i1, i2, i3, i4)
 
@@ -88,9 +88,9 @@ uindex(a::NonContViews{T,5}, i1::Int, i2::Int, i3::Int, i4::Int) where {T} =
     ((j4, j5) = _ind2sub(size(a)[4:5], i4); uindex(a, i1, i2, i3, j4, j5))
 
 uindex(a::NonContViews{T,5,0}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where {T} =
-    1 + xoffset0(strides(a), i1, i2, i3, i4, i5)
+    1 + xoffset0(astrides(a), i1, i2, i3, i4, i5)
 uindex(a::NonContViews{T,5}, i1::Int, i2::Int, i3::Int, i4::Int, i5::Int) where {T} =
-    1 + xoffset(strides(a), i1, i2, i3, i4, i5)
+    1 + xoffset(astrides(a), i1, i2, i3, i4, i5)
 
 
 

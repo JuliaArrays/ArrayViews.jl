@@ -150,7 +150,7 @@ function verify_cview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}) where {T
     end
     strides_tup = tuple(strides_arr...)
 
-    @test strides(v) == strides_tup
+    @test astrides(v) == strides_tup
     for d = 1:N
         @test stride(v,d) == strides_tup[d]
     end
@@ -161,7 +161,7 @@ function verify_cview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}) where {T
 end
 
 function verify_sview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int}) where {T,N,M}
-    # ss: strides
+    # ss: astrides
     @assert ss[1] >= 1
     for d = 2:N
         @assert ss[d] >= ss[d-1] * siz[d-1]
@@ -180,7 +180,7 @@ function verify_sview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type
     @test iscontiguous(v) == false
     @test contiguousrank(v) == M
 
-    @test strides(v) == ss
+    @test astrides(v) == ss
     for d = 1:N
         @test astride(v,d) == ss[d]
     end

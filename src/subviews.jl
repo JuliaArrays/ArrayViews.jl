@@ -45,7 +45,7 @@ roffset(a::ContiguousArray, i::Colon) = 0
 roffset(a::ContiguousArray, i::SubsNC) = _offset(i)
 
 roffset(a::StridedVector, i::Colon) = 0
-roffset(a::StridedVector, i::SubsNC) = _offset(i) * stride(a,1)
+roffset(a::StridedVector, i::SubsNC) = _offset(i) * astride(a,1)
 
 # 2D
 
@@ -56,10 +56,10 @@ roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC) =
     _offset(i1) + size(a,1) * _offset(i2)
 
 roffset(a::StridedMatrix, i1::Colon, i2::Colon) = 0
-roffset(a::StridedMatrix, i1::Colon, i2::SubsNC) = _offset(i2) * stride(a,2)
-roffset(a::StridedMatrix, i1::SubsNC, i2::Colon) = _offset(i1) * stride(a,1)
+roffset(a::StridedMatrix, i1::Colon, i2::SubsNC) = _offset(i2) * astride(a,2)
+roffset(a::StridedMatrix, i1::SubsNC, i2::Colon) = _offset(i1) * astride(a,1)
 roffset(a::StridedMatrix, i1::SubsNC, i2::SubsNC) =
-    _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
+    _offset(i1) * astride(a,1) + _offset(i2) * astride(a,2)
 
 # 3D
 
@@ -80,19 +80,19 @@ roffset(a::ContiguousArray, i1::SubsNC, i2::SubsNC, i3::SubsNC) =
 
 roffset(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::Colon) where {T} = 0
 roffset(a::StridedArray{T,3}, i1::Colon, i2::Colon, i3::SubsNC) where {T} =
-    _offset(i3) * stride(a,3)
+    _offset(i3) * astride(a,3)
 roffset(a::StridedArray{T,3}, i1::Colon, i2::SubsNC, i3::Colon) where {T} =
-    _offset(i2) * stride(a,2)
+    _offset(i2) * astride(a,2)
 roffset(a::StridedArray{T,3}, i1::Colon, i2::SubsNC, i3::SubsNC) where {T} =
-    _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
+    _offset(i2) * astride(a,2) + _offset(i3) * astride(a,3)
 roffset(a::StridedArray{T,3}, i1::SubsNC, i2::Colon, i3::Colon) where {T} =
-    _offset(i1) * stride(a,1)
+    _offset(i1) * astride(a,1)
 roffset(a::StridedArray{T,3}, i1::SubsNC, i2::Colon, i3::SubsNC) where {T} =
-    _offset(i1) * stride(a,1) + _offset(i3) * stride(a,3)
+    _offset(i1) * astride(a,1) + _offset(i3) * astride(a,3)
 roffset(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::Colon) where {T} =
-    _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2)
+    _offset(i1) * astride(a,1) + _offset(i2) * astride(a,2)
 roffset(a::StridedArray{T,3}, i1::SubsNC, i2::SubsNC, i3::SubsNC) where {T} =
-    _offset(i1) * stride(a,1) + _offset(i2) * stride(a,2) + _offset(i3) * stride(a,3)
+    _offset(i1) * astride(a,1) + _offset(i2) * astride(a,2) + _offset(i3) * astride(a,3)
 
 
 # 4D (partial)
@@ -138,7 +138,7 @@ function roffset(a::ContiguousArray, i1::Subs, i2::Subs, i3::Subs, i4::Subs, I::
 end
 
 roffset(a::StridedArray, i1::Subs, i2::Subs, i3::Subs, I::Subs...) =
-    _roffset(strides(a), tuple(i1, i2, i3, I...))::Int
+    _roffset(astrides(a), tuple(i1, i2, i3, I...))::Int
 
 function _roffset(ss::NTuple{N,Int}, subs::NTuple{N}) where N
     o = _offset(subs[1]) * ss[1]
@@ -251,27 +251,25 @@ _vshape(siz::NTuple{N,Int}, i1::Real, i2::Subs...) where {N} = tuple(_vshape(siz
 # 1D
 
 vstrides(a::ContiguousArray, i::Subs) = (_step(i),)
-vstrides(a::DenseArray, i::Subs) = (stride(a,1) * _step(i),)
+vstrides(a::DenseArray, i::Subs) = (astride(a,1) * _step(i),)
 
 # 2D
 vstrides(a::ContiguousArray, i1::Real, i2::Real) = ()
 vstrides(a::ContiguousArray, i1::SubsRange, i2::Real) = (_step(i1),)
-vstrides(a::ContiguousArray, i1::SubsRange, i2::Union{Colon,UnitRange}) = (_step(i1), stride(a,2))
-vstrides(a::ContiguousArray, i1::Real, i2::Union{Colon,UnitRange}) = (stride(a,2),)
-vstrides(a::ContiguousArray, i1::SubsRange, i2::AbstractRange) = (_step(i1), stride(a,2) * _step(i2))
-vstrides(a::ContiguousArray, i1::Real, i2::AbstractRange) = (stride(a,2) * _step(i2),)
+vstrides(a::ContiguousArray, i1::SubsRange, i2::Union{Colon,UnitRange}) = (_step(i1), astride(a,2))
+vstrides(a::ContiguousArray, i1::Real, i2::Union{Colon,UnitRange}) = (astride(a,2),)
+vstrides(a::ContiguousArray, i1::SubsRange, i2::AbstractRange) = (_step(i1), astride(a,2) * _step(i2))
+vstrides(a::ContiguousArray, i1::Real, i2::AbstractRange) = (astride(a,2) * _step(i2),)
 
 vstrides(a::DenseArray, i1::Real, i2::Real) = ()
-vstrides(a::DenseArray, i1::SubsRange, i2::Real) = (stride(a,1) * _step(i1),)
-vstrides(a::DenseArray, i1::SubsRange, i2::Subs) =
-    (stride(a,1) * _step(i1), stride(a,2) * _step(i2))
-vstrides(a::DenseArray, i1::Real, i2::Subs) =
-    (stride(a,2) * _step(i2),)
+vstrides(a::DenseArray, i1::SubsRange, i2::Real) = (astride(a,1) * _step(i1),)
+vstrides(a::DenseArray, i1::SubsRange, i2::Subs) = (astride(a,1) * _step(i1), astride(a,2) * _step(i2))
+vstrides(a::DenseArray, i1::Real, i2::Subs) = (astride(a,2) * _step(i2),)
 
 # multi-dimensional array
 
 vstrides(a::DenseArray, i1::Subs, i2::Subs, i3::Subs, I::Subs...) =
-    _vstrides(strides(a), 1, i1, i2, i3, I...)
+    _vstrides(astrides(a), 1, i1, i2, i3, I...)
 
 _vstrides(ss::NTuple{N,Int}, k::Int, i1::Real, i2::Real) where {N} = ()
 _vstrides(ss::NTuple{N,Int}, k::Int, i1::SubsRange, i2::Real) where {N} =

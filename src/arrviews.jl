@@ -40,7 +40,7 @@ struct StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
     offset::Int
     len::Int
     shp::NTuple{N,Int}
-    strides::NTuple{N,Int}
+    astrides::NTuple{N,Int}
 end
 
 function StridedView(arr::Array{T}, offset::Int, shp::NTuple{N,Int},
@@ -59,7 +59,7 @@ struct UnsafeStridedView{T,N,M} <: UnsafeArrayView{T,N,M}
     ptr::Ptr{T}
     len::Int
     shp::NTuple{N,Int}
-    strides::NTuple{N,Int}
+    astrides::NTuple{N,Int}
 end
 
 function UnsafeStridedView(ptr::Ptr{T}, shp::NTuple{N,Int},
