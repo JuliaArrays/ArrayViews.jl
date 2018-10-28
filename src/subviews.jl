@@ -2,7 +2,7 @@
 #
 #  - compute aview offset (w.r.t. the parent)
 #  - compute aview shape
-#  - compute strides (for non-contiguous views only)
+#  - compute astrides (for non-contiguous views only)
 #  - decide contiguous rank (statically)
 #  - make the aview
 #
@@ -246,7 +246,7 @@ _vshape(siz::NTuple{N,Int}, i1::AbstractRange) where {N} = (length(i1),)
 _vshape(siz::NTuple{N,Int}, i1::SubsRange, i2::Subs...) where {N} = tuple(_dim(siz,1,i1), _vshape(siz[2:N], i2...)...)
 _vshape(siz::NTuple{N,Int}, i1::Real, i2::Subs...) where {N} = tuple(_vshape(siz[2:N], i2...)...)
 
-##### Compute strides #####
+##### Compute astrides #####
 
 # 1D
 

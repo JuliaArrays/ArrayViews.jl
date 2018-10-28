@@ -14,7 +14,7 @@ IndexStyle(a::NonContViews{T,1}) where {T} = IndexLinear()
 
 ## astrides method
 
-astrides(a::DenseArray) = strides(a)
+astrides(a::Array{T,N}) where {T,N} = strides(a)
 
 astrides(a::ContViews{T,1}) where {T} = (1,)
 astrides(a::ContViews{T,2}) where {T} = (1, a.shp[1])
@@ -33,31 +33,31 @@ astrides(a::NonContViews) = a.astrides
 
 ## astride method
 
-astride(a::DenseArray, d::Integer) = stride(a, d)
+astride(a::Array{T,N}, d::Integer) where {T,N} = stride(a, d)
 
-astride(a::ContiguousView{T,1}, d::Integer) where {T} =
+astride(a::ContViews{T,1}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 : length(a))::Int
 
-astride(a::ContiguousView{T,2}, d::Integer) where {T} =
+astride(a::ContViews{T,2}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] : length(a))::Int
 
-astride(a::ContiguousView{T,3}, d::Integer) where {T} =
+astride(a::ContViews{T,3}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
      d == 3 ? a.shp[1] * a.shp[2] : length(a))::Int
 
- astride(a::ContiguousView{T,4}, d::Integer) where {T} =
+ astride(a::ContViews{T,4}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
      d == 3 ? a.shp[1] * a.shp[2] :
      d == 4 ? a.shp[1] * a.shp[2] * a.shp[3] : length(a))::Int
 
-astride(a::ContiguousView{T,5}, d::Integer) where {T} =
+astride(a::ContViews{T,5}, d::Integer) where {T} =
     (d > 0 || error("dimension out of range.");
      d == 1 ? 1 :
      d == 2 ? a.shp[1] :
