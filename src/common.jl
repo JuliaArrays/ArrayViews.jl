@@ -27,9 +27,9 @@ mutable struct ContRank{M} end
 ## auxiliary union types to simplify method definition
 ## (for internal use only)
 
-const Subs = Union{Real,Colon,Range}
-const SubsNC = Union{Real,Range}
-const SubsRange = Union{Colon,Range}
+const Subs = Union{Real,Colon,AbstractRange}
+const SubsNC = Union{Real,AbstractRange}
+const SubsRange = Union{Colon,AbstractRange}
 
 
 ### Common methods
@@ -56,4 +56,4 @@ unsafe_convert(::Type{Ptr{T}}, a::StridedArrayView{T}) where {T} = pointer(a)
 
 ## Create similar array
 
-similar(a::StridedArrayView, ::Type{T}, dims::Dims) where {T} = Array{T}(dims)
+similar(a::StridedArrayView, ::Type{T}, dims::Dims) where {T} = Array{T}(undef, dims)

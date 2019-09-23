@@ -40,50 +40,50 @@ struct StridedView{T,N,M,Arr<:Array} <: ArrayView{T,N,M}
     offset::Int
     len::Int
     shp::NTuple{N,Int}
-    strides::NTuple{N,Int}
+    astrides::NTuple{N,Int}
 end
 
 function StridedView(arr::Array{T}, offset::Int, shp::NTuple{N,Int},
-                      ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                      ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    StridedView{T,N,M,typeof(arr)}(arr, offset, prod(shp), shp, strides)
+    StridedView{T,N,M,typeof(arr)}(arr, offset, prod(shp), shp, astrides)
 end
 
 function StridedView(arr::Array{T}, shp::NTuple{N,Int},
-                      ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                      ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    StridedView{T,N,M,typeof(arr)}(arr, 0, prod(shp), shp, strides)
+    StridedView{T,N,M,typeof(arr)}(arr, 0, prod(shp), shp, astrides)
 end
 
 struct UnsafeStridedView{T,N,M} <: UnsafeArrayView{T,N,M}
     ptr::Ptr{T}
     len::Int
     shp::NTuple{N,Int}
-    strides::NTuple{N,Int}
+    astrides::NTuple{N,Int}
 end
 
 function UnsafeStridedView(ptr::Ptr{T}, shp::NTuple{N,Int},
-                           ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                           ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    UnsafeStridedView{T,N,M}(ptr, prod(shp), shp, strides)
+    UnsafeStridedView{T,N,M}(ptr, prod(shp), shp, astrides)
 end
 
 function UnsafeStridedView(ptr::Ptr{T}, offset::Int, shp::NTuple{N,Int},
-                           ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                           ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    UnsafeStridedView(ptr+offset*sizeof(T), shp, ContRank{M}, strides)
+    UnsafeStridedView(ptr+offset*sizeof(T), shp, ContRank{M}, astrides)
 end
 
 function UnsafeStridedView(arr::Array{T}, offset::Int, shp::NTuple{N,Int},
-                           ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                           ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    UnsafeStridedView(pointer(arr, offset+1), shp, ContRank{M}, strides)
+    UnsafeStridedView(pointer(arr, offset+1), shp, ContRank{M}, astrides)
 end
 
 function UnsafeStridedView(arr::Array{T}, shp::NTuple{N,Int},
-                           ::Type{ContRank{M}}, strides::NTuple{N,Int}) where {T,N,M}
+                           ::Type{ContRank{M}}, astrides::NTuple{N,Int}) where {T,N,M}
     @assert M < N
-    UnsafeStridedView(pointer(arr), shp, ContRank{M}, strides)
+    UnsafeStridedView(pointer(arr), shp, ContRank{M}, astrides)
 end
 
 

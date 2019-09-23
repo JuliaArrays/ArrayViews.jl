@@ -1,28 +1,23 @@
-# testing subviews
-
-using ArrayViews
-using Base.Test
-
 #### Test Subviews
+
+using ArrayViews, Test
 
 ## tools to facilitate aview testing
 function _test_arrview_contents(v, r)
     siz_r = size(r)
     siz_v = size(v)
-    if siz_r != siz_v
+    if siz_r ≠ siz_v
         error("Incorrect size: get $(siz_v), but expect $(siz_r)")
     end
 
-    if length(v) != length(r)
+    if length(v) ≠ length(r)
         error("Unmatched length: get $(length(v)), but expect $(length(r))")
     end
 
     for i = 1 : length(v)
-        if v[i] != r[i]
-            println("v = ")
-            println(v)
-            println("r = ")
-            println(r)
+        if v[i] ≠ r[i]
+            println("v = ", v)
+            println("r = ", r)
             error("Incorrect content.")
         end
     end
@@ -228,6 +223,8 @@ println("    -- testing 4D views")
 
 
 # Some 5D tests
+println("    -- testing 5D views")
+
 avparent2 = copy(reshape(1.:6720., (8, 7, 6, 5, 4)))
 
 @test_arrview(avparent2, :, 1, 1, 1, 1)

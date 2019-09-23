@@ -4,7 +4,7 @@
 
 function diagview(a::DenseArray{T,2}) where T
     m, n = size(a)
-    s1, s2 = strides(a)
+    s1, s2 = astrides(a)
     len = min(m, n)
     StridedView(parent(a), offset(a), (len,), ContRank{0}, (s1 + s2,))
 end
@@ -13,7 +13,7 @@ end
 
 function rowvec_view(a::DenseArray{T,2}, i::Integer) where T
     m, n = size(a)
-    s1, s2 = strides(a)
+    s1, s2 = astrides(a)
     StridedView(parent(a), offset(a) + (i-1) * s1, (n,), ContRank{0}, (s2,))
 end
 

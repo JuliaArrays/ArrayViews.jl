@@ -4,10 +4,11 @@ module ArrayViews
 
 using Compat
 
-import Base: eltype, ndims, size, length, stride, strides
+import Base: eltype, ndims, size, length
 import Base: to_index, getindex, setindex!, parent, similar
 import Base: Ptr, pointer
 import Base: iscontiguous, convert, unsafe_convert
+import Base: _sub2ind, _ind2sub
 
 export
     StridedArrayView,
@@ -25,6 +26,8 @@ export
     contiguous_view,
     strided_view,
     aview,
+    astride,
+    astrides,
     unsafe_aview,
     ellipview,
     diagview,

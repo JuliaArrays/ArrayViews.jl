@@ -1,11 +1,5 @@
-tests = ["arrviews",
-         "contrank",
-         "subviews",
-         "linalg",
-         "convenience"]
-
-for t in tests
-    fp = string(t, ".jl")
-    println("* running $fp ...")
-    include(fp)
-end
+include("arrviews.jl")
+include("contrank.jl")
+include("subviews.jl")
+include("linalg.jl")
+include("convenience.jl")

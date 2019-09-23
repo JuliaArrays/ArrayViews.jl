@@ -1,6 +1,6 @@
-using ArrayViews
-using Base.Test
+using ArrayViews, Test
 import ArrayViews: ContRank
+import Base._ind2sub
 
 ### Auxiliary functions
 
@@ -49,8 +49,8 @@ function _ofs(siz::NTuple{N,Int}, ss::NTuple{N,Int}, subs::NTuple{K,Int}) where 
     if K >= N
         _ofs(ss, subs)
     else
-        subs_ = (K == 1 ? ind2sub(siz, subs[1]) :
-                          tuple(subs[1:K-1]..., ind2sub(siz[K:N], subs[K])...))::NTuple{N,Int}
+        subs_ = (K == 1 ? _ind2sub(siz, subs[1]) :
+                          tuple(subs[1:K-1]..., _ind2sub(siz[K:N], subs[K])...))::NTuple{N,Int}
         _ofs(ss, subs_)
     end::Int
 end
@@ -58,31 +58,31 @@ end
 
 function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{1,Int}) where T
     n = siz[1]
-    @test T[v[i] for i = 1:n] == src[o+(1:n)]
+    @test T[v[i] for i = 1:n] == src[o.+(1:n)]
 end
 
 function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{2,Int}) where T
     d1, d2 = siz
-    @test T[v[i1,i2] for i1=1:d1, i2=1:d2] == reshape(src[o+(1:d1*d2)], (d1, d2))
+    @test T[v[i1,i2] for i1=1:d1, i2=1:d2] == reshape(src[o.+(1:d1*d2)], (d1, d2))
 end
 
 function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{3,Int}) where T
     d1, d2, d3 = siz
-    sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3))
+    sr = reshape(src[o.+(1:prod(siz))], (d1, d2, d3))
     vr = T[v[i1,i2,i3] for i1=1:d1, i2=1:d2, i3=1:d3]
     @test vr == sr
 end
 
 function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{4,Int}) where T
     d1, d2, d3, d4 = siz
-    sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3, d4))
+    sr = reshape(src[o.+(1:prod(siz))], (d1, d2, d3, d4))
     vr = T[v[i1,i2,i3,i4] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4]
     @test vr == sr
 end
 
 function verify_elements(src::Array{T}, o::Int, v::AbstractArray, siz::NTuple{5,Int}) where T
     d1, d2, d3, d4, d5 = siz
-    sr = reshape(src[o+(1:prod(siz))], (d1, d2, d3, d4, d5))
+    sr = reshape(src[o.+(1:prod(siz))], (d1, d2, d3, d4, d5))
     vr = T[v[i1,i2,i3,i4,i5] for i1=1:d1, i2=1:d2, i3=1:d3, i4=1:d4, i5=1:d5]
     @test vr == sr
 end
@@ -150,7 +150,7 @@ function verify_cview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}) where {T
     end
     strides_tup = tuple(strides_arr...)
 
-    @test strides(v) == strides_tup
+    @test astrides(v) == strides_tup
     for d = 1:N
         @test stride(v,d) == strides_tup[d]
     end
@@ -161,7 +161,7 @@ function verify_cview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}) where {T
 end
 
 function verify_sview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type{ContRank{M}}, ss::NTuple{N,Int}) where {T,N,M}
-    # ss: strides
+    # ss: astrides
     @assert ss[1] >= 1
     for d = 2:N
         @assert ss[d] >= ss[d-1] * siz[d-1]
@@ -180,9 +180,9 @@ function verify_sview(VType, src::Array{T}, o::Int, siz::NTuple{N,Int}, cr::Type
     @test iscontiguous(v) == false
     @test contiguousrank(v) == M
 
-    @test strides(v) == ss
+    @test astrides(v) == ss
     for d = 1:N
-        @test stride(v,d) == ss[d]
+        @test astride(v,d) == ss[d]
     end
 
     for k = 1:min(N+1,5)
